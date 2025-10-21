@@ -1,11 +1,13 @@
 import { CameraView, CameraType, useCameraPermissions, FlashMode } from 'expo-camera';
 import { useRef, useState } from 'react';
 import { Button, Text, TouchableOpacity, View } from 'react-native';
+import { GestureDetector, Gesture } from 'react-native-gesture-handler';
 import PhotoPreview from '@/components/camera/PhotoPreview';
 
 export default function Camera() {
   const [facing, setFacing] = useState<CameraType>('back');
   const [flash, setFlash] = useState<FlashMode>('off');
+  const [zoom, setZoom] = useState(0);
   const [permission, requestPermission] = useCameraPermissions();
   const [photo, setPhoto] = useState<any>(null);
   const cameraRef = useRef<CameraView | null>(null);
@@ -32,6 +34,12 @@ export default function Camera() {
   function toggleFlash() {
     setFlash((current) => (current === 'off' ? 'on' : 'off'));
   }
+
+  const pinchGesture = Gesture.Pinch().onUpdate((e) => {
+    const velocity = e.scale;
+    const newZoom = Math.min(Math.max(zoom + (velocity - 1) * 0.05, 0), 1);
+    setZoom(newZoom);
+  });
 
   const handleTakePhoto = async () => {
     if (cameraRef.current) {
@@ -62,11 +70,12 @@ export default function Camera() {
           style={{ height: '100%', width: '95%', borderRadius: 16, overflow: 'hidden' }}
           facing={facing}
           flash={flash}
+          zoom={zoom}
           ref={cameraRef}
         />
       </View>
 
-      <View className="h-[10vh] items-center justify-center">
+      <View className="h-[10vh] flex-row flex-wrap items-center justify-center gap-4">
         <TouchableOpacity onPress={toggleCameraFacing}>
           <Text className="text-2xl font-bold text-black">Flip Camera</Text>
         </TouchableOpacity>
@@ -79,6 +88,25 @@ export default function Camera() {
             {flash === 'on' ? 'Flash On' : 'Flash Off'}
           </Text>
         </TouchableOpacity>
+        <View className="mb-4 flex-row gap-4">
+          <TouchableOpacity onPress={() => setZoom(0)}>
+            <Text className={`text-xl font-bold ${zoom === 0 ? 'text-blue-600' : 'text-gray-400'}`}>
+              0.5x
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => setZoom(0.15)}>
+            <Text
+              className={`text-xl font-bold ${zoom === 0.15 ? 'text-blue-600' : 'text-gray-400'}`}>
+              1x
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => setZoom(0.3)}>
+            <Text
+              className={`text-xl font-bold ${zoom === 0.3 ? 'text-blue-600' : 'text-gray-400'}`}>
+              3x
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
