@@ -7,7 +7,7 @@ on:
 
 jobs:
   prettier:
-    name: Prettier Formatting Check
+    name: format
     runs-on: ubuntu-latest
 
     steps:
@@ -34,7 +34,7 @@ jobs:
         run: npx prettier --check .
 
   eslint:
-    name: ESLint Linting Check
+    name: lint
     runs-on: ubuntu-latest
 
     steps:
