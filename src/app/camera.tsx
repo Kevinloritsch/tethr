@@ -1,5 +1,5 @@
 import { CameraView, CameraType, useCameraPermissions, FlashMode } from 'expo-camera';
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState } from 'react';
 import {
   Text,
   TouchableOpacity,
