@@ -1,0 +1,33 @@
+import { Fontisto } from '@expo/vector-icons';
+import { CameraCapturedPicture } from 'expo-camera';
+import { TouchableOpacity, Image, View } from 'react-native';
+
+import Tethr from '@/components/Tethr';
+
+const PhotoPreview = ({
+  photo,
+  handleRetakePhoto,
+}: {
+  photo: CameraCapturedPicture;
+  handleRetakePhoto: () => void;
+}) => (
+  <View className="flex-1 justify-between bg-black py-8">
+    <Tethr />
+
+    <View className="h-[80vh] flex-1 items-center justify-center">
+      <Image
+        className="w-[95%] rounded-2xl"
+        style={{ height: '100%', borderRadius: 16, overflow: 'hidden' }}
+        source={{ uri: 'data:image/jpg;base64,' + photo.base64 }}
+      />
+    </View>
+
+    <View className="h-[10vh] items-center justify-center">
+      <TouchableOpacity onPress={handleRetakePhoto}>
+        <Fontisto name="trash" size={36} color="white" />
+      </TouchableOpacity>
+    </View>
+  </View>
+);
+
+export default PhotoPreview;
