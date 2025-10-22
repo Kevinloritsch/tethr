@@ -116,7 +116,9 @@ export default function Camera() {
 
       <View className="h-[10vh] items-center justify-center space-y-2">
         <TouchableOpacity onPress={handleTakePhoto}>
-          <Text className="text-2xl font-bold text-white">Take Photo</Text>
+          <View className="items-center justify-center rounded-full">
+            <MaterialIcons name="radio-button-checked" size={72} color="white" />
+          </View>
         </TouchableOpacity>
       </View>
     </View>

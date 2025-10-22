@@ -1,6 +1,6 @@
 import { Fontisto } from '@expo/vector-icons';
 import { CameraCapturedPicture } from 'expo-camera';
-import { TouchableOpacity, Image, View, Text } from 'react-native';
+import { TouchableOpacity, Image, View } from 'react-native';
 
 import Tethr from '@/components/Tethr';
 
