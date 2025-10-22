@@ -1,13 +1,13 @@
 import { CameraView, CameraType, useCameraPermissions, FlashMode } from 'expo-camera';
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import {
-  Button,
   Text,
   TouchableOpacity,
   View,
   ScrollView,
   NativeScrollEvent,
   NativeSyntheticEvent,
+  Pressable,
 } from 'react-native';
 import PhotoPreview from '@/components/camera/PhotoPreview';
 import Tethr from '@/components/Tethr';
@@ -26,10 +26,13 @@ export default function Camera() {
   if (!permission) return <View />;
   if (!permission.granted)
     return (
-      <View className="flex-1 justify-center">
-        <Text className="pb-2.5 text-center">We need your permission to show the camera</Text>
-        <Button onPress={requestPermission} title="grant permission" />
-      </View>
+      <Pressable
+        onPress={requestPermission}
+        className="flex-1 items-center justify-center bg-black">
+        <Text className="px-6 text-center text-white">
+          Tap Anywhere to Grant Permission to Use Camera
+        </Text>
+      </Pressable>
     );
 
   const toggleCameraFacing = () => setFacing((c) => (c === 'back' ? 'front' : 'back'));

@@ -44,7 +44,7 @@ export default function RootLayout() {
             tabBarIcon: ({ size }) => (
               <View className="items-center justify-center rounded-full">
                 <View className="h-24 w-24 items-center justify-center rounded-full bg-black" />
-                <View className="bg-tethr-purple absolute h-20 w-20 items-center justify-center rounded-full">
+                <View className="absolute h-20 w-20 items-center justify-center rounded-full bg-tethr-purple">
                   <AntDesign name="camera" size={size} color="#ffffff" />
                 </View>
               </View>
