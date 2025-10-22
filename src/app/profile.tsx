@@ -1,5 +1,5 @@
 import { View } from 'react-native';
-import { AppText } from '@/components/apptexts';
+import { AppText } from '@/components/apptext';
 
 export default function ProfileScreen() {
   return (
