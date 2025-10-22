@@ -2,7 +2,7 @@ import { Fontisto } from '@expo/vector-icons';
 import { CameraCapturedPicture } from 'expo-camera';
 import { TouchableOpacity, Image, View } from 'react-native';
 
-import Tethr from '@/components/Tethr';
+import Tethr from '@/components/tethr';
 
 const PhotoPreview = ({
   photo,
