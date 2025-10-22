@@ -10,7 +10,7 @@ import {
   Pressable,
 } from 'react-native';
 import PhotoPreview from '@/components/camera/photopreview';
-import Tethr from '@/components/tethr';
+import Tethr from '@/components/tethrs';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
