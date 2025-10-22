@@ -1,4 +1,4 @@
-name: Checks
+name: Tethr
 
 on:
   pull_request:
@@ -7,7 +7,7 @@ on:
 
 jobs:
   prettier:
-    name: Check Code Format with Prettier
+    name: formatting
     runs-on: ubuntu-latest
 
     steps:
