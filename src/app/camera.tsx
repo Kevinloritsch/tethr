@@ -9,7 +9,7 @@ import {
   NativeSyntheticEvent,
   Pressable,
 } from 'react-native';
-import PhotoPreview from '@/components/camera/photopreview';
+import PhotoPreview from '@/components/camera/photopreviews';
 import Tethr from '@/components/tethr';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
