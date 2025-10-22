@@ -19,6 +19,7 @@ export default function Camera() {
   const [flash, setFlash] = useState<FlashMode>('off');
   const [zoom, setZoom] = useState(0.1);
   const [permission, requestPermission] = useCameraPermissions();
+  const [hasClicked, setHasClicked] = useState(false);
   const [photo, setPhoto] = useState<any>(null);
   const cameraRef = useRef<CameraView | null>(null);
   const scrollRef = useRef<ScrollView | null>(null);
@@ -51,17 +52,23 @@ export default function Camera() {
   };
 
   const handleTakePhoto = async () => {
+    if (hasClicked) return;
+    setHasClicked(true);
     if (cameraRef.current) {
       const takenPhoto = await cameraRef.current.takePictureAsync({
         quality: 1,
         base64: true,
         exif: false,
       });
+
       setPhoto(takenPhoto);
     }
   };
 
-  const handleRetakePhoto = () => setPhoto(null);
+  const handleRetakePhoto = () => {
+    setPhoto(null);
+    setHasClicked(false);
+  };
 
   if (photo) return <PhotoPreview photo={photo} handleRetakePhoto={handleRetakePhoto} />;
 
@@ -118,7 +125,7 @@ export default function Camera() {
       </View>
 
       <View className="h-[10vh] items-center justify-center space-y-2">
-        <TouchableOpacity onPress={handleTakePhoto}>
+        <TouchableOpacity onPress={handleTakePhoto} disabled={hasClicked}>
           <View className="items-center justify-center rounded-full">
             <MaterialIcons name="radio-button-checked" size={72} color="white" />
           </View>
