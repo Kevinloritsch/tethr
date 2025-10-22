@@ -6,12 +6,8 @@ const myImage = require('../assets/tethr.png');
 export default function App() {
   return (
     <View className="mx-auto h-[10vh] w-full items-center justify-center">
-      <View className="aspect-auto w-1/5">
-        <Image
-          style={styles.image}
-          source={myImage}
-          contentFit="contain" // or "cover", "fill"
-        />
+      <View className="w-1/5">
+        <Image style={styles.image} source={myImage} contentFit="contain" />
       </View>
     </View>
   );
@@ -19,6 +15,6 @@ export default function App() {
 
 const styles = StyleSheet.create({
   image: {
-    aspectRatio: 1, // keep square proportions
+    aspectRatio: 1,
   },
 });
