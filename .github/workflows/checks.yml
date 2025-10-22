@@ -6,8 +6,8 @@ on:
     branches: [main, dev]
 
 jobs:
-  lint-and-format:
-    name: Lint & Prettier Checks
+  prettier:
+    name: Prettier Formatting Check
     runs-on: ubuntu-latest
 
     steps:
@@ -30,10 +30,32 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      # 🧹 Prettier check
-      - name: Check formatting with Prettier
+      - name: Run Prettier check
         run: npx prettier --check .
 
-      # 🔍 ESLint check (React Native compatible)
-      - name: Run ESLint
+  eslint:
+    name: ESLint Linting Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Cache node modules
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run ESLint check
         run: npx eslint . --max-warnings=0
