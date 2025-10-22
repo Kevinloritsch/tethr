@@ -1,6 +1,7 @@
 import { Tabs } from 'expo-router';
 import '../../global.css';
 import React from 'react';
+import { View } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 
 import AntDesign from '@expo/vector-icons/AntDesign';
@@ -15,7 +16,12 @@ export default function RootLayout() {
         screenOptions={{
           headerShown: false,
           tabBarActiveTintColor: '#A597FF',
+          tabBarInactiveTintColor: 'white',
           tabBarShowLabel: false,
+          tabBarStyle: {
+            backgroundColor: '#000000',
+            borderTopWidth: 0,
+          },
         }}>
         <Tabs.Screen
           name="index"
@@ -32,9 +38,41 @@ export default function RootLayout() {
         <Tabs.Screen
           name="camera"
           options={{
-            tabBarIcon: ({ color, size }) => <AntDesign name="camera" size={size} color={color} />,
+            tabBarIcon: ({ size }) => (
+              <View
+                style={{
+                  height: 80,
+                  width: 80,
+                  borderRadius: 40,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                <View
+                  style={{
+                    position: 'absolute',
+                    height: 80,
+                    width: 80,
+                    borderRadius: 40,
+                    backgroundColor: 'black',
+                  }}
+                />
+                <View
+                  style={{
+                    position: 'absolute',
+                    height: 60,
+                    width: 60,
+                    borderRadius: 30,
+                    backgroundColor: '#A597FF',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}>
+                  <AntDesign name="camera" size={size} color="#ffffff" />
+                </View>
+              </View>
+            ),
           }}
         />
+
         <Tabs.Screen
           name="friends"
           options={{
