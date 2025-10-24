@@ -1,5 +1,5 @@
 import { CameraView, CameraType, useCameraPermissions, FlashMode } from 'expo-camera';
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState } from 'react';
 import {
   Text,
   TouchableOpacity,
@@ -9,8 +9,8 @@ import {
   NativeSyntheticEvent,
   Pressable,
 } from 'react-native';
-import PhotoPreview from '@/components/camera/PhotoPreview';
-import Tethr from '@/components/Tethr';
+import PhotoPreview from '@/components/camera/photopreview';
+import Tethr from '@/components/tethr';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 

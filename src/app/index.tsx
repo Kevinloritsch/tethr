@@ -1,5 +1,5 @@
 import { View } from 'react-native';
-import { AppText } from '@/components/AppText';
+import { AppText } from '@/components/apptext';
 
 export default function IndexScreen() {
   return (
