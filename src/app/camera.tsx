@@ -59,6 +59,7 @@ export default function Camera() {
         quality: 1,
         base64: true,
         exif: false,
+        mirror: facing === 'front',
       });
 
       setPhoto(takenPhoto);

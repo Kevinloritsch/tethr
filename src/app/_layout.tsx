@@ -11,7 +11,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 export default function RootLayout() {
   return (
     <React.Fragment>
-      <StatusBar style="auto" />
+      <StatusBar style="light" />
       <Tabs
         screenOptions={{
           headerShown: false,
@@ -42,7 +42,7 @@ export default function RootLayout() {
           name="camera"
           options={{
             tabBarIcon: ({ size }) => (
-              <View className="items-center justify-center rounded-full">
+              <View className="items-center justify-center">
                 <View className="h-24 w-24 items-center justify-center rounded-full bg-black" />
                 <View className="absolute h-20 w-20 items-center justify-center rounded-full bg-tethr-purple">
                   <AntDesign name="camera" size={size} color="#ffffff" />
