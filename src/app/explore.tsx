@@ -44,7 +44,7 @@ export default function ExploreScreen() {
   }
 
   return (
-    <View className="flex-1 bg-black py-8">
+    <View className="flex-1 bg-black pt-8">
       <Tethr side="left" />
       <FlatList
         data={photos}
