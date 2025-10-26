@@ -1,6 +1,10 @@
 import { View, Image, FlatList, ActivityIndicator, Text, RefreshControl } from 'react-native';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import { photoRetrieve, PhotoSubmission } from '@/controllers/photoRetrieve';
+
+import Tethr from '@/components/tethr';
+import Fyp from '@/components/fyp';
 
 export default function ExploreScreen() {
   const [photos, setPhotos] = useState<PhotoSubmission[]>([]);
@@ -24,6 +28,12 @@ export default function ExploreScreen() {
     setRefreshing(false);
   };
 
+  useFocusEffect(
+    useCallback(() => {
+      loadPhotos();
+    }, [])
+  );
+
   if (loading) {
     return (
       <View className="flex-1 items-center justify-center bg-black">
@@ -33,33 +43,23 @@ export default function ExploreScreen() {
     );
   }
 
-  if (photos.length === 0) {
-    return (
-      <View className="flex-1 items-center justify-center bg-black p-4">
-        <Text className="text-center text-white">No photos yet. Upload your first one!</Text>
-      </View>
-    );
-  }
-
   return (
-    <View className="flex-1 bg-black pt-12">
+    <View className="flex-1 bg-black py-8">
+      <Tethr side="left" />
+      <View>
+        <Text className="pb-8 text-center text-2xl font-bold text-white">Your Feed</Text>
+      </View>
       <FlatList
         data={photos}
         keyExtractor={(item) => item.name}
         renderItem={({ item }) => (
-          <View className="mb-6 px-4">
-            <Image
-              source={{ uri: item.publicUrl }}
-              className="w-full rounded-2xl"
-              style={{ aspectRatio: 3 / 4, height: undefined }}
-              resizeMode="cover"
+          <View className="mx-auto justify-center">
+            <Fyp
+              publicUrl={item.publicUrl}
+              taskName={item.taskName}
+              userId={item.userId}
+              groupId={item.groupId}
             />
-            <View className="mt-2 px-2">
-              <Text className="text-lg font-bold text-white">Task: {item.taskName}</Text>
-              <Text className="text-sm text-gray-400">
-                User: {item.userId} • Group: {item.groupId}
-              </Text>
-            </View>
           </View>
         )}
         refreshControl={
@@ -69,11 +69,19 @@ export default function ExploreScreen() {
             tintColor="#FFFFFF"
             colors={['#FFFFFF']}
             progressBackgroundColor="#000000"
-            title={'Refreshing...'}
+            title="Refreshing..."
             titleColor="#FFFFFF"
           />
         }
-        contentContainerStyle={{ paddingTop: 10, paddingBottom: 20 }}
+        contentContainerStyle={{
+          justifyContent: photos.length === 0 ? 'center' : undefined,
+          alignItems: photos.length === 0 ? 'center' : undefined,
+        }}
+        ListEmptyComponent={
+          <Text className="px-4 text-center text-white">
+            No photos yet. Join a group to start completing tasks!
+          </Text>
+        }
       />
     </View>
   );

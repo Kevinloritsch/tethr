@@ -75,7 +75,7 @@ export default function Camera() {
 
   return (
     <View className="flex-1 justify-between bg-black py-8">
-      <Tethr />
+      <Tethr side="center" />
 
       <View className="h-[80vh] flex-1 items-center justify-center">
         <CameraView
