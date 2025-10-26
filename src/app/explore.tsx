@@ -1,4 +1,4 @@
-import { View, Image, FlatList, ActivityIndicator, Text, RefreshControl } from 'react-native';
+import { View, FlatList, ActivityIndicator, Text, RefreshControl } from 'react-native';
 import { useEffect, useState, useCallback } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import { photoRetrieve, PhotoSubmission } from '@/controllers/photoRetrieve';
@@ -46,14 +46,11 @@ export default function ExploreScreen() {
   return (
     <View className="flex-1 bg-black py-8">
       <Tethr side="left" />
-      <View>
-        <Text className="pb-8 text-center text-2xl font-bold text-white">Your Feed</Text>
-      </View>
       <FlatList
         data={photos}
         keyExtractor={(item) => item.name}
         renderItem={({ item }) => (
-          <View className="mx-auto justify-center">
+          <View className="mx-auto justify-center pb-6">
             <Fyp
               publicUrl={item.publicUrl}
               taskName={item.taskName}
@@ -62,6 +59,9 @@ export default function ExploreScreen() {
             />
           </View>
         )}
+        ListHeaderComponent={
+          <Text className="pb-8 text-center text-2xl font-bold text-white">Your Feed</Text>
+        }
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
