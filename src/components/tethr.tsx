@@ -10,7 +10,7 @@ interface TethrSideProps {
 const Tethr = ({ side }: TethrSideProps) => {
   return (
     <View className={`mx-auto h-[8vh] w-5/6 items-center justify-center`}>
-      <View className={`w-1/5 ${side === 'left' ? 'self-start' : 'self-center'}`}>
+      <View className={`w-1/5 ${side === 'left' && 'self-start'}`}>
         <Image style={styles.image} source={myImage} contentFit="contain" />
       </View>
     </View>

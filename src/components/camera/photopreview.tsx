@@ -59,12 +59,12 @@ const PhotoPreview = ({
 
       <View className="relative h-[80vh] flex-1 items-center justify-center">
         <Image
-          className="border-tethr-gray w-[95%] rounded-2xl border-2"
+          className="w-[95%] rounded-2xl border-2 border-tethr-gray"
           style={{ height: '100%', borderRadius: 16, overflow: 'hidden' }}
           source={{ uri: 'data:image/jpg;base64,' + photo.base64 }}
         />
 
-        <Text className="bg-tethr-gray absolute left-8 top-2 w-auto items-center justify-center rounded-lg px-3 py-2 text-white">
+        <Text className="absolute left-8 top-2 w-auto items-center justify-center rounded-lg bg-tethr-gray px-3 py-2 text-white">
           TaskName
         </Text>
 

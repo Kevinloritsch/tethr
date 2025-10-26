@@ -62,17 +62,7 @@ export default function ExploreScreen() {
         ListHeaderComponent={
           <Text className="pb-8 text-center text-2xl font-bold text-white">Your Feed</Text>
         }
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-            tintColor="#FFFFFF"
-            colors={['#FFFFFF']}
-            progressBackgroundColor="#000000"
-            title="Refreshing..."
-            titleColor="#FFFFFF"
-          />
-        }
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         contentContainerStyle={{
           justifyContent: photos.length === 0 ? 'center' : undefined,
           alignItems: photos.length === 0 ? 'center' : undefined,
