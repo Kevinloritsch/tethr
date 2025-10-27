@@ -59,6 +59,7 @@ export default function Camera() {
         quality: 1,
         base64: true,
         exif: false,
+        mirror: facing === 'front',
       });
 
       setPhoto(takenPhoto);
@@ -74,9 +75,9 @@ export default function Camera() {
 
   return (
     <View className="flex-1 justify-between bg-black py-8">
-      <Tethr />
+      <Tethr side="center" />
 
-      <View className="h-[80vh] flex-1 items-center justify-center">
+      <View className="relative h-[80vh] flex-1 items-center justify-center">
         <CameraView
           style={{ height: '100%', width: '95%', borderRadius: 16, overflow: 'hidden' }}
           facing={facing}
@@ -84,6 +85,9 @@ export default function Camera() {
           zoom={zoom}
           ref={cameraRef}
         />
+        <Text className="absolute left-8 top-2 w-auto items-center justify-center rounded-lg bg-tethr-gray px-3 py-2 text-white">
+          TaskName
+        </Text>
 
         <View className="absolute bottom-6 w-full items-center justify-center">
           <View className="flex w-4/5 flex-row justify-between py-3">
