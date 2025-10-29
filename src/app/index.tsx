@@ -83,7 +83,7 @@ export default function IndexScreen() {
             Confirm Email Address
           </AppText>
           <AppText size="small" center>
-            Enter the OTP we've sent to {email}.
+            Enter the OTP we sent to {email}.
           </AppText>
           <TextInput
             style={{ borderWidth: 1, padding: 10, marginBottom: 10, borderRadius: 25, width: 100 }}
