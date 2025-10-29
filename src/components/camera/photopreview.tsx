@@ -23,7 +23,7 @@ const PhotoPreview = ({
       setUploading(true);
 
       storagePush.uploadImage({
-        base64Data: photo.base64,
+        uri: photo.uri,
         userId: 'Kevin',
         groupId: 'QUACKS',
         taskName: 'Selfie',
