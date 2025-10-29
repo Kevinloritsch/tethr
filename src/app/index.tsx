@@ -1,6 +1,6 @@
 'use client'
 
-import { View, Button, TextInput } from 'react-native';
+import { View, Button, TextInput, Alert } from 'react-native';
 import { AppText } from '@/components/apptext';
 import { useState } from 'react';
 import { supabase } from '@/lib/supabase';
@@ -19,9 +19,11 @@ export default function IndexScreen() {
 
     if (error) {
       console.error('Error:', error.message);
+      Alert.alert('Error', error.message);
     } else {
       console.log('Success! Check your email');
       setOtpSent(true);
+      Alert.alert('Success', 'Check your email for the OTP code');
     }
   }
 
@@ -34,8 +36,10 @@ export default function IndexScreen() {
 
     if (error) {
       console.error('Error verifying OTP:', error);
+      Alert.alert('Error', error.message);
     } else{
       console.log('User authenticated:', data);
+      Alert.alert('Success!', 'You are now logged in!');
     }
   }
 
