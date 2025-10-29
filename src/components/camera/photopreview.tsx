@@ -30,6 +30,7 @@ const PhotoPreview = ({
       });
 
       handleRetakePhoto();
+      router.dismissAll();
       router.replace('/');
     } catch (err: any) {
       console.error('Upload error:', err);

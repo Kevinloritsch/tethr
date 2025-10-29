@@ -1,4 +1,4 @@
-import { Tabs } from 'expo-router';
+import { Tabs, useSegments } from 'expo-router';
 import '../../global.css';
 import React from 'react';
 import { TouchableOpacity, View } from 'react-native';
@@ -9,6 +9,9 @@ import Feather from '@expo/vector-icons/Feather';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
 export default function RootLayout() {
+  const segments = useSegments();
+  const hideTabBar = segments.includes('camera') && segments.includes('takePhoto');
+
   return (
     <React.Fragment>
       <StatusBar style="light" />
@@ -19,9 +22,15 @@ export default function RootLayout() {
           tabBarInactiveTintColor: 'white',
           tabBarShowLabel: false,
           tabBarStyle: {
+            position: 'absolute',
+            bottom: 0,
+            left: 0,
+            right: 0,
             backgroundColor: '#000000',
             borderTopWidth: 0,
+            opacity: hideTabBar ? 0 : 1,
           },
+          sceneStyle: { backgroundColor: '#000000' },
         }}>
         <Tabs.Screen
           name="index"

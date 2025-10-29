@@ -17,7 +17,7 @@ class StoragePushController {
 
       const compressedUri = await imageCompressor.compress(uri, {
         maxWidth: 1080,
-        quality: 0.5,
+        quality: 0.6,
       });
 
       const response = await fetch(compressedUri);
