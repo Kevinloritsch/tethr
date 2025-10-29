@@ -1,10 +1,9 @@
-import { View, Text, ActivityIndicator } from 'react-native';
+import { View, Text, ActivityIndicator, SectionList, RefreshControl } from 'react-native';
 import Tethr from '@/components/tethr';
-import { AppText } from '@/components/apptext';
-import { getFriendsList } from '@/controllers/getFriends';
 import { useState, useCallback, useEffect } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import FriendCard, { FriendProps } from '@/components/friendcard';
+import { getFriendsList } from '@/controllers/getFriends';
 
 export default function FriendsScreen() {
   const [friends, setFriends] = useState<FriendProps[]>([]);
@@ -12,27 +11,50 @@ export default function FriendsScreen() {
   const [outgoingRequests, setOutgoing] = useState<FriendProps[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+
+  const TEST_USER_ID = process.env.TEST_USER_ID;
+
+  const loadFriends = useCallback(async () => {
+    try {
+      setLoading(true);
+
+      const [friendsRes, incomingRes, outgoingRes] = await Promise.all([
+        getFriendsList.getFriends(TEST_USER_ID),
+        getFriendsList.getIncomingFriendRequests(TEST_USER_ID),
+        getFriendsList.getOutgoingFriendRequests(TEST_USER_ID),
+      ]);
+
+      setFriends(friendsRes ?? []);
+      setIncoming(incomingRes ?? []);
+      setOutgoing(outgoingRes ?? []);
+    } catch (error) {
+      console.error('Error loading friends:', error);
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  }, [TEST_USER_ID]);
+
   useEffect(() => {
     loadFriends();
-  }, []);
-  const TEST_USER_ID = process.env.TEST_USER_ID;
-  const loadFriends = async () => {
-    setFriends(await getFriendsList.getFriends(TEST_USER_ID));
-    setIncoming(await getFriendsList.getIncomingFriendRequests(TEST_USER_ID));
-    setOutgoing(await getFriendsList.getOutgoingFriendRequests(TEST_USER_ID));
-    setLoading(false);
-  };
+  }, [loadFriends]);
+
   useFocusEffect(
     useCallback(() => {
       loadFriends();
-    }, [])
+    }, [loadFriends])
   );
 
-  const onRefresh = async () => {
+  const onRefresh = useCallback(async () => {
     setRefreshing(true);
     await loadFriends();
-    setRefreshing(false);
-  };
+  }, [loadFriends]);
+
+  const sections = [
+    { title: 'Incoming Requests', data: incomingRequests },
+    { title: 'Outgoing Requests', data: outgoingRequests },
+    { title: 'Friends', data: friends },
+  ];
 
   if (loading) {
     return (
@@ -44,48 +66,31 @@ export default function FriendsScreen() {
   }
 
   return (
-    <View className="flex-1 flex-col items-center bg-black py-8">
+    <View className="flex-1 flex-col bg-black pt-8">
       <Tethr side="left" />
-      <View>
-        <AppText className="text-4xl font-bold text-white">Your Friends</AppText>
-        <AppText>searchbar lmao</AppText>
-        <AppText center className="text-white">
-          Incoming
-        </AppText>
-        {incomingRequests.map(({ pfpUrl, username, buttonText, cardType }, index) => (
-          <FriendCard
-            pfpUrl={pfpUrl}
-            username={username}
-            buttonText={buttonText}
-            cardType={cardType}
-            key={index}
-          />
-        ))}
-        <AppText center className="text-white">
-          Pending
-        </AppText>
-        {outgoingRequests.map(({ pfpUrl, username, buttonText, cardType }, index) => (
-          <FriendCard
-            pfpUrl={pfpUrl}
-            username={username}
-            buttonText={buttonText}
-            cardType={cardType}
-            key={index}
-          />
-        ))}
-        <AppText center className="text-white">
-          Friends
-        </AppText>
-        {friends.map(({ pfpUrl, username, buttonText, cardType }, index) => (
-          <FriendCard
-            pfpUrl={pfpUrl}
-            username={username}
-            buttonText={buttonText}
-            cardType={cardType}
-            key={index}
-          />
-        ))}
+      <View className="mb-4">
+        <Text className="text-center text-white">Searchbar placeholder</Text>
       </View>
+
+      <SectionList
+        sections={sections}
+        keyExtractor={(item) => item.username}
+        renderItem={({ item }) => (
+          <FriendCard
+            pfpUrl={item.pfpUrl}
+            username={item.username}
+            buttonText={item.buttonText}
+            cardType={item.cardType}
+          />
+        )}
+        renderSectionHeader={({ section: { title } }) => (
+          <Text className="pb-4 pt-8 text-center text-xl font-bold text-white">{title}</Text>
+        )}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+        ListEmptyComponent={
+          <Text className="px-4 text-center text-white">No friends or requests yet.</Text>
+        }
+      />
     </View>
   );
 }
