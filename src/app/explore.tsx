@@ -1,7 +1,7 @@
 import { View, FlatList, ActivityIndicator, Text, RefreshControl } from 'react-native';
 import { useEffect, useState, useCallback } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
-import { photoRetrieve, PhotoSubmission } from '@/controllers/photoRetrieve';
+import { photoRetrieve, PhotoSubmission, UserGroupPair } from '@/controllers/photoRetrieve';
 
 import Tethr from '@/components/tethr';
 import Fyp from '@/components/fyp';
@@ -16,11 +16,23 @@ export default function ExploreScreen() {
   }, []);
 
   const loadPhotos = async () => {
-    const allPhotos = await photoRetrieve.getAllPhotos();
-    const validPhotos = allPhotos.filter((photo) => photo.name && photo.publicUrl).slice(0, -1);
-    setPhotos(validPhotos);
+    setLoading(true);
+
+    // would need some actual query here !
+    const pairs: UserGroupPair[] = [
+      { userId: 'Kevin', groupId: 'QUACKS' },
+      { userId: 'Quin', groupId: 'QUACKS' },
+      { userId: 'Charleen', groupId: 'QUACKS' },
+    ];
+
+    const allPhotos = await photoRetrieve.getPhotosByUserGroups(pairs);
+    setPhotos(allPhotos);
     setLoading(false);
   };
+
+  useEffect(() => {
+    loadPhotos();
+  }, []);
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -66,6 +78,7 @@ export default function ExploreScreen() {
         contentContainerStyle={{
           justifyContent: photos.length === 0 ? 'center' : undefined,
           alignItems: photos.length === 0 ? 'center' : undefined,
+          paddingBottom: 80,
         }}
         ListEmptyComponent={
           <Text className="px-4 text-center text-white">

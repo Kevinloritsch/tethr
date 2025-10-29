@@ -1,7 +1,8 @@
 import { supabase } from '@/lib/supabase';
+import { imageCompressor } from '@/utils/compress';
 
 export interface UploadParams {
-  base64Data: string;
+  uri: string;
   userId: string;
   groupId: string;
   taskName: string;
@@ -12,13 +13,22 @@ class StoragePushController {
 
   async uploadImage(params: UploadParams) {
     try {
-      const { base64Data, userId, groupId, taskName } = params;
-      const fileName = `${userId}_${groupId}_${taskName}_${Date.now()}.jpg`;
-      const binary = Uint8Array.from(atob(base64Data), (c) => c.charCodeAt(0));
+      const { uri, userId, groupId, taskName } = params;
+
+      const compressedUri = await imageCompressor.compress(uri, {
+        maxWidth: 1080,
+        quality: 0.6,
+      });
+
+      const response = await fetch(compressedUri);
+      const arrayBuffer = await response.arrayBuffer();
+      const uint8Array = new Uint8Array(arrayBuffer);
+
+      const fileName = `${userId}/${groupId}/${taskName}/${Date.now()}.jpg`;
 
       const { error } = await supabase.storage
         .from(this.bucketName)
-        .upload(fileName, binary, { contentType: 'image/jpeg' });
+        .upload(fileName, uint8Array, { contentType: 'image/jpeg' });
 
       if (error) throw error;
 

@@ -9,38 +9,62 @@ export interface PhotoSubmission {
   createdAt: string;
 }
 
+export interface UserGroupPair {
+  userId: string;
+  groupId: string;
+}
+
 class PhotoRetrieveController {
   private bucketName = 'task_submissions';
 
-  private parseFileName(fileName: string) {
-    const parts = fileName.replace('.jpg', '').split('_');
-    return {
-      userId: parts[0] || 'unknown',
-      groupId: parts[1] || 'unknown',
-      taskName: parts[2] || 'unknown',
-    };
-  }
-
-  async getAllPhotos(): Promise<PhotoSubmission[]> {
+  async getPhotosByUserGroups(pairs: UserGroupPair[]): Promise<PhotoSubmission[]> {
     try {
-      const { data, error } = await supabase.storage.from(this.bucketName).list('', {
-        limit: 100,
-        sortBy: { column: 'created_at', order: 'desc' },
-      });
+      const allPhotos: PhotoSubmission[] = [];
 
-      if (error) throw error;
+      await Promise.all(
+        pairs.map(async ({ userId, groupId }) => {
+          const { data: taskFolders } = await supabase.storage
+            .from(this.bucketName)
+            .list(`${userId}/${groupId}`);
 
-      return data.map((file) => {
-        const metadata = this.parseFileName(file.name);
-        const { data: urlData } = supabase.storage.from(this.bucketName).getPublicUrl(file.name);
+          if (!taskFolders) return;
 
-        return {
-          name: file.name,
-          publicUrl: urlData.publicUrl,
-          createdAt: file.created_at,
-          ...metadata,
-        };
-      });
+          await Promise.all(
+            taskFolders.map(async (taskFolder) => {
+              if (!taskFolder.name) return;
+
+              const path = `${userId}/${groupId}/${taskFolder.name}`;
+
+              const { data: files } = await supabase.storage
+                .from(this.bucketName)
+                .list(path, { sortBy: { column: 'created_at', order: 'desc' } });
+
+              if (!files) return;
+
+              const photoPromises = files.map(async (file) => {
+                const { data: urlData } = supabase.storage
+                  .from(this.bucketName)
+                  .getPublicUrl(`${path}/${file.name}`);
+
+                allPhotos.push({
+                  name: file.name,
+                  publicUrl: urlData.publicUrl,
+                  createdAt: file.created_at,
+                  userId,
+                  groupId,
+                  taskName: taskFolder.name,
+                });
+              });
+
+              await Promise.all(photoPromises);
+            })
+          );
+        })
+      );
+
+      return allPhotos
+        .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+        .slice(0, 100);
     } catch (err) {
       console.error('Error retrieving photos:', err);
       return [];
