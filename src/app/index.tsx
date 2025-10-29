@@ -8,7 +8,6 @@ import { supabase } from '@/lib/supabase';
 export default function IndexScreen() {
   const [email, setEmail] = useState('');
   const [otp, setOtp] = useState('');
-  const [otpSent, setOtpSent] = useState(false);
   const [currentView, setCurrentView] = useState<'email' | 'verify' | 'authenticated'>('email');
 
   const testOTP = async () => {
@@ -22,7 +21,6 @@ export default function IndexScreen() {
       console.error('Error:', error.message);
       Alert.alert('Error', error.message);
     } else {
-      setOtpSent(true);
       setCurrentView('verify');
       console.log('Success! Check your email');
     }
