@@ -78,6 +78,7 @@ export default function ExploreScreen() {
         contentContainerStyle={{
           justifyContent: photos.length === 0 ? 'center' : undefined,
           alignItems: photos.length === 0 ? 'center' : undefined,
+          paddingBottom: 80,
         }}
         ListEmptyComponent={
           <Text className="px-4 text-center text-white">
