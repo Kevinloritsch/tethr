@@ -1,21 +1,29 @@
-type CardType = "top" | "middle" | "bottom" | "solo";
-import { View, Image, Text } from "react-native";
+import { View, Image, Text } from 'react-native';
+type CardType = 'top' | 'middle' | 'bottom' | 'solo';
 
-interface FriendProps {
-    pfpUrl: string,
-    username: string,
-    buttonText: string,
-    cardType: CardType
+export interface FriendProps {
+  pfpUrl: string;
+  username: string;
+  buttonText: string;
+  cardType: CardType;
 }
 
-const FriendCard = ({pfpUrl, username, buttonText, cardType}: FriendProps) => {
-    return(
-        <View className="flex items-center justify-between rounded-2xl">
-            <Image source={{uri: pfpUrl}} className="w-1/5 rounded-full" style={{ aspectRatio: 1}}/>
-            <Text>{username}</Text>
-            <Text>{buttonText}</Text>
-        </View>
-    )
-}
+const FriendCard = ({ pfpUrl, username, buttonText, cardType }: FriendProps) => {
+  const roundedMap: Record<CardType, string> = {
+    top: 'rounded-t-2xl',
+    middle: '',
+    bottom: 'rounded-b-2xl',
+    solo: 'rounded-2xl',
+  };
 
-export default FriendCard
+  const roundedClass = roundedMap[cardType];
+  return (
+    <View className={`flex items-center justify-between ${roundedClass}`}>
+      <Image source={{ uri: pfpUrl }} className="w-1/5 rounded-full" style={{ aspectRatio: 1 }} />
+      <Text>{username}</Text>
+      <Text>{buttonText}</Text>
+    </View>
+  );
+};
+
+export default FriendCard;
