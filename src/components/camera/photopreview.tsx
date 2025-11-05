@@ -4,6 +4,7 @@ import { router } from 'expo-router';
 import { useState } from 'react';
 import Tethr from '@/components/tethr';
 import { storagePush } from '@/controllers/photoUpload';
+import { userController } from '@/controllers/userInfo';
 
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
@@ -22,9 +23,15 @@ const PhotoPreview = ({
 
       setUploading(true);
 
+      const userId = await userController.getId();
+      if (!userId) {
+        console.error('No user ID found');
+        return;
+      }
+
       storagePush.uploadImage({
         uri: photo.uri,
-        userId: 'Kevin',
+        userId: userId,
         groupId: 'QUACKS',
         taskName: 'Selfie',
       });

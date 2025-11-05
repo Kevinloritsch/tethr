@@ -20,9 +20,9 @@ export default function ExploreScreen() {
 
     // would need some actual query here !
     const pairs: UserGroupPair[] = [
-      { userId: 'Kevin', groupId: 'QUACKS' },
-      { userId: 'Quin', groupId: 'QUACKS' },
-      { userId: 'Charleen', groupId: 'QUACKS' },
+      { userId: '977ab496-dc63-4891-a642-669fb777ac05', groupId: 'QUACKS' },
+      { userId: '48f3c94f-b8dc-4278-9d46-4b4724a93232', groupId: 'QUACKS' },
+      // { userId: 'Charleen', groupId: 'QUACKS' },
     ];
 
     const allPhotos = await photoRetrieve.getPhotosByUserGroups(pairs);
@@ -66,7 +66,7 @@ export default function ExploreScreen() {
             <Fyp
               publicUrl={item.publicUrl}
               taskName={item.taskName}
-              userId={item.userId}
+              userId={item.username}
               groupId={item.groupId}
             />
           </View>

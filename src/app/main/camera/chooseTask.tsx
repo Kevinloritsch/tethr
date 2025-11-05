@@ -25,7 +25,7 @@ const ChooseTask = () => {
       </View>
       <View className="items-center">
         <Text className="text-xl text-white">Select Task</Text>
-        <Link href="/camera/takePhoto" asChild>
+        <Link href="/main/camera/takePhoto" asChild>
           <Button title="Take Photo" />
         </Link>
       </View>
