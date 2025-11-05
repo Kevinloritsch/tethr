@@ -1,4 +1,4 @@
-import { FlatList, View, Dimensions, Text } from 'react-native';
+import { FlatList, View, Dimensions } from 'react-native';
 
 import Task from '@/components/tasks/task';
 

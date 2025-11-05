@@ -1,5 +1,4 @@
 import { View, Text } from 'react-native';
-import { photoRetrieve } from '@/controllers/photoRetrieve';
 
 interface GroupProps {
   groupId: string;

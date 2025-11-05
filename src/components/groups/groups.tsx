@@ -1,4 +1,4 @@
-import { FlatList, Dimensions, View, Text } from 'react-native';
+import { FlatList, Dimensions, View } from 'react-native';
 
 import Group from '@/components/groups/group';
 
