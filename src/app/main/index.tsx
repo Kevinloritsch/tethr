@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react';
 import { userController } from '@/controllers/userInfo';
 
 import Tethr from '@/components/tethr';
-import { Button } from '@/components/button';
 import Groups from '@/components/groups/groups';
 import Tasks from '@/components/tasks/tasks';
 
