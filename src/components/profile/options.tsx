@@ -5,7 +5,9 @@ interface OptionsTypes {
 const Options = ({ logoutHandler }: OptionsTypes) => {
   return (
     <View className="flex flex-col items-center gap-2 text-white">
-      <TouchableOpacity className="w-3/4 rounded-xl bg-tethr-purple/80 py-1">
+      <TouchableOpacity
+        className="w-3/4 rounded-xl bg-tethr-purple/80 py-1"
+        onPress={logoutHandler}>
         {' '}
         <Text> Log Out</Text>
       </TouchableOpacity>
@@ -13,9 +15,7 @@ const Options = ({ logoutHandler }: OptionsTypes) => {
         {' '}
         <Text> Delete Account</Text>{' '}
       </TouchableOpacity>
-      <TouchableOpacity
-        className="my-5 w-3/4 rounded-xl bg-tethr-purple/80 py-1"
-        onPress={logoutHandler}>
+      <TouchableOpacity className="my-5 w-3/4 rounded-xl bg-tethr-purple/80 py-1">
         <Text> Privacy Policy</Text>
       </TouchableOpacity>
     </View>
