@@ -4,6 +4,7 @@ export interface PhotoSubmission {
   name: string;
   publicUrl: string;
   userId: string;
+  username: string;
   groupId: string;
   taskName: string;
   createdAt: string;
@@ -20,9 +21,12 @@ class PhotoRetrieveController {
   async getPhotosByUserGroups(pairs: UserGroupPair[]): Promise<PhotoSubmission[]> {
     try {
       const allPhotos: PhotoSubmission[] = [];
+      const userIds = new Set<string>();
 
       await Promise.all(
         pairs.map(async ({ userId, groupId }) => {
+          userIds.add(userId);
+
           const { data: taskFolders } = await supabase.storage
             .from(this.bucketName)
             .list(`${userId}/${groupId}`);
@@ -51,6 +55,7 @@ class PhotoRetrieveController {
                   publicUrl: urlData.publicUrl,
                   createdAt: file.created_at,
                   userId,
+                  username: '',
                   groupId,
                   taskName: taskFolder.name,
                 });
@@ -61,6 +66,17 @@ class PhotoRetrieveController {
           );
         })
       );
+
+      const { data: users } = await supabase
+        .from('users')
+        .select('user_id, username')
+        .in('user_id', Array.from(userIds));
+
+      const usernameMap = new Map(users?.map((u) => [u.user_id, u.username]) || []);
+
+      allPhotos.forEach((photo) => {
+        photo.username = usernameMap.get(photo.userId) || photo.userId;
+      });
 
       return allPhotos
         .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
