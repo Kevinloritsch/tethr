@@ -20,7 +20,7 @@ export default function ProfileScreen() {
 
       setProfile(profileResponse);
     } catch (error) {
-      console.error('Error loading friends:', error);
+      console.error('Error loading profile:', error);
     } finally {
       setLoading(false);
       setRefreshing(false);
