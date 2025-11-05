@@ -136,6 +136,20 @@ create table public.tasks (
   primary key (group_id, task_name)
 );
 
+ALTER TABLE public.tasks ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Group Members can add tasks into their own group"
+ON public.tasks
+FOR INSERT
+WITH CHECK (
+  EXISTS (
+    SELECT 1
+    FROM public.isPartOf
+    WHERE isPartOf.group_id = tasks.group_id
+      AND isPartOf.user_id = auth.uid()
+  )
+)
+
 create table public.hasCompleted (
   user_id uuid not null references public.users(user_id),
   group_id uuid not null references public.groups(group_id),
