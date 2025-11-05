@@ -12,7 +12,7 @@ const ChooseGroup = () => {
       </View>
       <View className="items-center">
         <Text className="text-xl text-white">Select Group</Text>
-        <Link href="/camera/chooseTask" asChild>
+        <Link href="/main/camera/chooseTask" asChild>
           <Button title="Choose Task" />
         </Link>
       </View>
