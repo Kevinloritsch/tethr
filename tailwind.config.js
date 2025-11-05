@@ -6,7 +6,7 @@ module.exports = {
     extend: {
       colors: {
         'tethr-purple': '#A597FF',
-        'tethr-gray': '#3F3F3F80',
+        'tethr-gray': '#3F3F3F',
       },
     },
   },

@@ -114,18 +114,6 @@ USING (
   )
 );
 
-CREATE POLICY "Members can view their group details"
-ON public.groups
-FOR SELECT
-USING (
-  EXISTS (
-    SELECT 1
-    FROM public.isPartOf
-    WHERE isPartOf.group_id = groups.group_id
-      AND isPartOf.user_id = auth.uid()
-  )
-);
-
 create table public.isPartOf (
   user_id uuid not null references public.users(user_id),
   group_id uuid not null references public.groups(group_id),

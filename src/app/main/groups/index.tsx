@@ -95,22 +95,22 @@ const Index = () => {
       <View className="mb-6 flex-row items-center justify-between">
         <Text className="text-xl font-bold text-white">Your Groups</Text>
         <Pressable
-          className="flex-row items-center rounded-lg bg-tethr-purple/40 px-4 py-2"
+          className="flex-row items-center px-4 py-2"
           onPress={() => router.push('/main/groups')}>
           <FontAwesome6 name="plus" size={16} color="white" />
         </Pressable>
       </View>
 
       {groups.length === 0 ? (
-        <Text className="text-center text-white/70">You’re not in any groups yet.</Text>
+        <Text className="text-center text-white">You’re not in any groups yet.</Text>
       ) : (
         <ScrollView showsHorizontalScrollIndicator={false}>
           {groups.map((group) => (
             <Pressable
               key={group.group_id}
-              className="mr-3 rounded-xl bg-tethr-purple/40 px-4 py-2"
+              className="mr-3 rounded-xl bg-tethr-gray/45 px-4 py-2"
               onPress={() => console.log('Pressed group:', group.group_name)}>
-              <Text className="font-medium text-white">{group.group_name}</Text>
+              <Text className="text-2xl font-medium text-white">{group.group_name}</Text>
             </Pressable>
           ))}
         </ScrollView>
