@@ -4,36 +4,78 @@ import { FontAwesome6 } from '@expo/vector-icons';
 import { supabase } from '@/lib/supabase';
 import { router } from 'expo-router';
 
+type Group = {
+  group_id: string;
+  group_name: string;
+};
+
+type UserProfile = {
+  username: string;
+  name: string;
+};
+
 const Index = () => {
-  const [groups, setGroups] = useState<{ group_id: string; group_name: string }[]>([]);
+  const [groups, setGroups] = useState<Group[]>([]);
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchUserGroups();
+    fetchUserData();
   }, []);
 
-  const fetchUserGroups = async () => {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) return;
+  const fetchUserData = async () => {
+    try {
+      const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+      if (sessionError) {
+        console.error('Error fetching session:', sessionError);
+        setLoading(false);
+        return;
+      }
 
-    const { data, error } = await supabase
-      .from('ispartof')
-      .select('group_id, groups ( group_name )')
-      .eq('user_id', user.id);
+      const user = sessionData?.session?.user;
+      if (!user) {
+        console.log('No user logged in.');
+        setLoading(false);
+        return;
+      }
 
-    if (error) {
-      console.error('Error fetching groups:', error);
-    } else {
-      const formatted = data.map((item: any) => ({
-        group_id: item.group_id,
-        group_name: item.groups.group_name,
-      }));
-      setGroups(formatted);
+      console.log('Current user ID:', user.id);
+
+      const { data: userRow, error: userError } = await supabase
+        .from('users')
+        .select('username, name')
+        .eq('user_id', user.id)
+        .single();
+
+      if (userError) console.error('Error fetching user profile:', userError);
+      else {
+        setUserProfile(userRow);
+        console.log('User profile:', userRow);
+      }
+
+      const { data: groupData, error: groupError } = await supabase
+        .from('ispartof')
+        .select('group_id, groups ( group_id, group_name )')
+        .eq('user_id', user.id);
+
+      if (groupError) console.error('Error fetching groups:', groupError);
+      else {
+        console.log('Raw groups data:', groupData);
+
+        const formattedGroups: Group[] = (groupData || []).map((item: any) => ({
+          group_id: item.group_id,
+          group_name:
+            item.groups?.group_name || 'AN ERROR HAS OCCURRED. INVALID GROUP NAME / NO GROUP NAME',
+        }));
+
+        console.log('Formatted groups:', formattedGroups);
+        setGroups(formattedGroups);
+      }
+    } catch (err) {
+      console.error('Unexpected error fetching data:', err);
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   if (loading) {
@@ -46,6 +88,10 @@ const Index = () => {
 
   return (
     <View className="flex-1 bg-black px-4 pt-12">
+      <Text className="mb-8 text-2xl font-semibold text-white">
+        Welcome Back, {userProfile?.name || 'User'}!
+      </Text>
+
       <View className="mb-6 flex-row items-center justify-between">
         <Text className="text-xl font-bold text-white">Your Groups</Text>
         <Pressable

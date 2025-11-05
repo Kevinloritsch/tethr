@@ -100,6 +100,20 @@ create table public.groups (
   date_created date default now()
 );
 
+ALTER TABLE public.groups ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Members can view their group details"
+ON public.groups
+FOR SELECT
+USING (
+  EXISTS (
+    SELECT 1
+    FROM public.isPartOf
+    WHERE isPartOf.group_id = groups.group_id
+      AND isPartOf.user_id = auth.uid()
+  )
+);
+
 create table public.isPartOf (
   user_id uuid not null references public.users(user_id),
   group_id uuid not null references public.groups(group_id),
@@ -107,6 +121,13 @@ create table public.isPartOf (
   current_points int default 0,
   primary key (user_id, group_id)
 );
+
+ALTER TABLE public.isPartOf ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can view their own group memberships"
+ON public.isPartOf
+FOR SELECT
+USING ( auth.uid() = user_id );
 
 create table public.tasks (
   group_id uuid not null references public.groups(group_id),
