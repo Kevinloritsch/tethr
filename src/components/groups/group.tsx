@@ -6,12 +6,10 @@ interface GroupProps {
 }
 
 //{groupId }: GroupProps
-const Group = ({groupId }: GroupProps) => {
-  // istg if i forget to comment this out
-  groupId = "QUACKS"
+const Group = ({ groupId }: GroupProps) => {
   return (
-    <View className = "rounded-lg w-9/12 h-3/5 bg-tethr-gray">
-      <Text className="text-white text-3xl font-bold p-5">{groupId}</Text>
+    <View className="">
+      <Text className="text-3xl font-bold text-white">{groupId}</Text>
     </View>
   );
 };

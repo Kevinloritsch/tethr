@@ -16,7 +16,7 @@ export function Button({ title, onPress, theme = 'primary', disabled, ...rest }:
       onPress={onPress}
       className={cn(
         'mb-4 flex-row items-center justify-center rounded-md px-5 py-3',
-        theme === 'primary' && 'bg-[#a597ff90] py-1 px-3 rounded-full',
+        theme === 'primary' && 'rounded-full bg-[#a597ff90] px-3 py-1',
         theme === 'secondary' && 'border-gray-300 bg-white',
         theme === 'tertiary' && 'border-transparent bg-transparent',
         disabled && 'opacity-50'

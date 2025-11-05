@@ -1,11 +1,42 @@
-import { View, Text } from 'react-native';
+import { FlatList, Dimensions, View, Text } from 'react-native';
+
 import Group from '@/components/groups/group';
+
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
+const ITEM_WIDTH = SCREEN_WIDTH * 0.65;
+const SPACING = 10;
+
+// mock data, need add smth to actually get the data
+const data = [
+  { id: 'QUACKS', content: 'Page 1' },
+  { id: 'KEVIN', content: 'Page 2' },
+  { id: 'QUIN', content: 'Page 3' },
+];
 
 const Groups = () => {
   return (
-    <View className="m-6">
-      <Group/>
-    </View>
+    <FlatList
+      data={data}
+      horizontal={true}
+      showsHorizontalScrollIndicator={false}
+      contentContainerStyle={{
+        paddingHorizontal: 25,
+      }}
+      renderItem={({ item }) => (
+        <View
+          style={{
+            width: ITEM_WIDTH,
+            height: 290,
+            marginHorizontal: SPACING ,
+            backgroundColor: '#3F3F3F',
+            borderRadius: 10,
+            padding: 20,
+          }}>
+          <Group groupId={item.id}/>
+        </View>
+      )}
+      keyExtractor={(item) => item.id}
+    />
   );
 };
 
