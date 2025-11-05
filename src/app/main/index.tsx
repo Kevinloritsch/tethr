@@ -27,7 +27,7 @@ export default function Index() {
   }
 
   return (
-    <View className="bg-black px-4 pt-12">
+    <View className="px-4 pt-12">
       <Text className="mb-8 text-2xl font-semibold text-white">
         Welcome Back, {name || 'User'}!
       </Text>

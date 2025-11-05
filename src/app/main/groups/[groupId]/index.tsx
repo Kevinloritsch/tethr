@@ -1,7 +1,8 @@
-import { View, Text, ScrollView, ActivityIndicator } from 'react-native';
+import { View, Text, ScrollView, ActivityIndicator, Pressable } from 'react-native';
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
-import { useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams, router } from 'expo-router';
+import { FontAwesome6 } from '@expo/vector-icons';
 
 interface GroupUser {
   user_id: string;
@@ -56,6 +57,14 @@ const GroupPage = () => {
           <Text className="text-lg text-white">{username}</Text>
         </View>
       ))}
+      <View className="my-6 flex-row items-center justify-between">
+        <Text className="text-xl font-bold text-white">Tasks</Text>
+        <Pressable
+          className="flex-row items-center px-4 py-2"
+          onPress={() => router.push(`/main/groups/${groupId}/createTask`)}>
+          <FontAwesome6 name="plus" size={16} color="white" />
+        </Pressable>
+      </View>
     </ScrollView>
   );
 };
