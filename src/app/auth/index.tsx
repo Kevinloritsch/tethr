@@ -18,6 +18,12 @@ export default function IndexScreen() {
 
     const { error } = await supabase.auth.signInWithOtp({
       email: email,
+      options: {
+        data: {
+          username: username,
+          name: name,
+        },
+      },
     });
 
     if (error) {

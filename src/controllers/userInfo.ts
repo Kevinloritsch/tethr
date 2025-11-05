@@ -1,7 +1,62 @@
 import { supabase } from '@/lib/supabase';
 import { User } from '@supabase/supabase-js';
+export interface ProfileProps {
+  username: string;
+  pfpurl: string;
+  fullName: string;
+  numCompletedTasks: number;
+  numFriends: number;
+}
 
 class UserController {
+  private usersTableName = 'users';
+  private avatarBucket = 'avatars';
+  private friendsTableName = 'isfriendswith';
+
+  async getProfileInformation(): Promise<ProfileProps> {
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+    if (!user) throw authError;
+    const { data: pfpData } = supabase.storage
+      .from(this.avatarBucket)
+      .getPublicUrl('default/cat1.jpg');
+
+    const url = pfpData.publicUrl;
+    const { data: profileData, error } = await supabase
+      .from(this.usersTableName)
+      .select('username, num_completed_tasks, name')
+      .eq('user_id', user.id)
+      .single();
+    if (error) throw error;
+    const { data: left, error: leftError } = await supabase
+      .from(this.friendsTableName)
+      .select('*')
+      .eq('user1_id', user.id);
+
+    const { data: right, error: rightError } = await supabase
+      .from(this.friendsTableName)
+      .select('*')
+      .eq('user2_id', user.id);
+
+    if (leftError || rightError) throw leftError || rightError;
+    const friendRelations = [...(left ?? []), ...(right ?? [])];
+    let friendCount = 0;
+    const friendIds = friendRelations.map((r) =>
+      r.user1_id === user.id ? r.user2_id : r.user1_id
+    );
+    const uniqueFriends = [...new Set(friendIds)];
+    friendCount = uniqueFriends.length;
+
+    return {
+      username: profileData?.username ?? 'Unknown',
+      pfpurl: url,
+      fullName: profileData?.name ?? 'Unknown',
+      numCompletedTasks: profileData?.num_completed_tasks ?? 0,
+      numFriends: friendCount,
+    };
+  }
   async getUsername(): Promise<string | null> {
     const {
       data: { user },
