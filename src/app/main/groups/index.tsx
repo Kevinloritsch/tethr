@@ -4,15 +4,15 @@ import { FontAwesome6 } from '@expo/vector-icons';
 import { supabase } from '@/lib/supabase';
 import { router } from 'expo-router';
 
-type Group = {
+interface Group {
   group_id: string;
   group_name: string;
-};
+}
 
-type UserProfile = {
+interface UserProfile {
   username: string;
   name: string;
-};
+}
 
 const Index = () => {
   const [groups, setGroups] = useState<Group[]>([]);
@@ -104,11 +104,11 @@ const Index = () => {
       {groups.length === 0 ? (
         <Text className="text-center text-white/70">You’re not in any groups yet.</Text>
       ) : (
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+        <ScrollView showsHorizontalScrollIndicator={false}>
           {groups.map((group) => (
             <Pressable
               key={group.group_id}
-              className="mr-3 rounded-full bg-tethr-purple/40 px-4 py-2"
+              className="mr-3 rounded-xl bg-tethr-purple/40 px-4 py-2"
               onPress={() => console.log('Pressed group:', group.group_name)}>
               <Text className="font-medium text-white">{group.group_name}</Text>
             </Pressable>
