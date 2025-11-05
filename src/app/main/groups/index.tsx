@@ -39,8 +39,6 @@ const Index = () => {
         return;
       }
 
-      console.log('Current user ID:', user.id);
-
       const { data: userRow, error: userError } = await supabase
         .from('users')
         .select('username, name')
@@ -64,8 +62,7 @@ const Index = () => {
 
         const formattedGroups: Group[] = (groupData || []).map((item: any) => ({
           group_id: item.group_id,
-          group_name:
-            item.groups?.group_name || 'AN ERROR HAS OCCURRED. INVALID GROUP NAME / NO GROUP NAME',
+          group_name: item.groups?.group_name || 'INVALID GROUP NAME OR NO GROUP NAME',
         }));
 
         console.log('Formatted groups:', formattedGroups);
@@ -109,7 +106,7 @@ const Index = () => {
             <Pressable
               key={group.group_id}
               className="mr-3 rounded-xl bg-tethr-gray/45 px-4 py-2"
-              onPress={() => console.log('Pressed group:', group.group_name)}>
+              onPress={() => router.push(`/main/groups/${group.group_id}`)}>
               <Text className="text-2xl font-medium text-white">{group.group_name}</Text>
             </Pressable>
           ))}
