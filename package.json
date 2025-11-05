@@ -30,6 +30,7 @@
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-native": "0.81.5",
+    "react-native-countdown-bar": "^1.0.0",
     "react-native-dotenv": "^3.4.11",
     "react-native-pager-view": "6.9.1",
     "react-native-reanimated": "~4.1.1",

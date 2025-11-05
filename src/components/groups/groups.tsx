@@ -4,7 +4,6 @@ import Group from '@/components/groups/group';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const ITEM_WIDTH = SCREEN_WIDTH * 0.65;
-const SPACING = 10;
 
 // mock data, need add smth to actually get the data
 const data = [
@@ -26,8 +25,8 @@ const Groups = () => {
         <View
           style={{
             width: ITEM_WIDTH,
-            height: 290,
-            marginHorizontal: SPACING ,
+            height: 285,
+            marginHorizontal: 10 ,
             backgroundColor: '#3F3F3F',
             borderRadius: 10,
             padding: 20,

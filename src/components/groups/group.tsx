@@ -8,8 +8,9 @@ interface GroupProps {
 //{groupId }: GroupProps
 const Group = ({ groupId }: GroupProps) => {
   return (
-    <View className="">
+    <View>
       <Text className="text-3xl font-bold text-white">{groupId}</Text>
+
     </View>
   );
 };
