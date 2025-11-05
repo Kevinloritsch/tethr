@@ -1,5 +1,4 @@
 import { View, ActivityIndicator, Text, ScrollView, RefreshControl } from 'react-native';
-import { AppText } from '@/components/apptext';
 import Profile from '@/components/profile/profile';
 import Options from '@/components/profile/options';
 import Tethr from '@/components/tethr';
