@@ -54,4 +54,4 @@ class ProfileController {
   }
 }
 
-export default ProfileController;
+export const getProfileData = new ProfileController();
