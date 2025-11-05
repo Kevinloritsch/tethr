@@ -3,20 +3,21 @@ import { AppText } from '@/components/apptext';
 import Profile from '@/components/profile/profile';
 import Options from '@/components/profile/options';
 import Tethr from '@/components/tethr';
-import { ProfileProps, getProfileData } from '@/controllers/profile';
+import { ProfileProps, userController } from '@/controllers/userInfo';
 import { useState, useCallback, useEffect } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
+import { useRouter } from 'expo-router';
 
 export default function ProfileScreen() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [profile, setProfile] = useState<ProfileProps>();
-  const TEST_USER_ID = process.env.TEST_USER_ID;
+  const router = useRouter();
   const loadProfile = useCallback(async () => {
     try {
       setLoading(true);
 
-      const profileResponse = await getProfileData.getProfileInformation(TEST_USER_ID);
+      const profileResponse = await userController.getProfileInformation();
 
       setProfile(profileResponse);
     } catch (error) {
@@ -25,7 +26,7 @@ export default function ProfileScreen() {
       setLoading(false);
       setRefreshing(false);
     }
-  }, [TEST_USER_ID]);
+  }, []);
   useEffect(() => {
     loadProfile();
   }, [loadProfile]);
@@ -35,7 +36,12 @@ export default function ProfileScreen() {
       loadProfile();
     }, [loadProfile])
   );
-
+  const handleLogout = async () => {
+    const success = await userController.logout();
+    if (success) {
+      router.replace('/auth');
+    }
+  };
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     await loadProfile();
@@ -49,7 +55,6 @@ export default function ProfileScreen() {
       </View>
     );
   }
-  console.log(`user id: ${TEST_USER_ID}`);
   return (
     <View className="flex-1 flex-col bg-black">
       <Tethr side="left" />
@@ -66,7 +71,7 @@ export default function ProfileScreen() {
               numFriends={profile.numFriends}
             />
           )}
-          <Options />
+          <Options logoutHandler={handleLogout} />
         </AppText>
       </ScrollView>
     </View>

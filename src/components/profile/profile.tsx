@@ -1,5 +1,5 @@
 import { View, Text, Image } from 'react-native';
-import { ProfileProps } from '@/controllers/profile';
+import { ProfileProps } from '@/controllers/userInfo';
 
 const Profile = ({ username, pfpurl, fullName, numCompletedTasks, numFriends }: ProfileProps) => {
   return (
