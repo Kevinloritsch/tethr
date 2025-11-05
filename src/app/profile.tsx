@@ -1,6 +1,8 @@
 import { View, ActivityIndicator, Text, ScrollView, RefreshControl } from 'react-native';
 import { AppText } from '@/components/apptext';
 import Profile from '@/components/profile/profile';
+import Options from '@/components/profile/options';
+import Tethr from '@/components/tethr';
 import { ProfileProps, getProfileData } from '@/controllers/profile';
 import { useState, useCallback, useEffect } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
@@ -9,7 +11,6 @@ export default function ProfileScreen() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [profile, setProfile] = useState<ProfileProps>();
-
   const TEST_USER_ID = process.env.TEST_USER_ID;
   const loadProfile = useCallback(async () => {
     try {
@@ -48,22 +49,26 @@ export default function ProfileScreen() {
       </View>
     );
   }
-
+  console.log(`user id: ${TEST_USER_ID}`);
   return (
-    <ScrollView
-      className="flex-1 justify-center p-4"
-      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
-      <AppText center>
-        {profile && (
-          <Profile
-            username={profile.username}
-            pfpurl={profile.pfpurl}
-            fullName={profile.fullName}
-            numCompletedTasks={profile.numCompletedTasks}
-            numFriends={profile.numFriends}
-          />
-        )}
-      </AppText>
-    </ScrollView>
+    <View className="flex-1 flex-col bg-black">
+      <Tethr side="left" />
+      <ScrollView
+        className="flex-1 justify-center"
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
+        <AppText center>
+          {profile && (
+            <Profile
+              username={profile.username}
+              pfpurl={profile.pfpurl}
+              fullName={profile.fullName}
+              numCompletedTasks={profile.numCompletedTasks}
+              numFriends={profile.numFriends}
+            />
+          )}
+          <Options />
+        </AppText>
+      </ScrollView>
+    </View>
   );
 }

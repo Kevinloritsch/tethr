@@ -21,7 +21,7 @@ class ProfileController {
     const url = pfpData.publicUrl;
     const { data: profileData, error } = await supabase
       .from(this.usersTableName)
-      .select('username, num_completed_tasks, full_name')
+      .select('username, num_completed_tasks, name')
       .eq('user_id', userId)
       .single();
     if (error) throw error;
@@ -47,7 +47,7 @@ class ProfileController {
     return {
       username: profileData?.username ?? 'Unknown',
       pfpurl: url,
-      fullName: profileData?.full_name ?? 'Unknown',
+      fullName: profileData?.name ?? 'Unknown',
       numCompletedTasks: profileData?.num_completed_tasks ?? 0,
       numFriends: friendCount,
     };
