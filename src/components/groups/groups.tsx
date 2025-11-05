@@ -26,12 +26,12 @@ const Groups = () => {
           style={{
             width: ITEM_WIDTH,
             height: 285,
-            marginHorizontal: 10 ,
+            marginHorizontal: 10,
             backgroundColor: '#3F3F3F',
             borderRadius: 10,
             padding: 20,
           }}>
-          <Group groupId={item.id}/>
+          <Group groupId={item.id} />
         </View>
       )}
       keyExtractor={(item) => item.id}

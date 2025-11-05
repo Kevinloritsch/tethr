@@ -1,6 +1,6 @@
 import { FlatList, View, Dimensions, Text } from 'react-native';
 
-import Task from "@/components/tasks/task";
+import Task from '@/components/tasks/task';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const ITEM_WIDTH = SCREEN_WIDTH * 0.65;
@@ -14,7 +14,7 @@ const data = [
 
 const Tasks = () => {
   return (
-   <FlatList
+    <FlatList
       data={data}
       horizontal={true}
       showsHorizontalScrollIndicator={false}
@@ -26,12 +26,12 @@ const Tasks = () => {
           style={{
             width: ITEM_WIDTH,
             height: 200,
-            marginHorizontal: SPACING ,
+            marginHorizontal: SPACING,
             backgroundColor: '#3F3F3F',
             borderRadius: 10,
             padding: 20,
           }}>
-          <Task groupId={item.id} taskId={item.task}/>
+          <Task groupId={item.id} taskId={item.task} />
         </View>
       )}
       keyExtractor={(item) => item.id}

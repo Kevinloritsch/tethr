@@ -10,7 +10,6 @@ const Group = ({ groupId }: GroupProps) => {
   return (
     <View>
       <Text className="text-3xl font-bold text-white">{groupId}</Text>
-
     </View>
   );
 };
