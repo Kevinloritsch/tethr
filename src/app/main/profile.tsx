@@ -56,12 +56,13 @@ export default function ProfileScreen() {
     );
   }
   return (
-    <View className="flex-1 flex-col bg-black">
+    <View className="flex-1 flex-col bg-black pt-8">
       <Tethr side="left" />
       <ScrollView
-        className="flex-1 justify-center"
+        className="flex-1"
+        contentContainerStyle={{ flexGrow: 1, paddingTop: 20 }}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
-        <AppText center>
+        <View>
           {profile && (
             <Profile
               username={profile.username}
@@ -72,7 +73,7 @@ export default function ProfileScreen() {
             />
           )}
           <Options logoutHandler={handleLogout} />
-        </AppText>
+        </View>
       </ScrollView>
     </View>
   );

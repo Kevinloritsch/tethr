@@ -8,15 +8,13 @@ const Options = ({ logoutHandler }: OptionsTypes) => {
       <TouchableOpacity
         className="w-3/4 rounded-xl bg-tethr-purple/80 py-1"
         onPress={logoutHandler}>
-        {' '}
-        <Text> Log Out</Text>
+        <Text className="text-center"> Log Out</Text>
       </TouchableOpacity>
       <TouchableOpacity className="w-3/4 rounded-xl bg-tethr-purple/80 py-1">
-        {' '}
-        <Text> Delete Account</Text>{' '}
+        <Text className="text-center"> Delete Account</Text>{' '}
       </TouchableOpacity>
       <TouchableOpacity className="my-5 w-3/4 rounded-xl bg-tethr-purple/80 py-1">
-        <Text> Privacy Policy</Text>
+        <Text className="text-center"> Privacy Policy</Text>
       </TouchableOpacity>
     </View>
   );

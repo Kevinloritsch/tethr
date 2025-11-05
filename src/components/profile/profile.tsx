@@ -7,7 +7,7 @@ const Profile = ({ username, pfpurl, fullName, numCompletedTasks, numFriends }: 
       <Image source={{ uri: pfpurl }} className="w-1/3 rounded-full" style={{ aspectRatio: 1 }} />
       <View className="my-5 flex flex-col">
         <Text className="text-4xl font-semibold text-tethr-purple">{username}</Text>
-        <Text className="text-2xl">{fullName}</Text>
+        <Text className="text-center text-2xl text-white">{fullName}</Text>
       </View>
 
       <Text className="text-white/70">{numFriends} friends</Text>
