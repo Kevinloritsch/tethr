@@ -37,12 +37,10 @@ export default function Index() {
         <Text className="mb-6 pl-9 text-3xl font-bold text-white">Welcome back, {username}!</Text>
         <View className="flex-row items-center justify-between pl-9 pr-3">
           <Text className="mb-3 text-2xl font-bold text-white">Your Groups</Text>
-          <Button title="View all ➜" />
         </View>
         <Groups />
         <View className="flex-row items-center justify-between pl-9 pr-3 pt-6">
           <Text className="mb-3 text-2xl font-bold text-white">To-Do</Text>
-          <Button title="View all ➜" />
         </View>
         <Tasks />
       </ScrollView>
