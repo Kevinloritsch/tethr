@@ -79,7 +79,7 @@ class UserController {
       .select('num_completed_tasks')
       .eq('user_id', user.id)
       .single();
-    if (error) return null;
+    if (error) return -1;
 
     return data?.num_completed_tasks || 0;
   }

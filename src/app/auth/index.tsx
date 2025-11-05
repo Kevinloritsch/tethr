@@ -106,14 +106,7 @@ export default function IndexScreen() {
             Enter the OTP we sent to {email}.
           </AppText>
           <TextInput
-            style={{
-              borderWidth: 1,
-              padding: 10,
-              marginBottom: 10,
-              borderRadius: 25,
-              width: 100,
-              backgroundColor: 'white',
-            }}
+            className="border-1 m-2 mx-auto w-3/4 rounded-lg bg-white p-2"
             value={otp}
             onChangeText={setOtp}
             maxLength={6}
