@@ -1,58 +1,79 @@
-import { View, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
-import { useEffect, useState } from 'react';
-import { userController } from '@/controllers/userInfo';
+import { View, ActivityIndicator, Text, ScrollView, RefreshControl } from 'react-native';
+import Profile from '@/components/profile/profile';
+import Options from '@/components/profile/options';
+import Tethr from '@/components/tethr';
+import { ProfileProps, userController } from '@/controllers/userInfo';
+import { useState, useCallback, useEffect } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
 
-export default function Index() {
-  const [email, setEmail] = useState('');
-  const [name, setName] = useState('');
-  const [username, setUsername] = useState('');
-  const [tasks, setTasks] = useState(0);
+export default function ProfileScreen() {
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [profile, setProfile] = useState<ProfileProps>();
   const router = useRouter();
+  const loadProfile = useCallback(async () => {
+    try {
+      setLoading(true);
 
-  useEffect(() => {
-    loadUserData();
+      const profileResponse = await userController.getProfileInformation();
+
+      setProfile(profileResponse);
+    } catch (error) {
+      console.error('Error loading profile:', error);
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
   }, []);
+  useEffect(() => {
+    loadProfile();
+  }, [loadProfile]);
 
-  const loadUserData = async () => {
-    const username = await userController.getUsername();
-    const email = await userController.getEmail();
-    const name = await userController.getName();
-    const tasks = await userController.getNumCompletedTasks();
-    if (username) setUsername(username);
-    if (email) setEmail(email);
-    if (name) setName(name);
-    if (tasks) setTasks(tasks);
-    setLoading(false);
-  };
-
+  useFocusEffect(
+    useCallback(() => {
+      loadProfile();
+    }, [loadProfile])
+  );
   const handleLogout = async () => {
     const success = await userController.logout();
     if (success) {
       router.replace('/auth');
     }
   };
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await loadProfile();
+  }, [loadProfile]);
 
   if (loading) {
     return (
       <View className="flex-1 items-center justify-center bg-black">
         <ActivityIndicator size="large" color="white" />
-        <Text className="mt-4 text-white">Loading...</Text>
+        <Text className="mt-4 text-white">Loading profile...</Text>
       </View>
     );
   }
-
   return (
-    <View className="flex-1 items-center justify-center bg-black p-5">
-      <Text className="mb-8 text-xl font-semibold text-white">{username}</Text>
-      <Text className="mb-8 text-xl font-semibold text-white">{name}</Text>
-      <Text className="mb-8 text-xl font-semibold text-white">{email}</Text>
-      <Text className="mb-8 text-xl font-semibold text-white">{tasks}</Text>
-
-      <TouchableOpacity className="rounded-xl bg-red-500 p-4" onPress={handleLogout}>
-        <Text className="text-base font-semibold text-white">Logout</Text>
-      </TouchableOpacity>
+    <View className="flex-1 flex-col bg-black pt-8">
+      <Tethr side="left" />
+      <ScrollView
+        className="flex-1"
+        contentContainerStyle={{ flexGrow: 1, paddingTop: 20 }}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
+        <View>
+          {profile && (
+            <Profile
+              username={profile.username}
+              pfpurl={profile.pfpurl}
+              fullName={profile.fullName}
+              numCompletedTasks={profile.numCompletedTasks}
+              numFriends={profile.numFriends}
+            />
+          )}
+          <Options logoutHandler={handleLogout} />
+        </View>
+      </ScrollView>
     </View>
   );
 }
