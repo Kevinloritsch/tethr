@@ -3,8 +3,8 @@ import Group from '@/components/groups/group';
 
 const Groups = () => {
   return (
-    <View>
-      {/* <Group groupId={item.groupId}/> */}
+    <View className="m-6">
+      <Group/>
     </View>
   );
 };

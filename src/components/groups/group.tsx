@@ -1,14 +1,15 @@
 import { View, Text } from 'react-native';
-import { photoRetrieve, PhotoSubmission, UserGroupPair } from '@/controllers/photoRetrieve';
+import { photoRetrieve } from '@/controllers/photoRetrieve';
 
 interface GroupProps {
   groupId: string;
 }
 
-const Group = ({groupId }: GroupProps) => {
+//{groupId }: GroupProps
+const Group = () => {
   return (
     <View className = "rounded-lg">
-      <Text className="text-white bg-[#3f3f3f99]">hdh</Text>
+      <Text className="text-white bg-tethr-gray">hdh</Text>
     </View>
   );
 };
