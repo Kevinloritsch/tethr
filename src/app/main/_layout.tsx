@@ -76,6 +76,12 @@ export default function RootLayout() {
             tabBarButton: (props) => <TouchableOpacity {...(props as any)} />,
           }}
         />
+        <Tabs.Screen
+          name="groups"
+          options={{
+            href: null,
+          }}
+        />
       </Tabs>
     </React.Fragment>
   );

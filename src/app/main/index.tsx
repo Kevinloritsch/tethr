@@ -1,9 +1,10 @@
-import { View, Text, ActivityIndicator } from 'react-native';
+import { View, Text, Pressable, ActivityIndicator } from 'react-native';
 import { useEffect, useState } from 'react';
 import { userController } from '@/controllers/userInfo';
-
+import { FontAwesome6 } from '@expo/vector-icons';
+import { router } from 'expo-router';
 export default function Index() {
-  const [username, setUsername] = useState<string>('');
+  const [name, setName] = useState<string>('');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -11,8 +12,8 @@ export default function Index() {
   }, []);
 
   const loadUser = async () => {
-    const name = await userController.getUsername();
-    if (name) setUsername(name);
+    const name = await userController.getName();
+    if (name) setName(name);
     setLoading(false);
   };
 
@@ -26,8 +27,19 @@ export default function Index() {
   }
 
   return (
-    <View className="flex-1 items-center justify-center bg-black p-5">
-      <Text className="mb-8 text-xl font-semibold text-white">Welcome Back {username}!</Text>
+    <View className="px-4 pt-12">
+      <Text className="mb-8 text-2xl font-semibold text-white">
+        Welcome Back, {name || 'User'}!
+      </Text>
+      <View className="flex-row justify-between">
+        <Text className="text-xl font-bold text-white">Your Groups</Text>
+        <Pressable
+          className="flex-row items-center rounded-xl bg-tethr-purple/40 px-4 py-2"
+          onPress={() => router.push('main/groups')}>
+          <Text className="mr-1 font-medium text-white">View all</Text>
+          <FontAwesome6 name="arrow-right-long" size={16} color="white" className="pl-2" />
+        </Pressable>
+      </View>
     </View>
   );
 }

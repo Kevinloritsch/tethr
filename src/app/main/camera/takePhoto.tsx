@@ -102,7 +102,7 @@ export default function Camera() {
           zoom={zoom}
           ref={cameraRef}
         />
-        <Text className="absolute left-8 top-2 w-auto items-center justify-center rounded-lg bg-tethr-gray px-3 py-2 text-white">
+        <Text className="absolute left-8 top-2 w-auto items-center justify-center rounded-lg bg-tethr-gray/80 px-3 py-2 text-white">
           TaskName
         </Text>
 
