@@ -13,8 +13,7 @@ class GroupController {
 
   async createTask(groupId: string, taskName: string, recurring: boolean) {
     try {
-      // Fetch current user to log auth.uid()
-      const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+      const { data: sessionData } = await supabase.auth.getSession();
       const currentUserId = sessionData?.session?.user?.id;
 
       console.log('🔹 Debug createTask values:');
@@ -36,15 +35,10 @@ class GroupController {
         .single();
 
       if (error) {
-        console.error('❌ Error creating task:', error);
-        console.error('🔍 Full error details:', JSON.stringify(error, null, 2));
         return { success: false, message: error.message };
       }
-
-      console.log('✅ Task created successfully:', data);
       return { success: true, data };
-    } catch (err: any) {
-      console.error('🔥 Unexpected error creating task:', err);
+    } catch {
       return { success: false, message: 'Unexpected error occurred.' };
     }
   }
