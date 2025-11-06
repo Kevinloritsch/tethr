@@ -13,15 +13,6 @@ class GroupController {
 
   async createTask(groupId: string, taskName: string, recurring: boolean) {
     try {
-      const { data: sessionData } = await supabase.auth.getSession();
-      const currentUserId = sessionData?.session?.user?.id;
-
-      console.log('🔹 Debug createTask values:');
-      console.log('  groupId:', groupId);
-      console.log('  taskName:', taskName);
-      console.log('  recurring:', recurring);
-      console.log('  auth.uid() (current user):', currentUserId);
-
       const { data, error } = await supabase
         .from('tasks')
         .insert([
