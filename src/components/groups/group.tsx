@@ -1,14 +1,15 @@
 import { View, Text } from 'react-native';
 
 interface GroupProps {
-  groupId: string;
+  // group_id: string;
+  group_name: string;
 }
 
 //{groupId }: GroupProps
-const Group = ({ groupId }: GroupProps) => {
+const Group = ({ group_name }: GroupProps) => {
   return (
     <View>
-      <Text className="text-3xl font-bold text-white">{groupId}</Text>
+      <Text className="text-3xl font-bold text-white">{group_name}</Text>
     </View>
   );
 };

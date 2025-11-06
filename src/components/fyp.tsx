@@ -9,7 +9,7 @@ interface FypExplicitProps {
 
 const Fyp = ({ publicUrl, taskName, userId, groupId }: FypExplicitProps) => {
   return (
-    <View className="w-[90vw] rounded-lg bg-tethr-gray px-6 py-4">
+    <View className="w-[90vw] rounded-lg bg-tethr-gray/80 px-6 py-4">
       <Text className="pb-1 text-2xl font-bold text-white">{userId}</Text>
       <View className="flex flex-row gap-x-2 font-bold">
         <Text className="text-lg color-tethr-purple">Completed</Text>
