@@ -49,8 +49,8 @@ export default function FriendsScreen() {
   }, [loadFriends]);
 
   const sections = [
-    { title: 'Incoming Requests', data: incomingRequests },
-    { title: 'Outgoing Requests', data: outgoingRequests },
+    { title: 'Incoming', data: incomingRequests },
+    { title: 'Pending', data: outgoingRequests },
     { title: 'Friends', data: friends },
   ];
 
@@ -74,15 +74,17 @@ export default function FriendsScreen() {
         sections={sections}
         keyExtractor={(item) => item.username}
         renderItem={({ item }) => (
-          <FriendCard
-            pfpUrl={item.pfpUrl}
-            username={item.username}
-            buttonText={item.buttonText}
-            cardType={item.cardType}
-          />
+          <View className="flex flex-col items-center px-4">
+            <FriendCard
+              pfpUrl={item.pfpUrl}
+              username={item.username}
+              buttonText={item.buttonText}
+              cardType={item.cardType}
+            />
+          </View>
         )}
         renderSectionHeader={({ section: { title } }) => (
-          <Text className="pb-4 pt-8 text-center text-xl font-bold text-white">{title}</Text>
+          <Text className="px-4 pb-4 pt-8 text-left text-xl font-bold text-white">{title}</Text>
         )}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         ListEmptyComponent={

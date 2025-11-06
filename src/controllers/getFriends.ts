@@ -65,7 +65,7 @@ class GetFriendController {
     const result = (friends ?? []).map((f, index, arr) => ({
       pfpUrl: pfpUrl,
       username: f.username,
-      buttonText: 'Friends',
+      buttonText: 'Remove',
       cardType: this.getCardType(index, arr.length),
     }));
 
