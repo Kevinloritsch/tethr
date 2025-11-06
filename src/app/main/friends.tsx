@@ -64,10 +64,13 @@ export default function FriendsScreen() {
   }
 
   return (
-    <View className="flex-1 flex-col bg-black pt-8">
+    <View className="flex-1 flex-col bg-black">
       <Tethr side="left" />
-      <View className="mb-4">
-        <Text className="text-center text-white">Searchbar placeholder</Text>
+      <View className="flex w-full flex-col items-center gap-2">
+        <Text className="text-center text-2xl text-white">Your Friends</Text>
+        <Text className="w-11/12 rounded-2xl bg-tethr-gray py-2 text-center text-white/60">
+          Searchbar placeholder
+        </Text>
       </View>
 
       <SectionList
@@ -83,8 +86,10 @@ export default function FriendsScreen() {
             />
           </View>
         )}
-        renderSectionHeader={({ section: { title } }) => (
-          <Text className="px-4 pb-4 pt-8 text-left text-xl font-bold text-white">{title}</Text>
+        renderSectionHeader={({ section: { title, data } }) => (
+          <Text className="px-4 pb-4 pt-8 text-left text-xl font-bold text-white">
+            {title} ({data.length})
+          </Text>
         )}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         ListEmptyComponent={
