@@ -24,7 +24,7 @@ const ChooseTask = () => {
         </TouchableOpacity>
       </View>
       <View className="items-center">
-        <Text className="text-xl text-white">Select Task</Text>
+        <Text className="text-2xl font-bold text-white">Select Task</Text>
         <Link href="/main/camera/takePhoto" asChild>
           <Button title="Take Photo" />
         </Link>
