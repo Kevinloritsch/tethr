@@ -13,8 +13,16 @@ class GetFriendController {
   private friendRequestsTableName = 'friendrequests';
   private usersTableName = 'users';
   private friendsTableName = 'isfriendswith';
+  private avatarBucket = 'avatars';
 
-  private async getFriendRelations(userId: string) {
+  private async getFriendRelations() {
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+    if (!user) throw authError;
+    const userId = user.id;
+    console.log(userId);
     const { data: left, error: leftError } = await supabase
       .from(this.friendsTableName)
       .select('*')
@@ -29,8 +37,19 @@ class GetFriendController {
     return [...(left ?? []), ...(right ?? [])];
   }
 
-  async getFriends(userId: string): Promise<FriendProps[]> {
-    const relations = await this.getFriendRelations(userId);
+  async getFriends(): Promise<FriendProps[]> {
+    const { data: pfpData } = supabase.storage
+      .from(this.avatarBucket)
+      .getPublicUrl('default/cat1.jpg');
+
+    const pfpUrl = pfpData.publicUrl;
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+    if (!user) throw authError;
+    const userId = user.id;
+    const relations = await this.getFriendRelations();
     if (!relations.length) return [];
 
     const friendIds = relations.map((r) => (r.user1_id === userId ? r.user2_id : r.user1_id));
@@ -38,13 +57,13 @@ class GetFriendController {
 
     const { data: friends, error } = await supabase
       .from(this.usersTableName)
-      .select('user_id, username, avatar_url')
+      .select('user_id, username')
       .in('user_id', uniqueFriendIds);
 
     if (error) throw error;
 
     const result = (friends ?? []).map((f, index, arr) => ({
-      pfpUrl: f.avatar_url,
+      pfpUrl: pfpUrl,
       username: f.username,
       buttonText: 'Friends',
       cardType: this.getCardType(index, arr.length),
@@ -53,10 +72,21 @@ class GetFriendController {
     return result;
   }
 
-  async getIncomingFriendRequests(userId: string): Promise<FriendProps[]> {
+  async getIncomingFriendRequests(): Promise<FriendProps[]> {
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+    if (!user) throw authError;
+    const { data: pfpData } = supabase.storage
+      .from(this.avatarBucket)
+      .getPublicUrl('default/cat1.jpg');
+
+    const pfpUrl = pfpData.publicUrl;
+    const userId = user.id;
     const { data, error } = await supabase
       .from(this.friendRequestsTableName)
-      .select('sender_id, users!sender_id(username, avatar_url)')
+      .select('sender_id, users!sender_id(username)')
       .eq('recipient_id', userId);
 
     if (error) throw error;
@@ -65,7 +95,7 @@ class GetFriendController {
       const user = Array.isArray(r.users) ? r.users[0] : r.users;
 
       return {
-        pfpUrl: user?.avatar_url ?? '',
+        pfpUrl: pfpUrl,
         username: user?.username ?? 'Unknown',
         buttonText: 'Accept',
         cardType: this.getCardType(index, arr.length),
@@ -75,10 +105,21 @@ class GetFriendController {
     return requests;
   }
 
-  async getOutgoingFriendRequests(userId: string): Promise<FriendProps[]> {
+  async getOutgoingFriendRequests(): Promise<FriendProps[]> {
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+    const { data: pfpData } = supabase.storage
+      .from(this.avatarBucket)
+      .getPublicUrl('default/cat1.jpg');
+
+    const pfpUrl = pfpData.publicUrl;
+    if (!user) throw authError;
+    const userId = user.id;
     const { data, error } = await supabase
       .from(this.friendRequestsTableName)
-      .select('recipient_id, users!recipient_id(username, avatar_url)')
+      .select('recipient_id, users!recipient_id(username)')
       .eq('sender_id', userId);
 
     if (error) throw error;
@@ -87,7 +128,7 @@ class GetFriendController {
       const user = Array.isArray(r.users) ? r.users[0] : r.users;
 
       return {
-        pfpUrl: user?.avatar_url ?? '',
+        pfpUrl: pfpUrl,
         username: user?.username ?? 'Unknown',
         buttonText: 'Remove',
         cardType: this.getCardType(index, arr.length),

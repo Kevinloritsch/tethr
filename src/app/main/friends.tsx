@@ -12,16 +12,14 @@ export default function FriendsScreen() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
-  const TEST_USER_ID = process.env.TEST_USER_ID;
-
   const loadFriends = useCallback(async () => {
     try {
       setLoading(true);
 
       const [friendsRes, incomingRes, outgoingRes] = await Promise.all([
-        getFriendsList.getFriends(TEST_USER_ID),
-        getFriendsList.getIncomingFriendRequests(TEST_USER_ID),
-        getFriendsList.getOutgoingFriendRequests(TEST_USER_ID),
+        getFriendsList.getFriends(),
+        getFriendsList.getIncomingFriendRequests(),
+        getFriendsList.getOutgoingFriendRequests(),
       ]);
 
       setFriends(friendsRes ?? []);
@@ -33,7 +31,7 @@ export default function FriendsScreen() {
       setLoading(false);
       setRefreshing(false);
     }
-  }, [TEST_USER_ID]);
+  }, []);
 
   useEffect(() => {
     loadFriends();
