@@ -6,7 +6,7 @@ import {
   ActivityIndicator,
   ScrollView,
 } from 'react-native';
-import { Link, router } from 'expo-router';
+import { router } from 'expo-router';
 import { getAllGroups } from '@/controllers/group';
 import { useEffect, useState } from 'react';
 
