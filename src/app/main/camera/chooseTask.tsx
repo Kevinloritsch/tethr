@@ -1,10 +1,12 @@
 import { View, Text, Button, TouchableOpacity } from 'react-native';
-import { Link, router } from 'expo-router';
+import { Link, router, useLocalSearchParams } from 'expo-router';
 import Tethr from '@/components/tethr';
 
 import Entypo from '@expo/vector-icons/Entypo';
 
 const ChooseTask = () => {
+  const { group_name } = useLocalSearchParams();
+  console.log(group_name);
   return (
     <View className="flex-1 flex-col bg-black pt-8">
       <View className="relative h-[10vh] w-full items-center">
@@ -24,7 +26,7 @@ const ChooseTask = () => {
         </TouchableOpacity>
       </View>
       <View className="items-center">
-        <Text className="text-2xl font-bold text-white">Select Task</Text>
+        <Text className="text-2xl font-bold text-white">Select Task for {group_name}</Text>
         <Link href="/main/camera/takePhoto" asChild>
           <Button title="Take Photo" />
         </Link>
