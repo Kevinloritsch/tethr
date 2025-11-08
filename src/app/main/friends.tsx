@@ -12,16 +12,14 @@ export default function FriendsScreen() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
-  const TEST_USER_ID = process.env.TEST_USER_ID;
-
   const loadFriends = useCallback(async () => {
     try {
       setLoading(true);
 
       const [friendsRes, incomingRes, outgoingRes] = await Promise.all([
-        getFriendsList.getFriends(TEST_USER_ID),
-        getFriendsList.getIncomingFriendRequests(TEST_USER_ID),
-        getFriendsList.getOutgoingFriendRequests(TEST_USER_ID),
+        getFriendsList.getFriends(),
+        getFriendsList.getIncomingFriendRequests(),
+        getFriendsList.getOutgoingFriendRequests(),
       ]);
 
       setFriends(friendsRes ?? []);
@@ -33,7 +31,7 @@ export default function FriendsScreen() {
       setLoading(false);
       setRefreshing(false);
     }
-  }, [TEST_USER_ID]);
+  }, []);
 
   useEffect(() => {
     loadFriends();
@@ -51,8 +49,8 @@ export default function FriendsScreen() {
   }, [loadFriends]);
 
   const sections = [
-    { title: 'Incoming Requests', data: incomingRequests },
-    { title: 'Outgoing Requests', data: outgoingRequests },
+    { title: 'Incoming', data: incomingRequests },
+    { title: 'Pending', data: outgoingRequests },
     { title: 'Friends', data: friends },
   ];
 
@@ -66,25 +64,32 @@ export default function FriendsScreen() {
   }
 
   return (
-    <View className="flex-1 flex-col bg-black pt-8">
+    <View className="flex-1 flex-col bg-black">
       <Tethr side="left" />
-      <View className="mb-4">
-        <Text className="text-center text-white">Searchbar placeholder</Text>
+      <View className="flex w-full flex-col items-center gap-2">
+        <Text className="text-center text-2xl text-white">Your Friends</Text>
+        <Text className="w-11/12 rounded-2xl bg-tethr-gray py-2 text-center text-white/60">
+          Searchbar placeholder
+        </Text>
       </View>
 
       <SectionList
         sections={sections}
         keyExtractor={(item) => item.username}
         renderItem={({ item }) => (
-          <FriendCard
-            pfpUrl={item.pfpUrl}
-            username={item.username}
-            buttonText={item.buttonText}
-            cardType={item.cardType}
-          />
+          <View className="flex flex-col items-center px-4">
+            <FriendCard
+              pfpUrl={item.pfpUrl}
+              username={item.username}
+              buttonText={item.buttonText}
+              cardType={item.cardType}
+            />
+          </View>
         )}
-        renderSectionHeader={({ section: { title } }) => (
-          <Text className="pb-4 pt-8 text-center text-xl font-bold text-white">{title}</Text>
+        renderSectionHeader={({ section: { title, data } }) => (
+          <Text className="px-4 pb-4 pt-8 text-left text-xl font-bold text-white">
+            {title} ({data.length})
+          </Text>
         )}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         ListEmptyComponent={
