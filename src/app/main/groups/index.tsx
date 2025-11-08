@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { FontAwesome6 } from '@expo/vector-icons';
 import { supabase } from '@/lib/supabase';
 import { router } from 'expo-router';
+import { getAllGroups } from '@/controllers/group';
 
 interface Group {
   group_id: string;
@@ -20,58 +21,34 @@ const Index = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchUserData();
+    fetchGroupData();
   }, []);
 
-  const fetchUserData = async () => {
+  const fetchGroupData = async () => {
     try {
-      const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
-      if (sessionError) {
-        console.error('Error fetching session:', sessionError);
-        setLoading(false);
-        return;
-      }
-
-      const user = sessionData?.session?.user;
-      if (!user) {
-        console.log('No user logged in.');
-        setLoading(false);
-        return;
-      }
-
-      const { data: userRow, error: userError } = await supabase
-        .from('users')
-        .select('username, name')
-        .eq('user_id', user.id)
-        .single();
-
-      if (userError) console.error('Error fetching user profile:', userError);
-      else {
-        setUserProfile(userRow);
-        console.log('User profile:', userRow);
-      }
-
-      const { data: groupData, error: groupError } = await supabase
-        .from('ispartof')
-        .select('group_id, groups ( group_id, group_name )')
-        .eq('user_id', user.id);
-
-      if (groupError) console.error('Error fetching groups:', groupError);
-      else {
-        console.log('Raw groups data:', groupData);
-
-        const formattedGroups: Group[] = (groupData || []).map((item: any) => ({
-          group_id: item.group_id,
-          group_name: item.groups?.group_name || 'INVALID GROUP NAME OR NO GROUP NAME',
-        }));
-
-        console.log('Formatted groups:', formattedGroups);
-        setGroups(formattedGroups);
-      }
+      const allGroups = await getAllGroups.fetchUserData();
+      setGroups(allGroups);
     } catch (err) {
       console.error('Unexpected error fetching data:', err);
     } finally {
       setLoading(false);
+    }
+
+    const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+    if (sessionError) {
+      console.error('Error fetching session:', sessionError);
+    }
+    const user = sessionData?.session?.user;
+    const { data: userRow, error: userError } = await supabase
+      .from('users')
+      .select('username, name')
+      .eq('user_id', user?.id)
+      .single();
+
+    if (userError) console.error('Error fetching user profile:', userError);
+    else {
+      setUserProfile(userRow);
+      console.log('User profile:', userRow);
     }
   };
 
