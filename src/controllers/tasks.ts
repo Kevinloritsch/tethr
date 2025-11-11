@@ -5,8 +5,13 @@ export interface Task {
   recurring: boolean;
 }
 
+interface GroupType {
+  group_id: string;
+  group_name: string;
+}
+
 class TaskController {
-  async getTasksForGroup(groupId: string): Promise<Task[]> {
+  async getTasksForGroup(groupId: GroupType[]): Promise<Task[]> {
     try {
       const { data, error } = await supabase
         .from('tasks')

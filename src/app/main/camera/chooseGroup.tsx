@@ -76,7 +76,7 @@ const ChooseGroup = () => {
                 onPress={() =>
                   router.push({
                     pathname: '/main/camera/chooseTask',
-                    params: { group_name: group.group_name },
+                    params: { group_name: group.group_name, group_id: group.group_id },
                   })
                 }>
                 <Text className="text-2xl font-medium text-white">{group.group_name}</Text>

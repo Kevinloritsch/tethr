@@ -9,7 +9,7 @@ import {
   NativeSyntheticEvent,
   Pressable,
 } from 'react-native';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import PhotoPreview from '@/components/camera/photopreview';
 import Tethr from '@/components/tethr';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
@@ -17,6 +17,12 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import Entypo from '@expo/vector-icons/Entypo';
 
 export default function Camera() {
+  const { group_name } = useLocalSearchParams();
+  const groupName = Array.isArray(group_name) ? group_name[0] : (group_name ?? '');
+
+  const { group_id } = useLocalSearchParams();
+  const groupId = Array.isArray(group_id) ? group_id[0] : (group_id ?? '');
+
   const [facing, setFacing] = useState<CameraType>('back');
   const [flash, setFlash] = useState<FlashMode>('off');
   const [zoom, setZoom] = useState(0.1);
@@ -73,7 +79,15 @@ export default function Camera() {
     setHasClicked(false);
   };
 
-  if (photo) return <PhotoPreview photo={photo} handleRetakePhoto={handleRetakePhoto} />;
+  if (photo)
+    return (
+      <PhotoPreview
+        photo={photo}
+        handleRetakePhoto={handleRetakePhoto}
+        group_name={groupName}
+        group_id={groupId}
+      />
+    );
 
   return (
     <View className="flex-1 justify-between bg-black py-8">

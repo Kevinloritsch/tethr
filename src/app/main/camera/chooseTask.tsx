@@ -1,11 +1,12 @@
-import { View, Text, Button, TouchableOpacity } from 'react-native';
-import { Link, router, useLocalSearchParams } from 'expo-router';
+import { View, Text, TouchableOpacity, Pressable } from 'react-native';
+import { router, useLocalSearchParams } from 'expo-router';
 import Tethr from '@/components/tethr';
 
 import Entypo from '@expo/vector-icons/Entypo';
 
 const ChooseTask = () => {
   const { group_name } = useLocalSearchParams();
+  const { group_id } = useLocalSearchParams();
   console.log(group_name);
   return (
     <View className="flex-1 flex-col bg-black pt-8">
@@ -27,9 +28,17 @@ const ChooseTask = () => {
       </View>
       <View className="items-center">
         <Text className="text-2xl font-bold text-white">Select Task for {group_name}</Text>
-        <Link href="/main/camera/takePhoto" asChild>
+        {/* <Link href="/main/camera/takePhoto" asChild>
           <Button title="Take Photo" />
-        </Link>
+        </Link> */}
+        <Pressable
+          className="mr-3 rounded-xl bg-blue-500 px-4 py-2"
+          onPress={() =>
+            router.push({
+              pathname: '/main/camera/takePhoto',
+              params: { group_name: group_name, group_id: group_id },
+            })
+          }></Pressable>
       </View>
     </View>
   );

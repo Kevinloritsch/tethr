@@ -3,23 +3,81 @@ import { useEffect, useState } from 'react';
 import { userController } from '@/controllers/userInfo';
 import { FontAwesome6 } from '@expo/vector-icons';
 import { router } from 'expo-router';
+import { photoRetrieve, PhotoSubmission } from '@/controllers/photoRetrieve';
+import { getAllGroups } from '@/controllers/group';
 
 import Tethr from '@/components/tethr';
 import Groups from '@/components/groups/groups';
 import Tasks from '@/components/tasks/tasks';
 
+interface GroupWithPhotos {
+  group_id: string;
+  group_name: string;
+  photos: {
+    name: string;
+    publicUrl: string;
+    createdAt: string;
+  }[];
+}
+
+interface GroupType {
+  group_id: string;
+  group_name: string;
+}
+
 export default function Index() {
   const [name, setName] = useState<string>('');
   const [loading, setLoading] = useState(true);
+  const [photos, setPhotos] = useState<PhotoSubmission[]>([]);
+  const [groupsWithPhotos, setGroupsWithPhotos] = useState<GroupWithPhotos[]>([]);
+  const [groups, setGroups] = useState<GroupType[]>([]);
 
   useEffect(() => {
-    loadUser();
+    loadPageData();
   }, []);
 
-  const loadUser = async () => {
-    const name = await userController.getName();
-    if (name) setName(name);
-    setLoading(false);
+  const loadPageData = async () => {
+    try {
+      setLoading(true);
+
+      const userName = await userController.getName();
+      if (userName) setName(userName);
+
+      const allGroups = await getAllGroups.fetchUserData();
+      setGroups(allGroups);
+
+      const groupIds = allGroups.map((g) => g.group_id);
+
+      if (groupIds.length > 0) {
+        const allPhotos = await photoRetrieve.getPhotosByGroups(groupIds);
+        setPhotos(allPhotos);
+
+        const grouped = allGroups.map((group) => {
+          const groupPhotos = allPhotos
+            .filter((p) => p.groupId === group.group_id)
+            .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+            .slice(0, 3);
+
+          return {
+            group_id: group.group_id,
+            group_name: group.group_name,
+            photos: groupPhotos.map((p) => ({
+              name: p.name,
+              publicUrl: p.publicUrl,
+              createdAt: p.createdAt,
+            })),
+          };
+        });
+
+        setGroupsWithPhotos(grouped);
+      } else {
+        setGroupsWithPhotos([]);
+      }
+    } catch (err) {
+      console.error('Error loading homescreen:', err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (loading) {
@@ -45,7 +103,7 @@ export default function Index() {
             <FontAwesome6 name="arrow-right-long" size={16} color="white" className="pl-2" />
           </Pressable>
         </View>
-        <Groups />
+        <Groups groups={groupsWithPhotos} />
         <View className="flex-row items-center justify-between pl-9 pr-3 pt-6">
           <Text className="mb-3 text-2xl font-bold text-white">To-Do</Text>
         </View>

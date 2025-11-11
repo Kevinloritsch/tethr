@@ -6,7 +6,7 @@ import { photoRetrieve, PhotoSubmission } from '@/controllers/photoRetrieve';
 import Tethr from '@/components/tethr';
 import Fyp from '@/components/fyp';
 
-export default function ExploreScreen() {
+export default function ExploreUI() {
   const [photos, setPhotos] = useState<PhotoSubmission[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
