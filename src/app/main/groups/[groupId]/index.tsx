@@ -1,13 +1,15 @@
 import { View, Text, ScrollView, ActivityIndicator, Pressable } from 'react-native';
 import { useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabase';
 import { useLocalSearchParams, router } from 'expo-router';
 import { FontAwesome6 } from '@expo/vector-icons';
 import { taskController } from '@/controllers/tasks';
+import { groupController } from '@/controllers/group';
 
 interface GroupUser {
   user_id: string;
   username: string;
+  current_rank: number;
+  current_points: number;
 }
 
 interface Task {
@@ -30,21 +32,17 @@ const GroupPage = () => {
 
   const fetchGroupUsers = async (groupId: string) => {
     try {
-      const { data, error } = await supabase
-        .from('ispartof')
-        .select('user_id, users ( username )')
-        .eq('group_id', groupId);
+      setLoading(true);
+      const leaderboard = await groupController.getLeaderboardData(groupId);
 
-      if (error) console.error('Error fetching group users:', error);
-      else {
-        const formattedUsers = (data || []).map((item: any) => ({
-          user_id: item.user_id,
-          username: item.users?.username || 'No username',
-        }));
-        setUsers(formattedUsers);
+      if (!leaderboard || leaderboard.length === 0) {
+        console.log('No leaderboard data found.');
+        setUsers([]);
+      } else {
+        setUsers(leaderboard);
       }
     } catch (err) {
-      console.error('Unexpected error fetching group users:', err);
+      console.error('Unexpected error fetching leaderboard:', err);
     } finally {
       setLoading(false);
     }
@@ -71,6 +69,22 @@ const GroupPage = () => {
           <Text className="text-lg text-white">{username}</Text>
         </View>
       ))}
+
+      <Text className="mb-6 mt-6 text-2xl font-bold text-white">Leaderboard</Text>
+      {users.length === 0 ? (
+        <Text className="text-white/70">No leaderboard data yet.</Text>
+      ) : (
+        users.map(({ username, user_id, current_rank, current_points }) => (
+          <View
+            key={user_id}
+            className="mb-3 flex-row items-center justify-between rounded-xl bg-tethr-gray/45 px-4 py-2">
+            <Text className="text-lg text-white">
+              {current_rank}. {username}
+            </Text>
+            <Text className="text-lg font-semibold text-white">{current_points} pts</Text>
+          </View>
+        ))
+      )}
 
       <View className="my-6 flex-row items-center justify-between">
         <Text className="text-xl font-bold text-white">Tasks</Text>
