@@ -15,7 +15,6 @@ const ChooseTask = () => {
   const { group_name } = useLocalSearchParams();
   const { group_id } = useLocalSearchParams();
   const groupId = Array.isArray(group_id) ? group_id[0] : (group_id ?? '');
-  console.log(group_name);
 
   const [tasks, setTasks] = useState<Task[]>([]);
 

@@ -60,14 +60,13 @@ class GroupController {
 
       if (groupError) console.error('Error fetching groups:', groupError);
       else {
-        console.log('Raw groups data:', groupData);
-
+        //console.log('Raw groups data:', groupData);
         const formattedGroups: GroupType[] = (groupData || []).map((item: any) => ({
           group_id: item.group_id,
           group_name: item.groups?.group_name || 'INVALID GROUP NAME OR NO GROUP NAME',
         }));
 
-        console.log('Formatted groups:', formattedGroups);
+        //console.log('Formatted groups:', formattedGroups);
         return formattedGroups;
       }
     } catch (err) {
