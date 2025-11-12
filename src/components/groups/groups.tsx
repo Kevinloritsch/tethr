@@ -18,15 +18,6 @@ interface GroupsProps {
 }
 
 const Groups = ({ groups }: GroupsProps) => {
-  // if (loading) {
-  //   return (
-  //     <View className="flex-1 items-center justify-center bg-black">
-  //       <ActivityIndicator size="large" color="white" />
-  //       <Text className="mt-4 text-white">Loading groups...</Text>
-  //     </View>
-  //   );
-  // }
-
   return (
     <FlatList
       data={groups}

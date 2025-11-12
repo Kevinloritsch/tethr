@@ -20,19 +20,16 @@ class PhotoRetrieveController {
 
       await Promise.all(
         groupIds.map(async (groupId) => {
-          // Step 1: List all user folders under this group
           const { data: userFolders } = await supabase.storage.from(this.bucketName).list(groupId);
 
           if (!userFolders) return;
 
-          // Step 2: For each user folder under the group
           await Promise.all(
             userFolders.map(async (userFolder) => {
               if (!userFolder.name) return;
               const userId = userFolder.name;
               userIds.add(userId);
 
-              // Step 3: List all task folders for this user
               const { data: taskFolders } = await supabase.storage
                 .from(this.bucketName)
                 .list(`${groupId}/${userId}`);
@@ -44,7 +41,6 @@ class PhotoRetrieveController {
                   if (!taskFolder.name) return;
                   const taskPath = `${groupId}/${userId}/${taskFolder.name}`;
 
-                  // Step 4: List all photos inside the task folder
                   const { data: files } = await supabase.storage
                     .from(this.bucketName)
                     .list(taskPath, {
@@ -77,7 +73,6 @@ class PhotoRetrieveController {
         })
       );
 
-      // Step 5: Get usernames for all involved userIds
       const { data: users } = await supabase
         .from('users')
         .select('user_id, username')
@@ -89,7 +84,6 @@ class PhotoRetrieveController {
         photo.username = usernameMap.get(photo.userId) || photo.userId;
       });
 
-      // Step 6: Sort newest first and return
       return allPhotos.sort(
         (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
       );
