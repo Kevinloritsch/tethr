@@ -11,19 +11,35 @@ export default function IndexScreen() {
   const [name, setName] = useState('');
   const [username, setUsername] = useState('');
   const [otp, setOtp] = useState('');
+  const [authMode, setAuthMode] = useState<'login' | 'signup'>('signup');
   const [currentView, setCurrentView] = useState<'email' | 'verify' | 'authenticated'>('email');
 
   const testOTP = async () => {
+    console.log(authMode);
+    if (authMode === 'signup') {
+      const { data: existingUsers, error: checkError } = await supabase
+        .from('users')
+        .select('username, email')
+        .or(`username.eq.${username},email.eq.${email}`);
+      if (checkError) {
+        console.error(checkError);
+        Alert.alert('Error', 'There was a problem checking user availability.');
+        return;
+      }
+      if (existingUsers.length > 0) {
+        console.log('user already exists');
+        Alert.alert(
+          'Account Already Exists',
+          'An account with that username or email already exists. Please try logging in instead.'
+        );
+        return;
+      }
+    }
     console.log('Sending OTP...');
 
     const { error } = await supabase.auth.signInWithOtp({
       email: email,
-      options: {
-        data: {
-          username: username,
-          name: name,
-        },
-      },
+      options: authMode === 'signup' ? { data: { username: username, name: name } } : {},
     });
 
     if (error) {
@@ -51,7 +67,7 @@ export default function IndexScreen() {
       Alert.alert('Error', error.message);
     }
 
-    if (user) {
+    if (user && authMode === 'signup') {
       const { error: insertError } = await supabase.from('users').upsert({
         user_id: user.id,
         username: username,
@@ -63,6 +79,9 @@ export default function IndexScreen() {
       console.log('User authenticated:', data);
 
       if (insertError) console.error(insertError);
+    } else if (user) {
+      setCurrentView('authenticated');
+      console.log('User authenticated:', data);
     }
   };
 
@@ -83,19 +102,33 @@ export default function IndexScreen() {
             placeholder="youremail@gmail.com"
             keyboardType="email-address"
           />
-          <TextInput
-            className="border-1 m-2 mx-auto w-3/4 rounded-lg bg-white p-2"
-            value={name}
-            onChangeText={setName}
-            placeholder="hjsdsdydgf"
-          />
-          <TextInput
-            className="border-1 m-2 mx-auto w-3/4 rounded-lg bg-white p-2"
-            value={username}
-            onChangeText={setUsername}
-            placeholder="username"
-          />
+          {authMode === 'signup' && (
+            <TextInput
+              className="border-1 m-2 mx-auto w-3/4 rounded-lg bg-white p-2"
+              value={name}
+              onChangeText={setName}
+              placeholder="hjsdsdydgf"
+            />
+          )}
+          {authMode === 'signup' && (
+            <TextInput
+              className="border-1 m-2 mx-auto w-3/4 rounded-lg bg-white p-2"
+              value={username}
+              onChangeText={setUsername}
+              placeholder="username"
+            />
+          )}
           <Button title="Continue" onPress={testOTP} disabled={email.trim().length === 0} />
+          {authMode === 'signup' && (
+            <Text className="my-2 text-center text-white">Already have an account?</Text>
+          )}
+          {authMode === 'login' && (
+            <Text className="my-2 text-center text-white">Don&apos;t have an account?</Text>
+          )}
+          <Button
+            title={authMode === 'signup' ? 'Switch to Login' : 'Switch to Sign Up'}
+            onPress={() => setAuthMode(authMode === 'signup' ? 'login' : 'signup')}
+          />
         </View>
       </View>
     );
