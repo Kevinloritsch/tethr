@@ -13,11 +13,13 @@ const PhotoPreview = ({
   handleRetakePhoto,
   group_id,
   group_name,
+  task_name,
 }: {
   photo: CameraCapturedPicture;
   handleRetakePhoto: () => void;
   group_id: string;
   group_name: string;
+  task_name: string;
 }) => {
   const [uploading, setUploading] = useState(false);
 
@@ -37,7 +39,7 @@ const PhotoPreview = ({
         uri: photo.uri,
         userId: userId,
         groupId: group_id,
-        taskName: 'Selfie',
+        taskName: task_name,
       });
 
       handleRetakePhoto();
@@ -77,7 +79,7 @@ const PhotoPreview = ({
         />
 
         <Text className="absolute left-8 top-2 w-auto items-center justify-center rounded-lg bg-tethr-gray/80 px-3 py-2 text-white">
-          TaskName
+          {task_name}
         </Text>
 
         {uploading && (

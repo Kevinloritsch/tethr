@@ -23,6 +23,9 @@ export default function Camera() {
   const { group_id } = useLocalSearchParams();
   const groupId = Array.isArray(group_id) ? group_id[0] : (group_id ?? '');
 
+  const { task_name } = useLocalSearchParams();
+  const taskName = Array.isArray(task_name) ? task_name[0] : (task_name ?? '');
+
   const [facing, setFacing] = useState<CameraType>('back');
   const [flash, setFlash] = useState<FlashMode>('off');
   const [zoom, setZoom] = useState(0.1);
@@ -86,6 +89,7 @@ export default function Camera() {
         handleRetakePhoto={handleRetakePhoto}
         group_name={groupName}
         group_id={groupId}
+        task_name={taskName}
       />
     );
 
@@ -117,7 +121,7 @@ export default function Camera() {
           ref={cameraRef}
         />
         <Text className="absolute left-8 top-2 w-auto items-center justify-center rounded-lg bg-tethr-gray/80 px-3 py-2 text-white">
-          TaskName
+          {taskName}
         </Text>
 
         <View className="absolute bottom-6 w-full items-center justify-center">
