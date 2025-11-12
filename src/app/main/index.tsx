@@ -6,6 +6,7 @@ import { router } from 'expo-router';
 import { photoRetrieve } from '@/controllers/photoRetrieve';
 import { getAllGroups } from '@/controllers/group';
 import { taskController, Task } from '@/controllers/tasks';
+import { LinearGradient } from 'expo-linear-gradient';
 
 import Tethr from '@/components/tethr';
 import Groups from '@/components/groups/groups';
@@ -93,8 +94,34 @@ export default function Index() {
   }
 
   return (
-    <View className="flex-1 pt-8">
+    <View className="relative flex-1 pt-8">
       <Tethr side="left" />
+      <LinearGradient
+        colors={['rgba(0,0,0,1)', 'transparent']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 0 }}
+        style={{
+          position: 'absolute',
+          left: 0,
+          top: 0,
+          height: '100%',
+          width: '10%',
+          zIndex: 10,
+        }}
+      />
+      <LinearGradient
+        colors={['transparent', 'rgba(0,0,0,1)']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 0 }}
+        style={{
+          position: 'absolute',
+          right: 0,
+          top: 0,
+          height: '100%',
+          width: '10%',
+          zIndex: 10,
+        }}
+      />
       <ScrollView
         style={{ flex: 1 }}
         contentContainerStyle={{ paddingBottom: 20 }}
