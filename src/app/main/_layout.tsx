@@ -10,7 +10,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 
 export default function RootLayout() {
   const segments = useSegments();
-  const hideTabBar = segments.includes('camera') && segments.includes('takePhoto');
+  const hideTabBar = segments.includes('camera');
 
   return (
     <React.Fragment>

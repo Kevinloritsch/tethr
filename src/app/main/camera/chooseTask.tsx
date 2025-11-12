@@ -59,8 +59,8 @@ const ChooseTask = () => {
                 params: { group_name: group_name, group_id: group_id, task_name: task.task_name },
               })
             }>
-            <View className="mb-3 rounded-xl bg-tethr-gray/45 px-4 py-2">
-              <Text className="text-lg text-white">
+            <View className="flex w-full flex-col items-center rounded-2xl bg-tethr-purple/70 p-2">
+              <Text className="text-white">
                 {task.task_name} {task.recurring ? '(Recurring)' : ''}
               </Text>
             </View>

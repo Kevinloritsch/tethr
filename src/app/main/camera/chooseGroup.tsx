@@ -79,7 +79,9 @@ const ChooseGroup = () => {
                     params: { group_name: group.group_name, group_id: group.group_id },
                   })
                 }>
-                <Text className="text-2xl font-medium text-white">{group.group_name}</Text>
+                <View className="flex w-full flex-col items-center rounded-2xl bg-tethr-purple/70 p-2">
+                  <Text className="text-white">{group.group_name}</Text>
+                </View>
               </Pressable>
             ))}
           </ScrollView>
