@@ -51,7 +51,7 @@ const GroupPage = () => {
   };
 
   const fetchGroupTasks = async (groupId: string) => {
-    const data = await taskController.getTasksForGroup(groupId);
+    const data = await taskController.getTasksForGroup([{ group_id: groupId, group_name: '' }]);
     setTasks(data);
   };
 

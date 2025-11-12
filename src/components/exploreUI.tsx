@@ -1,5 +1,5 @@
 import { View, FlatList, ActivityIndicator, Text, RefreshControl } from 'react-native';
-import { useEffect, useState, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import { photoRetrieve, PhotoSubmission } from '@/controllers/photoRetrieve';
 import { getAllGroups } from '@/controllers/group';
@@ -7,10 +7,14 @@ import { getAllGroups } from '@/controllers/group';
 import Tethr from '@/components/tethr';
 import Fyp from '@/components/fyp';
 
+interface PhotoWithGroup extends PhotoSubmission {
+  groupName: string;
+}
+
 export default function ExploreUI() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const [photos, setPhotos] = useState<PhotoSubmission[]>([]);
+  const [photos, setPhotos] = useState<PhotoWithGroup[]>([]);
 
   const loadPhotos = async () => {
     try {
@@ -21,7 +25,14 @@ export default function ExploreUI() {
 
       if (groupIds.length > 0) {
         const allPhotos = await photoRetrieve.getPhotosByGroups(groupIds);
-        setPhotos(allPhotos);
+        const photosWithGroupNames = allPhotos.map((photo) => {
+          const group = allGroups.find((g) => g.group_id === photo.groupId);
+          return {
+            ...photo,
+            groupName: group?.group_name || 'Unknown Group',
+          };
+        });
+        setPhotos(photosWithGroupNames);
       } else {
         setPhotos([]);
       }
@@ -38,11 +49,6 @@ export default function ExploreUI() {
     await loadPhotos();
     setRefreshing(false);
   };
-
-  // useEffect(
-  //     loadPhotos();
-  //   }, [])
-  // );
 
   useFocusEffect(
     useCallback(() => {
@@ -65,16 +71,24 @@ export default function ExploreUI() {
       <FlatList
         data={photos}
         keyExtractor={(item) => item.name}
-        renderItem={({ item }) => (
-          <View className="mx-auto justify-center pb-6">
-            <Fyp
-              publicUrl={item.publicUrl}
-              taskName={item.taskName}
-              userId={item.username}
-              groupId={item.groupId}
-            />
-          </View>
-        )}
+        renderItem={({ item }) => {
+          console.log('Photo item:', {
+            groupId: item.groupId,
+            groupName: item.groupName,
+            taskName: item.taskName,
+          });
+
+          return (
+            <View className="mx-auto justify-center pb-6">
+              <Fyp
+                publicUrl={item.publicUrl}
+                taskName={item.taskName}
+                userId={item.username}
+                groupId={item.groupName}
+              />
+            </View>
+          );
+        }}
         ListHeaderComponent={
           <Text className="pb-8 text-center text-2xl font-bold text-white">Your Feed</Text>
         }

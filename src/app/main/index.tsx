@@ -5,6 +5,7 @@ import { FontAwesome6 } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { photoRetrieve } from '@/controllers/photoRetrieve';
 import { getAllGroups } from '@/controllers/group';
+import { taskController, Task } from '@/controllers/tasks';
 
 import Tethr from '@/components/tethr';
 import Groups from '@/components/groups/groups';
@@ -25,6 +26,7 @@ export default function Index() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [groupsWithPhotos, setGroupsWithPhotos] = useState<GroupWithPhotos[]>([]);
+  const [allTasks, setAllTasks] = useState<Task[]>([]);
 
   useEffect(() => {
     loadPageData();
@@ -62,8 +64,11 @@ export default function Index() {
         });
 
         setGroupsWithPhotos(grouped);
+        const tasks = await taskController.getTasksForGroup(allGroups);
+        setAllTasks(tasks);
       } else {
         setGroupsWithPhotos([]);
+        setAllTasks([]);
       }
     } catch (err) {
       console.error('Error loading homescreen:', err);
@@ -110,7 +115,7 @@ export default function Index() {
         <View className="flex-row items-center justify-between pl-8 pr-3 pt-6">
           <Text className="mb-3 text-2xl font-bold text-white">To-Do</Text>
         </View>
-        <Tasks />
+        <Tasks tasks={allTasks} />
       </ScrollView>
     </View>
   );
