@@ -1,9 +1,9 @@
-import { View, Text, Pressable, ActivityIndicator, ScrollView } from 'react-native';
+import { View, Text, Pressable, ActivityIndicator, ScrollView, RefreshControl } from 'react-native';
 import { useEffect, useState } from 'react';
 import { userController } from '@/controllers/userInfo';
 import { FontAwesome6 } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import { photoRetrieve, PhotoSubmission } from '@/controllers/photoRetrieve';
+import { photoRetrieve } from '@/controllers/photoRetrieve';
 import { getAllGroups } from '@/controllers/group';
 
 import Tethr from '@/components/tethr';
@@ -20,17 +20,11 @@ interface GroupWithPhotos {
   }[];
 }
 
-interface GroupType {
-  group_id: string;
-  group_name: string;
-}
-
 export default function Index() {
   const [name, setName] = useState<string>('');
   const [loading, setLoading] = useState(true);
-  const [photos, setPhotos] = useState<PhotoSubmission[]>([]);
+  const [refreshing, setRefreshing] = useState(false);
   const [groupsWithPhotos, setGroupsWithPhotos] = useState<GroupWithPhotos[]>([]);
-  const [groups, setGroups] = useState<GroupType[]>([]);
 
   useEffect(() => {
     loadPageData();
@@ -44,13 +38,11 @@ export default function Index() {
       if (userName) setName(userName);
 
       const allGroups = await getAllGroups.fetchUserData();
-      setGroups(allGroups);
 
       const groupIds = allGroups.map((g) => g.group_id);
 
       if (groupIds.length > 0) {
         const allPhotos = await photoRetrieve.getPhotosByGroups(groupIds);
-        setPhotos(allPhotos);
 
         const grouped = allGroups.map((group) => {
           const groupPhotos = allPhotos
@@ -80,11 +72,17 @@ export default function Index() {
     }
   };
 
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await loadPageData();
+    setRefreshing(false);
+  };
+
   if (loading) {
     return (
       <View className="flex-1 items-center justify-center bg-black">
         <ActivityIndicator size="large" color="white" />
-        <Text className="mt-4 text-white">Loading...</Text>
+        <Text className="mt-4 text-white">Loading Home Screen...</Text>
       </View>
     );
   }
@@ -92,9 +90,14 @@ export default function Index() {
   return (
     <View className="flex-1 pt-8">
       <Tethr side="left" />
-      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: 20 }}>
+      <ScrollView
+        style={{ flex: 1 }}
+        contentContainerStyle={{ paddingBottom: 20 }}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="white" />
+        }>
         <Text className="mb-6 pl-9 text-3xl font-bold text-white">Welcome back, {name}!</Text>
-        <View className="flex-row items-center justify-between pl-9 pr-3">
+        <View className="flex-row items-center justify-between pl-8 pr-3">
           <Text className="mb-3 text-2xl font-bold text-white">Your Groups</Text>
           <Pressable
             className="flex-row items-center rounded-xl bg-tethr-purple/40 px-4 py-2"
@@ -104,7 +107,7 @@ export default function Index() {
           </Pressable>
         </View>
         <Groups groups={groupsWithPhotos} />
-        <View className="flex-row items-center justify-between pl-9 pr-3 pt-6">
+        <View className="flex-row items-center justify-between pl-8 pr-3 pt-6">
           <Text className="mb-3 text-2xl font-bold text-white">To-Do</Text>
         </View>
         <Tasks />

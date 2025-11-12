@@ -2,40 +2,47 @@ import { View, FlatList, ActivityIndicator, Text, RefreshControl } from 'react-n
 import { useEffect, useState, useCallback } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import { photoRetrieve, PhotoSubmission } from '@/controllers/photoRetrieve';
+import { getAllGroups } from '@/controllers/group';
 
 import Tethr from '@/components/tethr';
 import Fyp from '@/components/fyp';
 
 export default function ExploreUI() {
-  const [photos, setPhotos] = useState<PhotoSubmission[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-
-  useEffect(() => {
-    loadPhotos();
-  }, []);
+  const [photos, setPhotos] = useState<PhotoSubmission[]>([]);
 
   const loadPhotos = async () => {
-    setLoading(true);
+    try {
+      setLoading(true);
 
-    // would need some actual query here !
-    const groups: string[] = ['QUACKS'];
+      const allGroups = await getAllGroups.fetchUserData();
+      const groupIds = allGroups.map((g) => g.group_id);
 
-    const allPhotos = await photoRetrieve.getPhotosByGroups(groups);
-
-    setPhotos(allPhotos);
-    setLoading(false);
+      if (groupIds.length > 0) {
+        const allPhotos = await photoRetrieve.getPhotosByGroups(groupIds);
+        setPhotos(allPhotos);
+      } else {
+        setPhotos([]);
+      }
+    } catch (error) {
+      console.error('Error loading photos:', error);
+      setPhotos([]);
+    } finally {
+      setLoading(false);
+    }
   };
-
-  useEffect(() => {
-    loadPhotos();
-  }, []);
 
   const onRefresh = async () => {
     setRefreshing(true);
     await loadPhotos();
     setRefreshing(false);
   };
+
+  // useEffect(
+  //     loadPhotos();
+  //   }, [])
+  // );
 
   useFocusEffect(
     useCallback(() => {
