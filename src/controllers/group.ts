@@ -5,6 +5,13 @@ interface GroupType {
   group_name: string;
 }
 
+interface LeaderboardEntry {
+  user_id: string;
+  username: string;
+  current_rank: number;
+  current_points: number;
+}
+
 class GroupController {
   async getGroupName(groupId: string): Promise<string | null> {
     const { data: group, error } = await supabase
@@ -12,6 +19,7 @@ class GroupController {
       .select('group_name')
       .eq('group_id', groupId)
       .single();
+
     if (error) return null;
     return group?.group_name || null;
   }
@@ -60,13 +68,11 @@ class GroupController {
 
       if (groupError) console.error('Error fetching groups:', groupError);
       else {
-        //console.log('Raw groups data:', groupData);
         const formattedGroups: GroupType[] = (groupData || []).map((item: any) => ({
           group_id: item.group_id,
           group_name: item.groups?.group_name || 'INVALID GROUP NAME OR NO GROUP NAME',
         }));
 
-        //console.log('Formatted groups:', formattedGroups);
         return formattedGroups;
       }
     } catch (err) {
@@ -74,6 +80,41 @@ class GroupController {
       return [];
     }
     return [];
+  }
+
+  async getLeaderboardData(groupId: string): Promise<LeaderboardEntry[]> {
+    try {
+      const { data, error } = await supabase
+        .from('ispartof')
+        .select(
+          `
+          user_id,
+          current_rank,
+          current_points,
+          users ( username )
+        `
+        )
+        .eq('group_id', groupId);
+
+      if (error) {
+        console.error('Error fetching leaderboard data:', error);
+        return [];
+      }
+
+      const leaderboard: LeaderboardEntry[] = (data || []).map((item: any) => ({
+        user_id: item.user_id,
+        username: item.users?.username || 'Unknown User',
+        current_rank: item.current_rank ?? 9999,
+        current_points: item.current_points ?? 0,
+      }));
+
+      leaderboard.sort((a, b) => a.current_rank - b.current_rank);
+
+      return leaderboard;
+    } catch (err) {
+      console.error('Unexpected error fetching leaderboard data:', err);
+      return [];
+    }
   }
 }
 
