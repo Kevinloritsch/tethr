@@ -1,13 +1,13 @@
 import { View, Image, Text } from 'react-native';
 
-interface FypExplicitProps {
+interface FypProps {
   publicUrl: string;
   taskName: string;
   userId: string;
   groupId: string;
 }
 
-const Fyp = ({ publicUrl, taskName, userId, groupId }: FypExplicitProps) => {
+const Fyp = ({ publicUrl, taskName, userId, groupId }: FypProps) => {
   return (
     <View className="w-[90vw] rounded-lg bg-tethr-gray/80 px-6 py-4">
       <Text className="pb-1 text-2xl font-bold text-white">{userId}</Text>

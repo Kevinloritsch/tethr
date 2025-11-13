@@ -10,58 +10,64 @@ export interface PhotoSubmission {
   createdAt: string;
 }
 
-export interface UserGroupPair {
-  userId: string;
-  groupId: string;
-}
-
 class PhotoRetrieveController {
   private bucketName = 'task_submissions';
 
-  async getPhotosByUserGroups(pairs: UserGroupPair[]): Promise<PhotoSubmission[]> {
+  async getPhotosByGroups(groupIds: string[]): Promise<PhotoSubmission[]> {
     try {
       const allPhotos: PhotoSubmission[] = [];
       const userIds = new Set<string>();
 
       await Promise.all(
-        pairs.map(async ({ userId, groupId }) => {
-          userIds.add(userId);
+        groupIds.map(async (groupId) => {
+          const { data: userFolders } = await supabase.storage.from(this.bucketName).list(groupId);
 
-          const { data: taskFolders } = await supabase.storage
-            .from(this.bucketName)
-            .list(`${userId}/${groupId}`);
-
-          if (!taskFolders) return;
+          if (!userFolders) return;
 
           await Promise.all(
-            taskFolders.map(async (taskFolder) => {
-              if (!taskFolder.name) return;
+            userFolders.map(async (userFolder) => {
+              if (!userFolder.name) return;
+              const userId = userFolder.name;
+              userIds.add(userId);
 
-              const path = `${userId}/${groupId}/${taskFolder.name}`;
-
-              const { data: files } = await supabase.storage
+              const { data: taskFolders } = await supabase.storage
                 .from(this.bucketName)
-                .list(path, { sortBy: { column: 'created_at', order: 'desc' } });
+                .list(`${groupId}/${userId}`);
 
-              if (!files) return;
+              if (!taskFolders) return;
 
-              const photoPromises = files.map(async (file) => {
-                const { data: urlData } = supabase.storage
-                  .from(this.bucketName)
-                  .getPublicUrl(`${path}/${file.name}`);
+              await Promise.all(
+                taskFolders.map(async (taskFolder) => {
+                  if (!taskFolder.name) return;
+                  const taskPath = `${groupId}/${userId}/${taskFolder.name}`;
 
-                allPhotos.push({
-                  name: file.name,
-                  publicUrl: urlData.publicUrl,
-                  createdAt: file.created_at,
-                  userId,
-                  username: '',
-                  groupId,
-                  taskName: taskFolder.name,
-                });
-              });
+                  const { data: files } = await supabase.storage
+                    .from(this.bucketName)
+                    .list(taskPath, {
+                      sortBy: { column: 'created_at', order: 'desc' },
+                    });
 
-              await Promise.all(photoPromises);
+                  if (!files) return;
+
+                  const photoPromises = files.map(async (file) => {
+                    const { data: urlData } = supabase.storage
+                      .from(this.bucketName)
+                      .getPublicUrl(`${taskPath}/${file.name}`);
+
+                    allPhotos.push({
+                      name: file.name,
+                      publicUrl: urlData.publicUrl,
+                      createdAt: file.created_at,
+                      userId,
+                      username: '',
+                      groupId,
+                      taskName: taskFolder.name,
+                    });
+                  });
+
+                  await Promise.all(photoPromises);
+                })
+              );
             })
           );
         })
@@ -78,9 +84,9 @@ class PhotoRetrieveController {
         photo.username = usernameMap.get(photo.userId) || photo.userId;
       });
 
-      return allPhotos
-        .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-        .slice(0, 100);
+      return allPhotos.sort(
+        (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
     } catch (err) {
       console.error('Error retrieving photos:', err);
       return [];

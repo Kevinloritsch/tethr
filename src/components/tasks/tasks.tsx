@@ -6,16 +6,19 @@ const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const ITEM_WIDTH = SCREEN_WIDTH * 0.65;
 const SPACING = 10;
 
-const data = [
-  { id: 'QUACKS', task: 'Coffee with friends' },
-  { id: 'KEVIN', task: 'Go sleep' },
-  { id: 'QUIN', task: 'Page 3' },
-];
+interface TaskItem {
+  task_name: string;
+  group_name: string;
+}
 
-const Tasks = () => {
+interface TasksProps {
+  tasks: TaskItem[];
+}
+
+const Tasks = ({ tasks }: TasksProps) => {
   return (
     <FlatList
-      data={data}
+      data={tasks}
       horizontal={true}
       showsHorizontalScrollIndicator={false}
       contentContainerStyle={{
@@ -31,10 +34,10 @@ const Tasks = () => {
             borderRadius: 10,
             padding: 20,
           }}>
-          <Task groupId={item.id} taskId={item.task} />
+          <Task groupId={item.group_name} taskId={item.task_name} />
         </View>
       )}
-      keyExtractor={(item) => item.id}
+      keyExtractor={(item) => item.group_name + item.task_name}
     />
   );
 };

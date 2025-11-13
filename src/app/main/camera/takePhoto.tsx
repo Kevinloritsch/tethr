@@ -9,7 +9,7 @@ import {
   NativeSyntheticEvent,
   Pressable,
 } from 'react-native';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import PhotoPreview from '@/components/camera/photopreview';
 import Tethr from '@/components/tethr';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
@@ -17,6 +17,15 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import Entypo from '@expo/vector-icons/Entypo';
 
 export default function Camera() {
+  const { group_name } = useLocalSearchParams();
+  const groupName = Array.isArray(group_name) ? group_name[0] : (group_name ?? '');
+
+  const { group_id } = useLocalSearchParams();
+  const groupId = Array.isArray(group_id) ? group_id[0] : (group_id ?? '');
+
+  const { task_name } = useLocalSearchParams();
+  const taskName = Array.isArray(task_name) ? task_name[0] : (task_name ?? '');
+
   const [facing, setFacing] = useState<CameraType>('back');
   const [flash, setFlash] = useState<FlashMode>('off');
   const [zoom, setZoom] = useState(0.1);
@@ -73,7 +82,16 @@ export default function Camera() {
     setHasClicked(false);
   };
 
-  if (photo) return <PhotoPreview photo={photo} handleRetakePhoto={handleRetakePhoto} />;
+  if (photo)
+    return (
+      <PhotoPreview
+        photo={photo}
+        handleRetakePhoto={handleRetakePhoto}
+        group_name={groupName}
+        group_id={groupId}
+        task_name={taskName}
+      />
+    );
 
   return (
     <View className="flex-1 justify-between bg-black py-8">
@@ -103,7 +121,7 @@ export default function Camera() {
           ref={cameraRef}
         />
         <Text className="absolute left-8 top-2 w-auto items-center justify-center rounded-lg bg-tethr-gray/80 px-3 py-2 text-white">
-          TaskName
+          {taskName}
         </Text>
 
         <View className="absolute bottom-6 w-full items-center justify-center">
@@ -144,12 +162,9 @@ export default function Camera() {
           </View>
         </View>
       </View>
-
-      <View className="h-[10vh] items-center justify-center space-y-2">
+      <View className="flex items-center">
         <TouchableOpacity onPress={handleTakePhoto} disabled={hasClicked}>
-          <View className="items-center justify-center rounded-full">
-            <MaterialIcons name="radio-button-checked" size={72} color="white" />
-          </View>
+          <MaterialIcons name="radio-button-checked" size={72} color="white" />
         </TouchableOpacity>
       </View>
     </View>
