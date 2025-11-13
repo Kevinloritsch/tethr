@@ -144,6 +144,40 @@ class GetFriendController {
     if (index === total - 1) return 'bottom';
     return 'middle';
   }
+
+  async removeFriend(friendId: string): Promise<void> {
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+    if (!user) throw authError;
+    const userId = user.id;
+    const { error } = await supabase
+      .from('isfriendswith')
+      .delete()
+      .or(
+        `and(left_friend_id.eq.${userId},right_friend_id.eq.${friendId}),` +
+          `and(left_friend_id.eq.${friendId},right_friend_id.eq.${userId})`
+      );
+    if (error) throw error;
+  }
+
+  async removeRequest(friendId: string): Promise<void> {
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+    if (!user) throw authError;
+    const userId = user.id;
+    const { error } = await supabase
+      .from('friendrequests')
+      .delete()
+      .or(
+        `and(left_friend_id.eq.${userId},right_friend_id.eq.${friendId}),` +
+          `and(left_friend_id.eq.${friendId},right_friend_id.eq.${userId})`
+      );
+    if (error) throw error;
+  }
 }
 
 export const getFriendsList = new GetFriendController();
