@@ -73,16 +73,12 @@ const ChooseGroup = () => {
               <Pressable
                 key={group.group_id}
                 className="mr-3 rounded-xl bg-tethr-gray/45 px-4 py-2"
-                onPress={() => {
-                  console.log('Routing to chooseTask with group:', {
-                    group_name: group.group_name,
-                    group_id: group.group_id,
-                  });
+                onPress={() =>
                   router.push({
                     pathname: '/main/camera/chooseTask',
                     params: { group_name: group.group_name, group_id: group.group_id },
-                  });
-                }}>
+                  })
+                }>
                 <View className="flex w-full flex-col items-center rounded-2xl bg-tethr-purple/70 p-2">
                   <Text className="text-white">{group.group_name}</Text>
                 </View>

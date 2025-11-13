@@ -168,12 +168,9 @@ export default function Camera() {
           </View>
         </View>
       </View>
-
-      <View className="h-[10vh] items-center justify-center space-y-2">
+      <View className="flex items-center">
         <TouchableOpacity onPress={handleTakePhoto} disabled={hasClicked}>
-          <View className="items-center justify-center rounded-full">
-            <MaterialIcons name="radio-button-checked" size={72} color="white" />
-          </View>
+          <MaterialIcons name="radio-button-checked" size={72} color="white" />
         </TouchableOpacity>
       </View>
     </View>
