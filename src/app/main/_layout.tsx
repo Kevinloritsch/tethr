@@ -11,7 +11,6 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 export default function RootLayout() {
   const segments = useSegments();
 
-  // Hide tab bar if any camera route is active
   const hideTabBar = segments.includes('camera');
 
   return (
@@ -30,7 +29,7 @@ export default function RootLayout() {
             right: 0,
             backgroundColor: '#000000',
             borderTopWidth: 0,
-            display: hideTabBar ? 'none' : 'flex', // <-- hide tab bar on camera
+            display: hideTabBar ? 'none' : 'flex',
           },
           sceneStyle: { backgroundColor: '#000000' },
         }}>
