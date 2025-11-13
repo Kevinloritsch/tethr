@@ -41,7 +41,6 @@ const PhotoPreview = ({
         groupId: group_id,
         taskName: task_name,
       });
-      console.log('rawr');
       handleRetakePhoto();
       router.dismissAll();
       router.replace('/');

@@ -63,11 +63,7 @@ export default function Camera() {
   };
 
   const handleTakePhoto = async () => {
-    console.log('does this work?');
-    if (hasClicked) {
-      console.log('this is activated');
-      return;
-    }
+    if (hasClicked) return;
     setHasClicked(true);
     if (cameraRef.current) {
       const takenPhoto = await cameraRef.current.takePictureAsync({
@@ -78,8 +74,6 @@ export default function Camera() {
       });
 
       setPhoto(takenPhoto);
-    } else {
-      console.log('this works!');
     }
   };
 
