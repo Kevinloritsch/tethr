@@ -48,7 +48,7 @@ const Index = () => {
     if (userError) console.error('Error fetching user profile:', userError);
     else {
       setUserProfile(userRow);
-      console.log('User profile:', userRow);
+      //console.log('User profile:', userRow);
     }
   };
 

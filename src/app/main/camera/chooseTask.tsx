@@ -1,12 +1,32 @@
-import { View, Text, Button, TouchableOpacity } from 'react-native';
-import { Link, router, useLocalSearchParams } from 'expo-router';
+import { View, Text, TouchableOpacity, Pressable } from 'react-native';
+import { router, useLocalSearchParams } from 'expo-router';
+import { useState, useEffect } from 'react';
+import { taskController } from '@/controllers/tasks';
 import Tethr from '@/components/tethr';
 
 import Entypo from '@expo/vector-icons/Entypo';
 
+interface Task {
+  task_name: string;
+  recurring: boolean;
+}
+
 const ChooseTask = () => {
   const { group_name } = useLocalSearchParams();
-  console.log(group_name);
+  const { group_id } = useLocalSearchParams();
+  const groupId = Array.isArray(group_id) ? group_id[0] : (group_id ?? '');
+
+  const [tasks, setTasks] = useState<Task[]>([]);
+
+  const fetchGroupTasks = async (groupId: string) => {
+    const data = await taskController.getTasksForGroup([{ group_id: groupId, group_name: '' }]);
+    setTasks(data);
+  };
+
+  useEffect(() => {
+    fetchGroupTasks(groupId);
+  });
+
   return (
     <View className="flex-1 flex-col bg-black pt-8">
       <View className="relative h-[10vh] w-full items-center">
@@ -27,9 +47,24 @@ const ChooseTask = () => {
       </View>
       <View className="items-center">
         <Text className="text-2xl font-bold text-white">Select Task for {group_name}</Text>
-        <Link href="/main/camera/takePhoto" asChild>
-          <Button title="Take Photo" />
-        </Link>
+
+        {tasks.map((task, idx) => (
+          <Pressable
+            className="mr-3 rounded-xl px-4 py-2"
+            key={idx}
+            onPress={() =>
+              router.push({
+                pathname: '/main/camera/takePhoto',
+                params: { group_name: group_name, group_id: group_id, task_name: task.task_name },
+              })
+            }>
+            <View className="flex w-full flex-col items-center rounded-2xl bg-tethr-purple/70 p-2">
+              <Text className="text-white">
+                {task.task_name} {task.recurring ? '(Recurring)' : ''}
+              </Text>
+            </View>
+          </Pressable>
+        ))}
       </View>
     </View>
   );

@@ -10,7 +10,8 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 
 export default function RootLayout() {
   const segments = useSegments();
-  const hideTabBar = segments.includes('camera') && segments.includes('takePhoto');
+
+  const hideTabBar = segments.includes('camera');
 
   return (
     <React.Fragment>
@@ -28,7 +29,7 @@ export default function RootLayout() {
             right: 0,
             backgroundColor: '#000000',
             borderTopWidth: 0,
-            opacity: hideTabBar ? 0 : 1,
+            display: hideTabBar ? 'none' : 'flex',
           },
           sceneStyle: { backgroundColor: '#000000' },
         }}>
@@ -46,7 +47,6 @@ export default function RootLayout() {
             tabBarButton: (props) => <TouchableOpacity {...(props as any)} />,
           }}
         />
-
         <Tabs.Screen
           name="camera"
           options={{
@@ -61,7 +61,6 @@ export default function RootLayout() {
             tabBarButton: (props) => <TouchableOpacity {...(props as any)} />,
           }}
         />
-
         <Tabs.Screen
           name="friends"
           options={{

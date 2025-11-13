@@ -24,7 +24,7 @@ class StoragePushController {
       const arrayBuffer = await response.arrayBuffer();
       const uint8Array = new Uint8Array(arrayBuffer);
 
-      const fileName = `${userId}/${groupId}/${taskName}/${Date.now()}.jpg`;
+      const fileName = `${groupId}/${userId}/${taskName}/${Date.now()}.jpg`;
 
       const { error } = await supabase.storage
         .from(this.bucketName)

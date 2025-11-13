@@ -11,9 +11,15 @@ import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 const PhotoPreview = ({
   photo,
   handleRetakePhoto,
+  group_id,
+  group_name,
+  task_name,
 }: {
   photo: CameraCapturedPicture;
   handleRetakePhoto: () => void;
+  group_id: string;
+  group_name: string;
+  task_name: string;
 }) => {
   const [uploading, setUploading] = useState(false);
 
@@ -32,10 +38,9 @@ const PhotoPreview = ({
       storagePush.uploadImage({
         uri: photo.uri,
         userId: userId,
-        groupId: 'QUACKS',
-        taskName: 'Selfie',
+        groupId: group_id,
+        taskName: task_name,
       });
-
       handleRetakePhoto();
       router.dismissAll();
       router.replace('/');
@@ -73,7 +78,7 @@ const PhotoPreview = ({
         />
 
         <Text className="absolute left-8 top-2 w-auto items-center justify-center rounded-lg bg-tethr-gray/80 px-3 py-2 text-white">
-          TaskName
+          {task_name}
         </Text>
 
         {uploading && (
@@ -86,7 +91,7 @@ const PhotoPreview = ({
       <View className="h-[10vh] flex-row items-center justify-end pr-8">
         <View className="flex flex-row items-center">
           <Text className="pr-2 text-xl font-bold text-white">Post To</Text>
-          <Text className="text-xl font-bold text-tethr-purple">GroupName</Text>
+          <Text className="text-xl font-bold text-tethr-purple">{group_name}</Text>
           <TouchableOpacity onPress={handleUpload} disabled={uploading}>
             <MaterialCommunityIcons name="chevron-right" size={36} color="white" />
           </TouchableOpacity>
