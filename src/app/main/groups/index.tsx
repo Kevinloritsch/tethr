@@ -1,9 +1,12 @@
 import { View, Pressable, Text, ScrollView, ActivityIndicator } from 'react-native';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { FontAwesome6 } from '@expo/vector-icons';
 import { supabase } from '@/lib/supabase';
 import { router } from 'expo-router';
 import { getAllGroups } from '@/controllers/group';
+
+import Tethr from '@/components/tethr';
+import SearchBar from '@/components/searchbar';
 
 interface Group {
   group_id: string;
@@ -19,6 +22,7 @@ const Index = () => {
   const [groups, setGroups] = useState<Group[]>([]);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     fetchGroupData();
@@ -52,6 +56,13 @@ const Index = () => {
     }
   };
 
+  const filteredGroups = useMemo(() => {
+    if (!searchQuery.trim()) return groups;
+
+    const lowerQuery = searchQuery.toLowerCase();
+    return groups.filter((group) => group.group_name.toLowerCase().includes(lowerQuery));
+  }, [groups, searchQuery]);
+
   if (loading) {
     return (
       <View className="flex-1 items-center justify-center bg-black">
@@ -61,25 +72,27 @@ const Index = () => {
   }
 
   return (
-    <View className="flex-1 bg-black px-4 pt-12">
-      <Text className="mb-8 text-2xl font-semibold text-white">
-        Welcome Back, {userProfile?.name || 'User'}!
-      </Text>
-
-      <View className="mb-6 flex-row items-center justify-between">
-        <Text className="text-xl font-bold text-white">Your Groups</Text>
+    <View className="flex-1 bg-black pt-8">
+      <Tethr side="left" />
+      <View className="mb-3 flex-row items-center justify-between pl-10 pr-3">
+        <Text className="text-2xl font-bold text-white">Your Groups</Text>
         <Pressable
           className="flex-row items-center px-4 py-2"
           onPress={() => router.push('/main/groups')}>
           <FontAwesome6 name="plus" size={16} color="white" />
         </Pressable>
       </View>
+      <View className="mb-5 items-center">
+        <SearchBar placeholder="Search groups..." onSearch={setSearchQuery} />
+      </View>
 
-      {groups.length === 0 ? (
-        <Text className="text-center text-white">You’re not in any groups yet.</Text>
+      {filteredGroups.length === 0 ? (
+        <Text className="text-center text-xl text-white">
+          {searchQuery ? 'No groups found.' : "You're not in any groups yet."}
+        </Text>
       ) : (
         <ScrollView showsHorizontalScrollIndicator={false}>
-          {groups.map((group) => (
+          {filteredGroups.map((group) => (
             <Pressable
               key={group.group_id}
               className="mr-3 rounded-xl bg-tethr-gray/45 px-4 py-2"
