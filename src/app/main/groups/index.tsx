@@ -20,7 +20,7 @@ interface UserProfile {
 
 const Index = () => {
   const [groups, setGroups] = useState<Group[]>([]);
-  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+  const [setUserProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
 
