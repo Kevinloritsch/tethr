@@ -1,7 +1,6 @@
 import { View, Pressable, Text, ScrollView, ActivityIndicator } from 'react-native';
 import { useEffect, useState, useMemo } from 'react';
 import { FontAwesome6 } from '@expo/vector-icons';
-import { supabase } from '@/lib/supabase';
 import { router } from 'expo-router';
 import { getAllGroups } from '@/controllers/group';
 
@@ -13,14 +12,8 @@ interface Group {
   group_name: string;
 }
 
-interface UserProfile {
-  username: string;
-  name: string;
-}
-
 const Index = () => {
   const [groups, setGroups] = useState<Group[]>([]);
-  const [setUserProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -36,23 +29,6 @@ const Index = () => {
       console.error('Unexpected error fetching data:', err);
     } finally {
       setLoading(false);
-    }
-
-    const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
-    if (sessionError) {
-      console.error('Error fetching session:', sessionError);
-    }
-    const user = sessionData?.session?.user;
-    const { data: userRow, error: userError } = await supabase
-      .from('users')
-      .select('username, name')
-      .eq('user_id', user?.id)
-      .single();
-
-    if (userError) console.error('Error fetching user profile:', userError);
-    else {
-      setUserProfile(userRow);
-      //console.log('User profile:', userRow);
     }
   };
 
