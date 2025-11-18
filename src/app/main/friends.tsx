@@ -42,6 +42,30 @@ export default function FriendsScreen() {
       loadFriends();
     }, [loadFriends])
   );
+  const handleRemoveFriend = async (friendId: string) => {
+    try {
+      setFriends((prev) => prev.filter((f) => f.userId !== friendId));
+      setIncoming((prev) => prev.filter((f) => f.userId !== friendId));
+      setOutgoing((prev) => prev.filter((f) => f.userId !== friendId));
+
+      await getFriendsList.removeFriend(friendId);
+    } catch (error) {
+      console.error(error);
+      loadFriends();
+    }
+  };
+  const handleRemoveRequest = async (friendId: string) => {
+    try {
+      setFriends((prev) => prev.filter((f) => f.userId !== friendId));
+      setIncoming((prev) => prev.filter((f) => f.userId !== friendId));
+      setOutgoing((prev) => prev.filter((f) => f.userId !== friendId));
+
+      await getFriendsList.removeRequest(friendId);
+    } catch (error) {
+      console.error(error);
+      loadFriends();
+    }
+  };
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -76,12 +100,20 @@ export default function FriendsScreen() {
       <SectionList
         sections={sections}
         keyExtractor={(item) => item.username}
-        renderItem={({ item }) => (
+        renderItem={({ item, section }) => (
           <View className="flex flex-col items-center px-4">
             <FriendCard
               pfpUrl={item.pfpUrl}
               username={item.username}
               buttonText={item.buttonText}
+              userId={item.userId}
+              pressFunction={() => {
+                if (section.title === 'Friends') {
+                  handleRemoveFriend(item.userId);
+                } else if (section.title === 'Incoming' || section.title === 'Pending') {
+                  handleRemoveRequest(item.userId);
+                }
+              }}
               cardType={item.cardType}
             />
           </View>

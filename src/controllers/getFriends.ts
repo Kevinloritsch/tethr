@@ -5,6 +5,7 @@ export type CardType = 'top' | 'middle' | 'bottom' | 'solo';
 export interface FriendProps {
   pfpUrl: string;
   username: string;
+  userId: string;
   buttonText: string;
   cardType: CardType;
 }
@@ -65,6 +66,7 @@ class GetFriendController {
     const result = (friends ?? []).map((f, index, arr) => ({
       pfpUrl: pfpUrl,
       username: f.username,
+      userId: f.user_id,
       buttonText: 'Remove',
       cardType: this.getCardType(index, arr.length),
     }));
@@ -86,7 +88,7 @@ class GetFriendController {
     const userId = user.id;
     const { data, error } = await supabase
       .from(this.friendRequestsTableName)
-      .select('sender_id, users!sender_id(username)')
+      .select('sender_id, users!sender_id(user_id, username)')
       .eq('recipient_id', userId);
 
     if (error) throw error;
@@ -97,6 +99,7 @@ class GetFriendController {
       return {
         pfpUrl: pfpUrl,
         username: user?.username ?? 'Unknown',
+        userId: user?.user_id ?? '',
         buttonText: 'Accept',
         cardType: this.getCardType(index, arr.length),
       };
@@ -119,7 +122,7 @@ class GetFriendController {
     const userId = user.id;
     const { data, error } = await supabase
       .from(this.friendRequestsTableName)
-      .select('recipient_id, users!recipient_id(username)')
+      .select('recipient_id, users!recipient_id(user_id, username)')
       .eq('sender_id', userId);
 
     if (error) throw error;
@@ -130,6 +133,7 @@ class GetFriendController {
       return {
         pfpUrl: pfpUrl,
         username: user?.username ?? 'Unknown',
+        userId: user?.user_id ?? '',
         buttonText: 'Remove',
         cardType: this.getCardType(index, arr.length),
       };
@@ -151,14 +155,16 @@ class GetFriendController {
       error: authError,
     } = await supabase.auth.getUser();
     if (!user) throw authError;
+
     const userId = user.id;
-    const { error } = await supabase
-      .from('isfriendswith')
-      .delete()
-      .or(
-        `and(left_friend_id.eq.${userId},right_friend_id.eq.${friendId}),` +
-          `and(left_friend_id.eq.${friendId},right_friend_id.eq.${userId})`
-      );
+
+    const filter = [
+      `and(user1_id.eq.${userId},user2_id.eq.${friendId})`,
+      `and(user1_id.eq.${friendId},user2_id.eq.${userId})`,
+    ].join(',');
+
+    const { error } = await supabase.from('isfriendswith').delete().or(filter);
+
     if (error) throw error;
   }
 
@@ -168,14 +174,16 @@ class GetFriendController {
       error: authError,
     } = await supabase.auth.getUser();
     if (!user) throw authError;
+
     const userId = user.id;
-    const { error } = await supabase
-      .from('friendrequests')
-      .delete()
-      .or(
-        `and(left_friend_id.eq.${userId},right_friend_id.eq.${friendId}),` +
-          `and(left_friend_id.eq.${friendId},right_friend_id.eq.${userId})`
-      );
+
+    const filter = [
+      `and(sender_id.eq.${userId},recipient_id.eq.${friendId})`,
+      `and(sender_id.eq.${friendId},recipient_id.eq.${userId})`,
+    ].join(',');
+
+    const { error } = await supabase.from('friendrequests').delete().or(filter);
+
     if (error) throw error;
   }
 }
