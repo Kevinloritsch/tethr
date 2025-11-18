@@ -1,9 +1,10 @@
 import { View, Text, ActivityIndicator, SectionList, RefreshControl } from 'react-native';
 import Tethr from '@/components/tethr';
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useMemo } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import FriendCard, { FriendProps } from '@/components/friendcard';
 import { getFriendsList } from '@/controllers/getFriends';
+import SearchBar from '@/components/searchbar';
 
 export default function FriendsScreen() {
   const [friends, setFriends] = useState<FriendProps[]>([]);
@@ -11,6 +12,7 @@ export default function FriendsScreen() {
   const [outgoingRequests, setOutgoing] = useState<FriendProps[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const loadFriends = useCallback(async () => {
     try {
@@ -72,11 +74,29 @@ export default function FriendsScreen() {
     await loadFriends();
   }, [loadFriends]);
 
-  const sections = [
-    { title: 'Incoming', data: incomingRequests },
-    { title: 'Pending', data: outgoingRequests },
-    { title: 'Friends', data: friends },
-  ];
+  const filterFriends = useCallback((friendsList: FriendProps[], query: string) => {
+    if (!query.trim()) return friendsList;
+
+    const lowerQuery = query.toLowerCase();
+    return friendsList.filter((friend) => friend.username.toLowerCase().includes(lowerQuery));
+  }, []);
+
+  const sections = useMemo(() => {
+    return [
+      {
+        title: 'Incoming',
+        data: filterFriends(incomingRequests, searchQuery),
+      },
+      {
+        title: 'Pending',
+        data: filterFriends(outgoingRequests, searchQuery),
+      },
+      {
+        title: 'Friends',
+        data: filterFriends(friends, searchQuery),
+      },
+    ];
+  }, [friends, incomingRequests, outgoingRequests, searchQuery, filterFriends]);
 
   if (loading) {
     return (
@@ -88,13 +108,11 @@ export default function FriendsScreen() {
   }
 
   return (
-    <View className="flex-1 flex-col bg-black">
+    <View className="flex-1 flex-col bg-black pt-8">
       <Tethr side="left" />
       <View className="flex w-full flex-col items-center gap-2">
-        <Text className="text-center text-2xl text-white">Your Friends</Text>
-        <Text className="w-11/12 rounded-2xl bg-tethr-gray py-2 text-center text-white/60">
-          Searchbar placeholder
-        </Text>
+        <Text className="text-center text-2xl font-bold text-white">Your Friends</Text>
+        <SearchBar placeholder="Search friends..." onSearch={setSearchQuery} />
       </View>
 
       <SectionList
