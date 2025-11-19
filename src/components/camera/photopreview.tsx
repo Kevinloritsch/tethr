@@ -6,6 +6,7 @@ import Tethr from '@/components/tethr';
 import { storagePush } from '@/controllers/photoUpload';
 import { userController } from '@/controllers/userInfo';
 import { completedTasksController } from '@/controllers/completeTask';
+import { groupController } from '@/controllers/group';
 
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
@@ -37,6 +38,7 @@ const PhotoPreview = ({
       }
 
       await completedTasksController.addTask(task_name, group_id);
+      await groupController.increaseMemberScore(userId, group_id);
 
       storagePush.uploadImage({
         uri: photo.uri,

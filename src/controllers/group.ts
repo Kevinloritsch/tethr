@@ -116,6 +116,34 @@ class GroupController {
       return [];
     }
   }
+  async increaseMemberScore(userId: string, groupId: string): Promise<boolean> {
+    try {
+      const { data } = await supabase
+        .from('ispartof')
+        .select('current_points')
+        .eq('user_id', userId)
+        .eq('group_id', groupId)
+        .single();
+
+      const newPoints = (data?.current_points || 0) + 1;
+
+      const { error: updateError } = await supabase
+        .from('ispartof')
+        .update({ current_points: newPoints })
+        .eq('user_id', userId)
+        .eq('group_id', groupId);
+
+      if (updateError) {
+        console.error('Error updating:', updateError);
+        return false;
+      }
+
+      return true;
+    } catch (err) {
+      console.error('Increasing Score Error:', err);
+      return false;
+    }
+  }
 }
 
 export const groupController = new GroupController();

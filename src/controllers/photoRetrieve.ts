@@ -25,50 +25,56 @@ class PhotoRetrieveController {
           if (!userFolders) return;
 
           await Promise.all(
-            userFolders.map(async (userFolder) => {
-              if (!userFolder.name) return;
-              const userId = userFolder.name;
-              userIds.add(userId);
+            userFolders
+              .filter((folder) => folder.name !== '.emptyFolderPlaceholder')
+              .map(async (userFolder) => {
+                if (!userFolder.name) return;
+                const userId = userFolder.name;
+                userIds.add(userId);
 
-              const { data: taskFolders } = await supabase.storage
-                .from(this.bucketName)
-                .list(`${groupId}/${userId}`);
+                const { data: taskFolders } = await supabase.storage
+                  .from(this.bucketName)
+                  .list(`${groupId}/${userId}`);
 
-              if (!taskFolders) return;
+                if (!taskFolders) return;
 
-              await Promise.all(
-                taskFolders.map(async (taskFolder) => {
-                  if (!taskFolder.name) return;
-                  const taskPath = `${groupId}/${userId}/${taskFolder.name}`;
+                await Promise.all(
+                  taskFolders
+                    .filter((folder) => folder.name !== '.emptyFolderPlaceholder')
+                    .map(async (taskFolder) => {
+                      if (!taskFolder.name) return;
+                      const taskPath = `${groupId}/${userId}/${taskFolder.name}`;
 
-                  const { data: files } = await supabase.storage
-                    .from(this.bucketName)
-                    .list(taskPath, {
-                      sortBy: { column: 'created_at', order: 'desc' },
-                    });
+                      const { data: files } = await supabase.storage
+                        .from(this.bucketName)
+                        .list(taskPath, {
+                          sortBy: { column: 'created_at', order: 'desc' },
+                        });
 
-                  if (!files) return;
+                      if (!files) return;
 
-                  const photoPromises = files.map(async (file) => {
-                    const { data: urlData } = supabase.storage
-                      .from(this.bucketName)
-                      .getPublicUrl(`${taskPath}/${file.name}`);
+                      const photoPromises = files
+                        .filter((folder) => folder.name !== '.emptyFolderPlaceholder')
+                        .map(async (file) => {
+                          const { data: urlData } = supabase.storage
+                            .from(this.bucketName)
+                            .getPublicUrl(`${taskPath}/${file.name}`);
 
-                    allPhotos.push({
-                      name: file.name,
-                      publicUrl: urlData.publicUrl,
-                      createdAt: file.created_at,
-                      userId,
-                      username: '',
-                      groupId,
-                      taskName: taskFolder.name,
-                    });
-                  });
+                          allPhotos.push({
+                            name: file.name,
+                            publicUrl: urlData.publicUrl,
+                            createdAt: file.created_at,
+                            userId,
+                            username: '',
+                            groupId,
+                            taskName: taskFolder.name,
+                          });
+                        });
 
-                  await Promise.all(photoPromises);
-                })
-              );
-            })
+                      await Promise.all(photoPromises);
+                    })
+                );
+              })
           );
         })
       );
