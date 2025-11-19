@@ -5,6 +5,7 @@ import { useState } from 'react';
 import Tethr from '@/components/tethr';
 import { storagePush } from '@/controllers/photoUpload';
 import { userController } from '@/controllers/userInfo';
+import { completedTasksController } from '@/controllers/completeTask';
 
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
@@ -34,6 +35,8 @@ const PhotoPreview = ({
         console.error('No user ID found');
         return;
       }
+
+      await completedTasksController.addTask(task_name, group_id);
 
       storagePush.uploadImage({
         uri: photo.uri,

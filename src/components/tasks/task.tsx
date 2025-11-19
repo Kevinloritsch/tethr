@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { View, Text } from 'react-native';
 
 interface TaskProps {
-  groupId: string;
+  groupName: string;
   taskId: string;
 }
 
@@ -42,10 +42,10 @@ const DayCountdownBar = () => {
   );
 };
 
-const Task = ({ groupId, taskId }: TaskProps) => {
+const Task = ({ groupName, taskId }: TaskProps) => {
   return (
     <View className="">
-      <Text className="text-3xl font-bold text-white">{groupId}</Text>
+      <Text className="text-3xl font-bold text-white">{groupName}</Text>
       <Text className="py-5 text-xl text-white">{taskId}</Text>
       <DayCountdownBar />
       <Text className="text-md pt-5 text-white">Complete the task ➜</Text>

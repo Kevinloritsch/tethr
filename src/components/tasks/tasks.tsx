@@ -1,6 +1,8 @@
 import { FlatList, View, Dimensions } from 'react-native';
 
 import Task from '@/components/tasks/task';
+import { completedTasksController } from '@/controllers/completeTask';
+import { useEffect, useState } from 'react';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const ITEM_WIDTH = SCREEN_WIDTH * 0.65;
@@ -9,6 +11,7 @@ const SPACING = 10;
 interface TaskItem {
   task_name: string;
   group_name: string;
+  group_id: string;
 }
 
 interface TasksProps {
@@ -16,6 +19,22 @@ interface TasksProps {
 }
 
 const Tasks = ({ tasks }: TasksProps) => {
+  const [completedTasks, setCompletedTasks] = useState<string[]>([]);
+
+  useEffect(() => {
+    const loadCompletedTasks = async () => {
+      const completed = await completedTasksController.getTasks();
+      setCompletedTasks(completed);
+    };
+
+    loadCompletedTasks();
+  }, [tasks]);
+
+  const isCompleted = (taskName: string, groupId: string) => {
+    const taskKey = `${groupId}-${taskName}`;
+    return completedTasks.includes(taskKey);
+  };
+
   return (
     <FlatList
       data={tasks}
@@ -24,19 +43,24 @@ const Tasks = ({ tasks }: TasksProps) => {
       contentContainerStyle={{
         paddingHorizontal: 25,
       }}
-      renderItem={({ item }) => (
-        <View
-          style={{
-            width: ITEM_WIDTH,
-            height: 200,
-            marginHorizontal: SPACING,
-            backgroundColor: '#3F3F3F',
-            borderRadius: 10,
-            padding: 20,
-          }}>
-          <Task groupId={item.group_name} taskId={item.task_name} />
-        </View>
-      )}
+      renderItem={({ item }) => {
+        const completed = isCompleted(item.task_name, item.group_id);
+        if (completed) return null;
+
+        return (
+          <View
+            style={{
+              width: ITEM_WIDTH,
+              height: 200,
+              marginHorizontal: SPACING,
+              backgroundColor: '#3F3F3F',
+              borderRadius: 10,
+              padding: 20,
+            }}>
+            <Task groupName={item.group_name} taskId={item.task_name} />
+          </View>
+        );
+      }}
       keyExtractor={(item) => item.group_name + item.task_name}
     />
   );
