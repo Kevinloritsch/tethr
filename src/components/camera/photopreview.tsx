@@ -47,8 +47,7 @@ const PhotoPreview = ({
         taskName: task_name,
       });
       handleRetakePhoto();
-      router.dismissAll();
-      router.replace('/');
+      router.push('/');
     } catch (err: any) {
       console.error('Upload error:', err);
     }

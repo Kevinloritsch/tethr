@@ -1,8 +1,9 @@
-import { FlatList, View, Dimensions } from 'react-native';
+import { FlatList, View, Dimensions, Pressable } from 'react-native';
 
 import Task from '@/components/tasks/task';
 import { completedTasksController } from '@/controllers/completeTask';
 import { useEffect, useState } from 'react';
+import { router } from 'expo-router';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const ITEM_WIDTH = SCREEN_WIDTH * 0.65;
@@ -57,7 +58,19 @@ const Tasks = ({ tasks }: TasksProps) => {
               borderRadius: 10,
               padding: 20,
             }}>
-            <Task groupName={item.group_name} taskId={item.task_name} />
+            <Pressable
+              onPress={() =>
+                router.push({
+                  pathname: '/main/camera/takePhoto',
+                  params: {
+                    group_name: item.group_name,
+                    group_id: item.group_id,
+                    task_name: item.task_name,
+                  },
+                })
+              }>
+              <Task groupName={item.group_name} taskId={item.task_name} />
+            </Pressable>
           </View>
         );
       }}

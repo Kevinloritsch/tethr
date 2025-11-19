@@ -23,7 +23,9 @@ const DayCountdownBar = () => {
       setProgress(progressPercent);
 
       const hours = Math.floor(remainingMs / (1000 * 60 * 60));
-      setTimeRemaining(`${hours} hours remaining!`);
+      const minutes = Math.floor(remainingMs / (1000 * 60));
+      if (hours > 0) setTimeRemaining(`${hours} hours remaining!`);
+      else setTimeRemaining(`${minutes} minutes remaining!`);
     };
 
     updateProgress();
