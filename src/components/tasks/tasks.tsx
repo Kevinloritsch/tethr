@@ -1,13 +1,9 @@
-import { FlatList, View, Dimensions, Pressable } from 'react-native';
+import { FlatList, View, Pressable } from 'react-native';
 
 import Task from '@/components/tasks/task';
 import { completedTasksController } from '@/controllers/completeTask';
 import { useEffect, useState } from 'react';
 import { router } from 'expo-router';
-
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
-const ITEM_WIDTH = SCREEN_WIDTH * 0.65;
-const SPACING = 10;
 
 interface TaskItem {
   task_name: string;
@@ -49,15 +45,7 @@ const Tasks = ({ tasks }: TasksProps) => {
         if (completed) return null;
 
         return (
-          <View
-            style={{
-              width: ITEM_WIDTH,
-              height: 200,
-              marginHorizontal: SPACING,
-              backgroundColor: '#3F3F3F',
-              borderRadius: 10,
-              padding: 20,
-            }}>
+          <View className="h-50 mx-4 w-72 rounded-md bg-tethr-gray p-4">
             <Pressable
               onPress={() =>
                 router.push({
