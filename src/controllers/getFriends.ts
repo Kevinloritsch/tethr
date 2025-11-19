@@ -186,6 +186,85 @@ class GetFriendController {
 
     if (error) throw error;
   }
+
+  async searchUsers(query: string): Promise<FriendProps[] | null> {
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+    if (!user) throw authError;
+
+    const userId = user.id;
+
+    const { data: pfpData } = supabase.storage
+      .from(this.avatarBucket)
+      .getPublicUrl('default/cat1.jpg');
+
+    const pfpUrl = pfpData.publicUrl;
+
+    const { data: users, error } = await supabase
+      .from(this.usersTableName)
+      .select('user_id, username')
+      .ilike('username', `%${query}%`)
+      .neq('user_id', userId);
+
+    if (error) {
+      console.error('Error searching users:', error);
+      return null;
+    }
+
+    if (!users || users.length === 0) return [];
+
+    const result: FriendProps[] = users.map((u, index) => ({
+      pfpUrl,
+      username: u.username,
+      userId: u.user_id,
+      buttonText: 'Add',
+      cardType: this.getCardType(index, users.length),
+    }));
+
+    return result;
+  }
+  async sendRequest(recipientId: string): Promise<void> {
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+    if (!user) throw authError;
+
+    const senderId = user.id;
+
+    const { error } = await supabase.from(this.friendRequestsTableName).insert({
+      sender_id: senderId,
+      recipient_id: recipientId,
+    });
+
+    if (error) throw error;
+  }
+  async acceptRequest(senderId: string): Promise<void> {
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+    if (!user) throw authError;
+
+    const recipientId = user.id;
+
+    const { error: insertError } = await supabase.from(this.friendsTableName).insert({
+      user1_id: senderId,
+      user2_id: recipientId,
+    });
+
+    if (insertError) throw insertError;
+
+    const { error: deleteError } = await supabase
+      .from(this.friendRequestsTableName)
+      .delete()
+      .eq('sender_id', senderId)
+      .eq('recipient_id', recipientId);
+
+    if (deleteError) throw deleteError;
+  }
 }
 
 export const getFriendsList = new GetFriendController();

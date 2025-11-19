@@ -1,10 +1,18 @@
-import { View, Text, ActivityIndicator, SectionList, RefreshControl } from 'react-native';
+import {
+  View,
+  Text,
+  ActivityIndicator,
+  SectionList,
+  RefreshControl,
+  TouchableOpacity,
+} from 'react-native';
 import Tethr from '@/components/tethr';
 import { useState, useCallback, useEffect, useMemo } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import FriendCard, { FriendProps } from '@/components/friendcard';
 import { getFriendsList } from '@/controllers/getFriends';
 import SearchBar from '@/components/searchbar';
+import { useRouter } from 'expo-router';
 
 export default function FriendsScreen() {
   const [friends, setFriends] = useState<FriendProps[]>([]);
@@ -13,6 +21,7 @@ export default function FriendsScreen() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const router = useRouter();
 
   const loadFriends = useCallback(async () => {
     try {
@@ -68,6 +77,18 @@ export default function FriendsScreen() {
       loadFriends();
     }
   };
+  const handleAcceptRequest = async (friendId: string) => {
+    try {
+      setFriends((prev) => prev.filter((f) => f.userId !== friendId));
+      setIncoming((prev) => prev.filter((f) => f.userId !== friendId));
+      setOutgoing((prev) => prev.filter((f) => f.userId !== friendId));
+
+      await getFriendsList.acceptRequest(friendId);
+    } catch (error) {
+      console.error(error);
+      loadFriends();
+    }
+  };
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -110,9 +131,16 @@ export default function FriendsScreen() {
   return (
     <View className="flex-1 flex-col bg-black pt-8">
       <Tethr side="left" />
+      <TouchableOpacity
+        className="flex w-1/4 flex-col items-center rounded-2xl bg-tethr-purple/70 p-2"
+        onPress={() => {
+          router.push('/addfriends');
+        }}>
+        <Text className="text-white">Add Friends +</Text>
+      </TouchableOpacity>
       <View className="flex w-full flex-col items-center gap-2">
         <Text className="text-center text-2xl font-bold text-white">Your Friends</Text>
-        <SearchBar placeholder="Search friends..." onSearch={setSearchQuery} />
+        <SearchBar placeholder="Search friends..." onSearch={setSearchQuery} value={searchQuery} />
       </View>
 
       <SectionList
@@ -129,6 +157,8 @@ export default function FriendsScreen() {
                 if (section.title === 'Friends') {
                   handleRemoveFriend(item.userId);
                 } else if (section.title === 'Incoming' || section.title === 'Pending') {
+                  handleAcceptRequest(item.userId);
+                } else if (section.title === 'Outgoing') {
                   handleRemoveRequest(item.userId);
                 }
               }}
