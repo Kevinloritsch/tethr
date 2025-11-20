@@ -3,6 +3,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { useState, useEffect } from 'react';
 import { taskController } from '@/controllers/tasks';
 import Tethr from '@/components/tethr';
+import { completedTasksController } from '@/controllers/completeTask';
 
 import Entypo from '@expo/vector-icons/Entypo';
 
@@ -17,6 +18,7 @@ const ChooseTask = () => {
   const groupId = Array.isArray(group_id) ? group_id[0] : (group_id ?? '');
 
   const [tasks, setTasks] = useState<Task[]>([]);
+  const [completedTasks, setCompletedTasks] = useState<string[]>([]);
 
   const fetchGroupTasks = async (groupId: string) => {
     const data = await taskController.getTasksForGroup([{ group_id: groupId, group_name: '' }]);
@@ -24,8 +26,19 @@ const ChooseTask = () => {
   };
 
   useEffect(() => {
+    const loadCompletedTasks = async () => {
+      const completed = await completedTasksController.getTasks();
+      setCompletedTasks(completed);
+    };
+
+    loadCompletedTasks();
     fetchGroupTasks(groupId);
-  });
+  }, [groupId]);
+
+  const isCompleted = (taskName: string, groupId: string) => {
+    const taskKey = `${groupId}-${taskName}`;
+    return completedTasks.includes(taskKey);
+  };
 
   return (
     <View className="flex-1 flex-col bg-black pt-8">
@@ -48,23 +61,29 @@ const ChooseTask = () => {
       <View className="items-center">
         <Text className="text-2xl font-bold text-white">Select Task for {group_name}</Text>
 
-        {tasks.map((task, idx) => (
-          <Pressable
-            className="mr-3 rounded-xl px-4 py-2"
-            key={idx}
-            onPress={() =>
-              router.push({
-                pathname: '/main/camera/takePhoto',
-                params: { group_name: group_name, group_id: group_id, task_name: task.task_name },
-              })
-            }>
-            <View className="flex w-full flex-col items-center rounded-2xl bg-tethr-purple/70 p-2">
-              <Text className="text-white">
-                {task.task_name} {task.recurring ? '(Recurring)' : ''}
-              </Text>
-            </View>
-          </Pressable>
-        ))}
+        {tasks.map((task, idx) => {
+          const taskCompleted = isCompleted(task.task_name, groupId);
+          return (
+            <Pressable
+              className="mr-3 rounded-xl px-4 py-2"
+              key={idx}
+              disabled={taskCompleted}
+              onPress={() =>
+                router.push({
+                  pathname: '/main/camera/takePhoto',
+                  params: { group_name: group_name, group_id: group_id, task_name: task.task_name },
+                })
+              }>
+              <View
+                className={`flex w-full flex-col items-center rounded-2xl ${taskCompleted ? `bg-gray-400` : `bg-tethr-purple/70`} p-2`}>
+                <Text className="text-white">
+                  {task.task_name} {task.recurring ? '(Recurring)' : ''}{' '}
+                  {taskCompleted ? '(Completed Today)' : ''}
+                </Text>
+              </View>
+            </Pressable>
+          );
+        })}
       </View>
     </View>
   );

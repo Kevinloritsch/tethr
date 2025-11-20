@@ -5,6 +5,8 @@ import { useState } from 'react';
 import Tethr from '@/components/tethr';
 import { storagePush } from '@/controllers/photoUpload';
 import { userController } from '@/controllers/userInfo';
+import { completedTasksController } from '@/controllers/completeTask';
+import { groupController } from '@/controllers/group';
 
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
@@ -35,6 +37,9 @@ const PhotoPreview = ({
         return;
       }
 
+      await completedTasksController.addTask(task_name, group_id);
+      await groupController.increaseMemberScore(userId, group_id);
+
       storagePush.uploadImage({
         uri: photo.uri,
         userId: userId,
@@ -42,8 +47,7 @@ const PhotoPreview = ({
         taskName: task_name,
       });
       handleRetakePhoto();
-      router.dismissAll();
-      router.replace('/');
+      router.push('/');
     } catch (err: any) {
       console.error('Upload error:', err);
     }
