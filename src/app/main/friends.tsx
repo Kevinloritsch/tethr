@@ -131,16 +131,23 @@ export default function FriendsScreen() {
   return (
     <View className="flex-1 flex-col bg-black pt-8">
       <Tethr side="left" />
-      <TouchableOpacity
-        className="flex w-1/4 flex-col items-center rounded-2xl bg-tethr-purple/70 p-2"
-        onPress={() => {
-          router.push('/addfriends');
-        }}>
-        <Text className="text-white">Add Friends +</Text>
-      </TouchableOpacity>
+
       <View className="flex w-full flex-col items-center gap-2">
         <Text className="text-center text-2xl font-bold text-white">Your Friends</Text>
-        <SearchBar placeholder="Search friends..." onSearch={setSearchQuery} value={searchQuery} />
+        <View className="w-11/12 flex-row items-center justify-between gap-2">
+          <SearchBar
+            placeholder="Search friends..."
+            onSearch={setSearchQuery}
+            value={searchQuery}
+          />
+          <TouchableOpacity
+            className="flex aspect-square h-full flex-col items-center justify-center rounded-2xl bg-tethr-purple/70 p-2"
+            onPress={() => {
+              router.push('/addfriends');
+            }}>
+            <Text className="text-white">+</Text>
+          </TouchableOpacity>
+        </View>
       </View>
 
       <SectionList

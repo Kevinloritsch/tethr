@@ -27,7 +27,7 @@ export default function AddFriendsScreen() {
   }, []);
   return (
     <View className="flex-1 flex-col bg-black pt-8">
-      <Tethr side="left" />
+      <Tethr side="center" />
       <TouchableOpacity
         className="flex w-1/4 flex-col items-center rounded-2xl bg-tethr-purple/70 p-2"
         onPress={() => {

@@ -38,7 +38,7 @@ export default function SearchBar({
   };
 
   return (
-    <View className="w-11/12 flex-row items-center rounded-2xl bg-tethr-gray px-4 py-2">
+    <View className="w-10/12 flex-row items-center rounded-2xl bg-tethr-gray px-4 py-2">
       <Ionicons name="search" size={20} color="#ffffff60" />
 
       <TextInput

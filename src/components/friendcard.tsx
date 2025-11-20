@@ -20,7 +20,7 @@ const FriendCard = ({
 }: FriendProps) => {
   const roundedMap: Record<CardType, string> = {
     top: 'rounded-t-2xl',
-    middle: 'border-b-2',
+    middle: '',
     bottom: 'rounded-b-2xl',
     solo: 'rounded-2xl',
   };
