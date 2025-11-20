@@ -7,6 +7,7 @@ import Tethr from '@/components/tethr';
 import { useRouter } from 'expo-router';
 import Entypo from '@expo/vector-icons/Entypo';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getCardType } from '@/utils/cardType';
 
 export default function AddFriendsScreen() {
   const [users, setUsers] = useState<FriendProps[]>([]);
@@ -120,13 +121,13 @@ export default function AddFriendsScreen() {
           className="flex flex-col items-center px-4"
           sections={[{ title: 'Results', data: users }]}
           keyExtractor={(item) => item.userId}
-          renderItem={({ item }) => (
+          renderItem={({ item, index }) => (
             <FriendCard
               pfpUrl={item.pfpUrl}
               username={item.username}
               userId={item.userId}
               buttonText={item.buttonText}
-              cardType={item.cardType}
+              cardType={getCardType(index, users.length)}
               pressFunction={() => handleSendRequest(item)}
             />
           )}

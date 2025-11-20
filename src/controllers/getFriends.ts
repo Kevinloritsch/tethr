@@ -1,6 +1,5 @@
 import { supabase } from '@/lib/supabase';
-
-export type CardType = 'top' | 'middle' | 'bottom' | 'solo';
+import { CardType, getCardType } from '@/utils/cardType';
 
 export interface FriendProps {
   pfpUrl: string;
@@ -68,7 +67,7 @@ class GetFriendController {
       username: f.username,
       userId: f.user_id,
       buttonText: 'Remove',
-      cardType: this.getCardType(index, arr.length),
+      cardType: getCardType(index, arr.length),
     }));
 
     return result;
@@ -101,7 +100,7 @@ class GetFriendController {
         username: user?.username ?? 'Unknown',
         userId: user?.user_id ?? '',
         buttonText: 'Accept',
-        cardType: this.getCardType(index, arr.length),
+        cardType: getCardType(index, arr.length),
       };
     });
 
@@ -135,18 +134,11 @@ class GetFriendController {
         username: user?.username ?? 'Unknown',
         userId: user?.user_id ?? '',
         buttonText: 'Remove',
-        cardType: this.getCardType(index, arr.length),
+        cardType: getCardType(index, arr.length),
       };
     });
 
     return requests;
-  }
-
-  private getCardType(index: number, total: number): CardType {
-    if (total === 1) return 'solo';
-    if (index === 0) return 'top';
-    if (index === total - 1) return 'bottom';
-    return 'middle';
   }
 
   async removeFriend(friendId: string): Promise<void> {
@@ -220,7 +212,7 @@ class GetFriendController {
       username: u.username,
       userId: u.user_id,
       buttonText: 'Add',
-      cardType: this.getCardType(index, users.length),
+      cardType: getCardType(index, users.length),
     }));
 
     return result;

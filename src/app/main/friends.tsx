@@ -14,6 +14,7 @@ import { getFriendsList } from '@/controllers/getFriends';
 import SearchBar from '@/components/searchbar';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getCardType } from '@/utils/cardType';
 
 export default function FriendsScreen() {
   const [friends, setFriends] = useState<FriendProps[]>([]);
@@ -196,7 +197,7 @@ export default function FriendsScreen() {
       <SectionList
         sections={sections}
         keyExtractor={(item) => item.username}
-        renderItem={({ item, section }) => (
+        renderItem={({ item, section, index }) => (
           <View className="flex flex-col items-center px-4">
             <FriendCard
               pfpUrl={item.pfpUrl}
@@ -212,7 +213,7 @@ export default function FriendsScreen() {
                   handleRemoveRequest(item.userId);
                 }
               }}
-              cardType={item.cardType}
+              cardType={getCardType(index, section.data.length)}
             />
           </View>
         )}
