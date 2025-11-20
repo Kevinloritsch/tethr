@@ -134,7 +134,7 @@ export default function FriendsScreen() {
 
       <View className="flex w-full flex-col items-center gap-2">
         <Text className="text-center text-2xl font-bold text-white">Your Friends</Text>
-        <View className="w-11/12 flex-row items-center justify-between gap-2">
+        <View className="h-[6vh] w-11/12 flex-row items-center justify-between gap-2">
           <SearchBar
             placeholder="Search friends..."
             onSearch={setSearchQuery}
