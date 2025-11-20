@@ -5,6 +5,7 @@ import { getFriendsList } from '@/controllers/getFriends';
 import { useState, useCallback } from 'react';
 import Tethr from '@/components/tethr';
 import { useRouter } from 'expo-router';
+import Entypo from '@expo/vector-icons/Entypo';
 
 export default function AddFriendsScreen() {
   const [users, setUsers] = useState<FriendProps[]>([]);
@@ -27,14 +28,25 @@ export default function AddFriendsScreen() {
   }, []);
   return (
     <View className="flex-1 flex-col bg-black pt-8">
-      <Tethr side="center" />
-      <TouchableOpacity
-        className="flex w-1/4 flex-col items-center rounded-2xl bg-tethr-purple/70 p-2"
-        onPress={() => {
-          router.push('/main/friends');
-        }}>
-        <Text className="text-white">Back</Text>
-      </TouchableOpacity>
+      <View className="relative h-[10vh] w-full items-center">
+        <View className="absolute left-0 right-0 top-0 items-center">
+          <Tethr side="center" />
+        </View>
+        <TouchableOpacity
+          className="absolute left-0 top-0 h-full items-center justify-center pb-2 pl-8"
+          onPress={() => {
+            router.push('/main/friends');
+          }}>
+          <Entypo
+            name="chevron-left"
+            size={24}
+            color="#000000"
+            backgroundColor="#A597FF"
+            className="rounded-lg px-2"
+          />
+        </TouchableOpacity>
+      </View>
+
       <View className="flex w-full flex-col items-center gap-2">
         <Text className="text-center text-2xl font-bold text-white">Add Friends</Text>
 
