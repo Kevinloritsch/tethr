@@ -163,9 +163,9 @@ export default function FriendsScreen() {
               pressFunction={() => {
                 if (section.title === 'Friends') {
                   handleRemoveFriend(item.userId);
-                } else if (section.title === 'Incoming' || section.title === 'Pending') {
+                } else if (section.title === 'Incoming') {
                   handleAcceptRequest(item.userId);
-                } else if (section.title === 'Outgoing') {
+                } else if (section.title === 'Pending') {
                   handleRemoveRequest(item.userId);
                 }
               }}
