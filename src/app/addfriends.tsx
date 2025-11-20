@@ -2,30 +2,87 @@ import { View, Text, SectionList, ActivityIndicator, TouchableOpacity } from 're
 import SearchBar from '@/components/searchbar';
 import FriendCard, { FriendProps } from '@/components/friendcard';
 import { getFriendsList } from '@/controllers/getFriends';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import Tethr from '@/components/tethr';
 import { useRouter } from 'expo-router';
 import Entypo from '@expo/vector-icons/Entypo';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function AddFriendsScreen() {
   const [users, setUsers] = useState<FriendProps[]>([]);
   const [loading, setLoading] = useState(false);
   const [query, setQuery] = useState('');
   const router = useRouter();
+  const [cachedFriends, setCachedFriends] = useState<FriendProps[]>([]);
+  const [cachedIncoming, setCachedIncoming] = useState<FriendProps[]>([]);
+  const [cachedOutgoing, setCachedOutgoing] = useState<FriendProps[]>([]);
 
-  const searchUsers = useCallback(async (text: string) => {
-    setQuery(text);
+  const filterOutExisting = useCallback(
+    (results: FriendProps[]) => {
+      const existingIds = new Set([
+        ...cachedFriends.map((u) => u.userId),
+        ...cachedIncoming.map((u) => u.userId),
+        ...cachedOutgoing.map((u) => u.userId),
+      ]);
 
-    if (!text.trim()) {
-      setUsers([]);
-      return;
-    }
+      return results.filter((user) => !existingIds.has(user.userId));
+    },
+    [cachedFriends, cachedIncoming, cachedOutgoing]
+  );
 
-    setLoading(true);
-    const result = await getFriendsList.searchUsers(text);
-    setUsers(result || []);
-    setLoading(false);
+  const handleSendRequest = useCallback(
+    async (user: FriendProps) => {
+      try {
+        await getFriendsList.sendRequest(user.userId);
+        setUsers((prev) => prev.filter((u) => u.userId !== user.userId));
+
+        const updatedOutgoing = [...cachedOutgoing, user];
+        setCachedOutgoing(updatedOutgoing);
+        await AsyncStorage.setItem('@outgoingRequests', JSON.stringify(updatedOutgoing));
+      } catch (error) {
+        console.error('Error sending request:', error);
+      }
+    },
+    [cachedOutgoing]
+  );
+  const searchUsers = useCallback(
+    async (text: string) => {
+      setQuery(text);
+
+      if (!text.trim()) {
+        setUsers([]);
+        return;
+      }
+
+      setLoading(true);
+      const result = await getFriendsList.searchUsers(text);
+      const filtered = filterOutExisting(result || []);
+      setUsers(filtered);
+      setLoading(false);
+    },
+    [filterOutExisting]
+  );
+
+  useEffect(() => {
+    const loadCachedRelationships = async () => {
+      try {
+        const [addedFriends, incomingReqs, outgoingReqs] = await AsyncStorage.multiGet([
+          '@friends',
+          '@incomingRequests',
+          '@outgoingRequests',
+        ]);
+
+        if (addedFriends[1]) setCachedFriends(JSON.parse(addedFriends[1]));
+        if (incomingReqs[1]) setCachedIncoming(JSON.parse(incomingReqs[1]));
+        if (outgoingReqs[1]) setCachedOutgoing(JSON.parse(outgoingReqs[1]));
+      } catch (err) {
+        console.error('Error loading cached relationships:', err);
+      }
+    };
+
+    loadCachedRelationships();
   }, []);
+
   return (
     <View className="flex-1 flex-col bg-black pt-8">
       <View className="relative h-[10vh] w-full items-center">
@@ -70,7 +127,7 @@ export default function AddFriendsScreen() {
               userId={item.userId}
               buttonText={item.buttonText}
               cardType={item.cardType}
-              pressFunction={() => getFriendsList.sendRequest(item.userId)}
+              pressFunction={() => handleSendRequest(item)}
             />
           )}
           ListEmptyComponent={<Text className="px-4 text-center text-white">No results found</Text>}

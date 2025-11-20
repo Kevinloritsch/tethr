@@ -13,6 +13,7 @@ import FriendCard, { FriendProps } from '@/components/friendcard';
 import { getFriendsList } from '@/controllers/getFriends';
 import SearchBar from '@/components/searchbar';
 import { useRouter } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function FriendsScreen() {
   const [friends, setFriends] = useState<FriendProps[]>([]);
@@ -22,6 +23,22 @@ export default function FriendsScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const router = useRouter();
+
+  const storeFriendsData = async (
+    friendsData: FriendProps[],
+    incomingData: FriendProps[],
+    outgoingData: FriendProps[]
+  ) => {
+    try {
+      await AsyncStorage.multiSet([
+        ['@friends', JSON.stringify(friendsData)],
+        ['@incomingRequests', JSON.stringify(incomingData)],
+        ['@outgoingRequests', JSON.stringify(outgoingData)],
+      ]);
+    } catch (err) {
+      console.error('Error saving friends to storage:', err);
+    }
+  };
 
   const loadFriends = useCallback(async () => {
     try {
@@ -33,15 +50,41 @@ export default function FriendsScreen() {
         getFriendsList.getOutgoingFriendRequests(),
       ]);
 
-      setFriends(friendsRes ?? []);
-      setIncoming(incomingRes ?? []);
-      setOutgoing(outgoingRes ?? []);
+      const addedFriends = friendsRes ?? [];
+      const incomingReqs = incomingRes ?? [];
+      const outgoingReqs = outgoingRes ?? [];
+
+      setFriends(addedFriends);
+      setIncoming(incomingReqs);
+      setOutgoing(outgoingReqs);
+
+      storeFriendsData(addedFriends, incomingReqs, outgoingReqs);
     } catch (error) {
       console.error('Error loading friends:', error);
     } finally {
       setLoading(false);
       setRefreshing(false);
     }
+  }, []);
+
+  useEffect(() => {
+    const loadCachedData = async () => {
+      try {
+        const [addedFriends, incomingReqs, outgoingReqs] = await AsyncStorage.multiGet([
+          '@friends',
+          '@incomingRequests',
+          '@outgoingRequests',
+        ]);
+
+        if (addedFriends[1]) setFriends(JSON.parse(addedFriends[1]));
+        if (incomingReqs[1]) setIncoming(JSON.parse(incomingReqs[1]));
+        if (outgoingReqs[1]) setOutgoing(JSON.parse(outgoingReqs[1]));
+      } catch (err) {
+        console.error('Error loading cached friends:', err);
+      }
+    };
+
+    loadCachedData();
   }, []);
 
   useEffect(() => {
