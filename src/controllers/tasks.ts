@@ -2,6 +2,7 @@ import { supabase } from '@/lib/supabase';
 
 export interface Task {
   group_name: string;
+  group_id: string;
   task_name: string;
   recurring: boolean;
 }

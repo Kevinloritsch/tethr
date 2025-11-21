@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "expo-starter",
-    "slug": "expo-starter",
-    "scheme": "expo-starter",
+    "name": "tethr",
+    "slug": "tethr",
+    "scheme": "tethr",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./src/assets/tethr.png",
+    "icon": "./src/assets/splash-icon.png",
     "userInterfaceStyle": "dark",
     "newArchEnabled": true,
     "splash": {
@@ -22,8 +22,8 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "foregroundImage": "./src/assets/splash-icon.png",
+        "backgroundColor": "#000000"
       }
     },
     "web": {
