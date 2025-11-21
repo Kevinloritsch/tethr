@@ -59,7 +59,7 @@ const Index = () => {
         </Pressable>
       </View>
       <View className="mb-5 items-center">
-        <SearchBar placeholder="Search groups..." onSearch={setSearchQuery} />
+        <SearchBar placeholder="Search groups..." onSearch={setSearchQuery} value={searchQuery} />
       </View>
 
       {filteredGroups.length === 0 ? (

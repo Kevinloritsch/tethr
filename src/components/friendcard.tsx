@@ -6,12 +6,21 @@ export interface FriendProps {
   username: string;
   buttonText: string;
   cardType: CardType;
+  userId: string;
+  pressFunction?: (userId: string) => void;
 }
 
-const FriendCard = ({ pfpUrl, username, buttonText, cardType }: FriendProps) => {
+const FriendCard = ({
+  pfpUrl,
+  username,
+  userId,
+  buttonText,
+  cardType,
+  pressFunction,
+}: FriendProps) => {
   const roundedMap: Record<CardType, string> = {
     top: 'rounded-t-2xl',
-    middle: 'border-b-2',
+    middle: '',
     bottom: 'rounded-b-2xl',
     solo: 'rounded-2xl',
   };
@@ -24,7 +33,15 @@ const FriendCard = ({ pfpUrl, username, buttonText, cardType }: FriendProps) => 
         <Image source={{ uri: pfpUrl }} className="w-1/6 rounded-full" style={{ aspectRatio: 1 }} />
         <Text className="text-xl text-white">{username}</Text>
       </View>
-      <TouchableOpacity className="flex w-1/4 flex-col items-center rounded-2xl bg-tethr-purple/70 p-2">
+      <TouchableOpacity
+        className="flex w-1/4 flex-col items-center rounded-2xl bg-tethr-purple/70 p-2"
+        onPress={() => {
+          if (pressFunction) {
+            pressFunction(userId);
+          } else {
+            console.log('error with button function');
+          }
+        }}>
         <Text className="text-white">{buttonText}</Text>
       </TouchableOpacity>
     </View>
