@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "tethr",
-    "slug": "tethr",
+    "slug": "expo-starter",
     "scheme": "tethr",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -17,7 +17,8 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.tethr.app",
       "infoPlist": {
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSCameraUsageDescription": "This app needs camera access to take photos and scan."
       }
     },
     "android": {

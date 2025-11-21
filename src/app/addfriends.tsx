@@ -118,7 +118,7 @@ export default function AddFriendsScreen() {
       )}
       {!loading && (
         <SectionList
-          className="flex flex-col items-center px-4"
+          className="flex flex-col px-4"
           sections={[{ title: 'Results', data: users }]}
           keyExtractor={(item) => item.userId}
           renderItem={({ item, index }) => (
