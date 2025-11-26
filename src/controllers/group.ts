@@ -89,7 +89,6 @@ class GroupController {
         .select(
           `
           user_id,
-          current_rank,
           current_points,
           users ( username )
         `
@@ -101,14 +100,19 @@ class GroupController {
         return [];
       }
 
-      const leaderboard: LeaderboardEntry[] = (data || []).map((item: any) => ({
+      let leaderboard: LeaderboardEntry[] = (data || []).map((item: any) => ({
         user_id: item.user_id,
         username: item.users?.username || 'Unknown User',
-        current_rank: item.current_rank ?? 9999,
+        current_rank: 0,
         current_points: item.current_points ?? 0,
       }));
 
-      leaderboard.sort((a, b) => a.current_rank - b.current_rank);
+      leaderboard.sort((a, b) => b.current_points - a.current_points);
+
+      leaderboard = leaderboard.map((person, index) => ({
+        ...person,
+        current_rank: index + 1,
+      }));
 
       return leaderboard;
     } catch (err) {
