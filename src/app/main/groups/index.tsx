@@ -1,4 +1,11 @@
-import { View, Pressable, Text, ScrollView, ActivityIndicator } from 'react-native';
+import {
+  View,
+  Pressable,
+  Text,
+  ScrollView,
+  ActivityIndicator,
+  TouchableOpacity,
+} from 'react-native';
 import { useEffect, useState, useMemo } from 'react';
 import { FontAwesome6 } from '@expo/vector-icons';
 import { router } from 'expo-router';
@@ -6,6 +13,9 @@ import { getAllGroups } from '@/controllers/group';
 
 import Tethr from '@/components/tethr';
 import SearchBar from '@/components/searchbar';
+import { getCardType, roundedMap } from '@/utils/cardType';
+
+import Entypo from '@expo/vector-icons/Entypo';
 
 interface Group {
   group_id: string;
@@ -49,7 +59,22 @@ const Index = () => {
 
   return (
     <View className="flex-1 bg-black pt-8">
-      <Tethr side="left" />
+      <View className="relative h-[10vh] w-full items-center">
+        <View className="absolute left-0 right-0 top-0 items-center">
+          <Tethr side="center" />
+        </View>
+        <TouchableOpacity
+          onPress={() => router.back()}
+          className="absolute left-0 top-0 h-full items-center justify-center pb-2 pl-8">
+          <Entypo
+            name="chevron-left"
+            size={24}
+            color="#000000"
+            backgroundColor="#A597FF"
+            className="rounded-lg px-2"
+          />
+        </TouchableOpacity>
+      </View>
       <View className="mb-3 flex-row items-center justify-between pl-10 pr-3">
         <Text className="text-2xl font-bold text-white">Your Groups</Text>
         <Pressable
@@ -68,14 +93,22 @@ const Index = () => {
         </Text>
       ) : (
         <ScrollView showsHorizontalScrollIndicator={false}>
-          {filteredGroups.map((group) => (
-            <Pressable
-              key={group.group_id}
-              className="mr-3 rounded-xl bg-tethr-gray/45 px-4 py-2"
-              onPress={() => router.push(`/main/groups/${group.group_id}`)}>
-              <Text className="text-2xl font-medium text-white">{group.group_name}</Text>
-            </Pressable>
-          ))}
+          {filteredGroups.map((group, index) => {
+            if (!group || !group.group_id) return null;
+            return (
+              <Pressable
+                key={group.group_id}
+                className="w-full items-center rounded-xl px-4"
+                onPress={() => router.push(`/main/groups/${group.group_id}`)}>
+                <View
+                  className={`flex w-11/12 flex-col items-center bg-tethr-gray/50 ${roundedMap[getCardType(index, filteredGroups.length)]} p-2`}>
+                  <Text className="text-2xl font-medium text-white">
+                    {group.group_name || 'Unnamed Group'}
+                  </Text>
+                </View>
+              </Pressable>
+            );
+          })}
         </ScrollView>
       )}
     </View>

@@ -71,7 +71,7 @@ class GroupController {
       else {
         const formattedGroups: GroupType[] = (groupData || []).map((item: any) => ({
           group_id: item.group_id,
-          group_name: item.groups?.group_name || 'INVALID GROUP NAME OR NO GROUP NAME',
+          group_name: item.groups?.group_name || 'N/A Group Name',
           current_points: item.current_points,
         }));
 
