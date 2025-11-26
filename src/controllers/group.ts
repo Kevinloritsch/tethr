@@ -3,6 +3,7 @@ import { supabase } from '@/lib/supabase';
 interface GroupType {
   group_id: string;
   group_name: string;
+  current_points: number;
 }
 
 interface LeaderboardEntry {
@@ -63,7 +64,7 @@ class GroupController {
 
       const { data: groupData, error: groupError } = await supabase
         .from('ispartof')
-        .select('group_id, groups ( group_id, group_name )')
+        .select('group_id, groups ( group_id, group_name ), current_points')
         .eq('user_id', user.id);
 
       if (groupError) console.error('Error fetching groups:', groupError);
@@ -71,6 +72,7 @@ class GroupController {
         const formattedGroups: GroupType[] = (groupData || []).map((item: any) => ({
           group_id: item.group_id,
           group_name: item.groups?.group_name || 'INVALID GROUP NAME OR NO GROUP NAME',
+          current_points: item.current_points,
         }));
 
         return formattedGroups;

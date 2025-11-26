@@ -15,6 +15,8 @@ import Tasks from '@/components/tasks/tasks';
 interface GroupWithPhotos {
   group_id: string;
   group_name: string;
+  current_points: number;
+  total_tasks: number;
   photos: {
     name: string;
     publicUrl: string;
@@ -47,6 +49,14 @@ export default function Index() {
       if (groupIds.length > 0) {
         const allPhotos = await photoRetrieve.getPhotosByGroups(groupIds);
 
+        const tasks = await taskController.getTasksForGroup(allGroups);
+        setAllTasks(tasks);
+
+        const taskCountMap: Record<string, number> = {};
+        tasks.forEach((task) => {
+          taskCountMap[task.group_id] = (taskCountMap[task.group_id] || 0) + 1;
+        });
+
         const grouped = allGroups.map((group) => {
           const groupPhotos = allPhotos
             .filter((p) => p.groupId === group.group_id)
@@ -56,6 +66,8 @@ export default function Index() {
           return {
             group_id: group.group_id,
             group_name: group.group_name,
+            current_points: group.current_points,
+            total_tasks: taskCountMap[group.group_id] || 0,
             photos: groupPhotos.map((p) => ({
               name: p.name,
               publicUrl: p.publicUrl,
@@ -65,8 +77,6 @@ export default function Index() {
         });
 
         setGroupsWithPhotos(grouped);
-        const tasks = await taskController.getTasksForGroup(allGroups);
-        setAllTasks(tasks);
       } else {
         setGroupsWithPhotos([]);
         setAllTasks([]);
