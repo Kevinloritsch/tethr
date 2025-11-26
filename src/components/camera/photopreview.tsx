@@ -78,7 +78,7 @@ const PhotoPreview = ({
         <Image
           className="w-[95%] rounded-2xl border-2 border-tethr-gray/80"
           style={{ height: '100%', borderRadius: 16, overflow: 'hidden' }}
-          source={{ uri: 'data:image/jpg;base64,' + photo.base64 }}
+          source={{ uri: photo.uri }}
         />
 
         <Text className="absolute left-8 top-2 w-auto items-center justify-center rounded-lg bg-tethr-gray/80 px-3 py-2 text-white">

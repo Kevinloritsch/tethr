@@ -1,6 +1,5 @@
 import { View, FlatList, ActivityIndicator, Text, RefreshControl } from 'react-native';
-import { useState, useCallback } from 'react';
-import { useFocusEffect } from '@react-navigation/native';
+import { useState, useEffect } from 'react';
 import { photoRetrieve, PhotoSubmission } from '@/controllers/photoRetrieve';
 import { getAllGroups } from '@/controllers/group';
 
@@ -50,11 +49,9 @@ export default function ExploreUI() {
     setRefreshing(false);
   };
 
-  useFocusEffect(
-    useCallback(() => {
-      loadPhotos();
-    }, [])
-  );
+  useEffect(() => {
+    loadPhotos();
+  }, []);
 
   if (loading) {
     return (

@@ -3,6 +3,7 @@ import { supabase } from '@/lib/supabase';
 interface GroupType {
   group_id: string;
   group_name: string;
+  current_points: number;
 }
 
 interface LeaderboardEntry {
@@ -40,14 +41,15 @@ class GroupController {
 
       const { data: groupData, error: groupError } = await supabase
         .from('ispartof')
-        .select('group_id, groups ( group_id, group_name )')
+        .select('group_id, groups ( group_id, group_name ), current_points')
         .eq('user_id', user.id);
 
       if (groupError) console.error('Error fetching groups:', groupError);
       else {
         const formattedGroups: GroupType[] = (groupData || []).map((item: any) => ({
           group_id: item.group_id,
-          group_name: item.groups?.group_name || 'INVALID GROUP NAME OR NO GROUP NAME',
+          group_name: item.groups?.group_name || 'N/A Group Name',
+          current_points: item.current_points,
         }));
 
         return formattedGroups;
@@ -66,7 +68,6 @@ class GroupController {
         .select(
           `
           user_id,
-          current_rank,
           current_points,
           users ( username )
         `
@@ -78,14 +79,19 @@ class GroupController {
         return [];
       }
 
-      const leaderboard: LeaderboardEntry[] = (data || []).map((item: any) => ({
+      let leaderboard: LeaderboardEntry[] = (data || []).map((item: any) => ({
         user_id: item.user_id,
         username: item.users?.username || 'Unknown User',
-        current_rank: item.current_rank ?? 9999,
+        current_rank: 0,
         current_points: item.current_points ?? 0,
       }));
 
-      leaderboard.sort((a, b) => a.current_rank - b.current_rank);
+      leaderboard.sort((a, b) => b.current_points - a.current_points);
+
+      leaderboard = leaderboard.map((person, index) => ({
+        ...person,
+        current_rank: index + 1,
+      }));
 
       return leaderboard;
     } catch (err) {
@@ -95,23 +101,41 @@ class GroupController {
   }
   async increaseMemberScore(userId: string, groupId: string): Promise<boolean> {
     try {
-      const { data } = await supabase
+      let { data: groupData } = await supabase
         .from('ispartof')
         .select('current_points')
         .eq('user_id', userId)
         .eq('group_id', groupId)
         .single();
 
-      const newPoints = (data?.current_points || 0) + 1;
+      const newPoints = (groupData?.current_points || 0) + 1;
 
-      const { error: updateError } = await supabase
+      const { error: groupUpdateError } = await supabase
         .from('ispartof')
         .update({ current_points: newPoints })
         .eq('user_id', userId)
         .eq('group_id', groupId);
 
-      if (updateError) {
-        console.error('Error updating:', updateError);
+      if (groupUpdateError) {
+        console.error('Error updating groups:', groupUpdateError);
+        return false;
+      }
+
+      let { data: profileData } = await supabase
+        .from('users')
+        .select('num_completed_tasks')
+        .eq('user_id', userId)
+        .single();
+
+      const newCompletedTasks = (profileData?.num_completed_tasks || 0) + 1;
+
+      const { error: profileUpdateError } = await supabase
+        .from('users')
+        .update({ num_completed_tasks: newCompletedTasks })
+        .eq('user_id', userId);
+
+      if (profileUpdateError) {
+        console.error('Error updating profile:', profileUpdateError);
         return false;
       }
 

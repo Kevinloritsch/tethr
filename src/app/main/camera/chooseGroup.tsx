@@ -1,17 +1,10 @@
-import {
-  View,
-  Text,
-  Pressable,
-  TouchableOpacity,
-  ActivityIndicator,
-  ScrollView,
-} from 'react-native';
+import { View, Text, TouchableOpacity, ActivityIndicator, ScrollView } from 'react-native';
 import { router } from 'expo-router';
 import { getAllGroups } from '@/controllers/group';
-import { useEffect, useState } from 'react';
-
+import { useEffect, useState, useCallback } from 'react';
+import { getCardType, roundedMap } from '@/utils/cardType';
+import SearchBar from '@/components/searchbar';
 import Tethr from '@/components/tethr';
-
 import Entypo from '@expo/vector-icons/Entypo';
 
 interface Group {
@@ -21,7 +14,9 @@ interface Group {
 
 const ChooseGroup = () => {
   const [groups, setGroups] = useState<Group[]>([]);
+  const [filtered, setFiltered] = useState<Group[]>([]);
   const [loading, setLoading] = useState(true);
+  const [query, setQuery] = useState('');
 
   useEffect(() => {
     fetchGroupData();
@@ -31,20 +26,29 @@ const ChooseGroup = () => {
     try {
       const allGroups = await getAllGroups.fetchUserData();
       setGroups(allGroups);
+      setFiltered(allGroups);
     } catch (err) {
       console.error('Unexpected error fetching data:', err);
     } finally {
       setLoading(false);
     }
   };
-  if (loading) {
-    return (
-      <View className="flex-1 items-center justify-center bg-black">
-        <ActivityIndicator size="large" color="white" />
-      </View>
-    );
-  }
 
+  const handleSearch = useCallback(
+    (text: string) => {
+      setQuery(text);
+
+      if (!text.trim()) {
+        setFiltered(groups);
+        return;
+      }
+
+      const lowered = text.toLowerCase();
+      const filteredGroups = groups.filter((g) => g.group_name.toLowerCase().includes(lowered));
+      setFiltered(filteredGroups);
+    },
+    [groups]
+  );
   return (
     <View className="flex-1 flex-col bg-black pt-8">
       <View className="relative h-[10vh] w-full items-center">
@@ -63,30 +67,43 @@ const ChooseGroup = () => {
           />
         </TouchableOpacity>
       </View>
-      <View className="items-center">
+      <View className="w-full items-center gap-2">
         <Text className="text-2xl font-bold text-white">Select Group</Text>
-        {groups.length === 0 ? (
-          <Text className="text-center text-white">You’re not in any groups yet.</Text>
-        ) : (
-          <ScrollView showsHorizontalScrollIndicator={false}>
-            {groups.map((group) => (
-              <Pressable
-                key={group.group_id}
-                className="mr-3 rounded-xl bg-tethr-gray/45 px-4 py-2"
-                onPress={() =>
-                  router.push({
-                    pathname: '/main/camera/chooseTask',
-                    params: { group_name: group.group_name, group_id: group.group_id },
-                  })
-                }>
-                <View className="flex w-full flex-col items-center rounded-2xl bg-tethr-purple/70 p-2">
-                  <Text className="text-white">{group.group_name}</Text>
-                </View>
-              </Pressable>
-            ))}
-          </ScrollView>
-        )}
+
+        <SearchBar placeholder="Search groups..." value={query} onSearch={handleSearch} />
       </View>
+      {loading && (
+        <View className="flex-1 items-center justify-center bg-black">
+          <ActivityIndicator size="large" color="white" />
+          <Text className="mt-4 text-white">Loading groups...</Text>
+        </View>
+      )}
+      {!loading && (
+        <View className="items-center">
+          {filtered.length === 0 ? (
+            <Text className="mt-4 text-center text-white">No matching groups.</Text>
+          ) : (
+            <ScrollView className="mt-4 w-full" showsVerticalScrollIndicator={false}>
+              {filtered.map((group, index) => (
+                <TouchableOpacity
+                  key={group.group_id}
+                  className={`flex w-10/12 self-center bg-tethr-gray/50 px-5 py-4 text-2xl text-white ${roundedMap[getCardType(index, filtered.length)]}`}
+                  onPress={() =>
+                    router.push({
+                      pathname: '/main/camera/chooseTask',
+                      params: {
+                        group_name: group.group_name,
+                        group_id: group.group_id,
+                      },
+                    })
+                  }>
+                  <Text className="font-semibold text-white">{group.group_name}</Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          )}
+        </View>
+      )}
     </View>
   );
 };

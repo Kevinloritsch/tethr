@@ -160,6 +160,37 @@ class UserController {
       return false;
     }
   }
+  async updateUsername(newUsername: string): Promise<void> {
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (!user) throw authError;
+
+    const { error } = await supabase
+      .from(this.usersTableName)
+      .update({ username: newUsername })
+      .eq('user_id', user.id);
+
+    if (error) throw error;
+  }
+
+  async updateName(newName: string): Promise<void> {
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (!user) throw authError;
+
+    const { error } = await supabase
+      .from(this.usersTableName)
+      .update({ name: newName })
+      .eq('user_id', user.id);
+
+    if (error) throw error;
+  }
 }
 
 export const userController = new UserController();

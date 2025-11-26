@@ -54,6 +54,7 @@ const Tasks = ({ tasks }: TasksProps) => {
                     group_name: item.group_name,
                     group_id: item.group_id,
                     task_name: item.task_name,
+                    return_state: 'main',
                   },
                 })
               }>

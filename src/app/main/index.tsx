@@ -15,6 +15,8 @@ import Tasks from '@/components/tasks/tasks';
 interface GroupWithPhotos {
   group_id: string;
   group_name: string;
+  current_points: number;
+  total_tasks: number;
   photos: {
     name: string;
     publicUrl: string;
@@ -47,6 +49,14 @@ export default function Index() {
       if (groupIds.length > 0) {
         const allPhotos = await photoRetrieve.getPhotosByGroups(groupIds);
 
+        const tasks = await taskController.getTasksForGroup(allGroups);
+        setAllTasks(tasks);
+
+        const taskCountMap: Record<string, number> = {};
+        tasks.forEach((task) => {
+          taskCountMap[task.group_id] = (taskCountMap[task.group_id] || 0) + 1;
+        });
+
         const grouped = allGroups.map((group) => {
           const groupPhotos = allPhotos
             .filter((p) => p.groupId === group.group_id)
@@ -56,6 +66,8 @@ export default function Index() {
           return {
             group_id: group.group_id,
             group_name: group.group_name,
+            current_points: group.current_points,
+            total_tasks: taskCountMap[group.group_id] || 0,
             photos: groupPhotos.map((p) => ({
               name: p.name,
               publicUrl: p.publicUrl,
@@ -65,8 +77,6 @@ export default function Index() {
         });
 
         setGroupsWithPhotos(grouped);
-        const tasks = await taskController.getTasksForGroup(allGroups);
-        setAllTasks(tasks);
       } else {
         setGroupsWithPhotos([]);
         setAllTasks([]);
@@ -130,9 +140,9 @@ export default function Index() {
         }>
         <Text className="mb-6 pl-9 text-3xl font-bold text-white">Welcome back, {name}!</Text>
         <View className="flex-row items-center justify-between pl-8 pr-3">
-          <Text className="mb-3 text-2xl font-bold text-white">Your Groups</Text>
+          <Text className="my-3 text-2xl font-bold text-white">Your Groups</Text>
           <Pressable
-            className="flex-row items-center rounded-xl bg-tethr-purple/40 px-4 py-2"
+            className="mb-1 flex-row items-center rounded-xl bg-tethr-purple/40 px-4 py-2"
             onPress={() => router.push('main/groups')}>
             <Text className="mr-1 font-medium text-white">View all</Text>
             <FontAwesome6 name="arrow-right-long" size={16} color="white" className="pl-2" />
@@ -140,7 +150,13 @@ export default function Index() {
         </View>
         <Groups groups={groupsWithPhotos} />
         <View className="flex-row items-center justify-between pl-8 pr-3 pt-6">
-          <Text className="mb-3 text-2xl font-bold text-white">To-Do</Text>
+          <Text className="my-3 text-2xl font-bold text-white">To-Do</Text>
+          <Pressable
+            className="mb-1 flex-row items-center rounded-xl bg-tethr-purple/40 px-4 py-2"
+            onPress={() => router.push('main/groups')}>
+            <Text className="mr-1 font-medium text-white">View all</Text>
+            <FontAwesome6 name="arrow-right-long" size={16} color="white" className="pl-2" />
+          </Pressable>
         </View>
         <Tasks tasks={allTasks} />
       </ScrollView>

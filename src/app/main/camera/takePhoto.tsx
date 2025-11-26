@@ -26,9 +26,12 @@ export default function Camera() {
   const { task_name } = useLocalSearchParams();
   const taskName = Array.isArray(task_name) ? task_name[0] : (task_name ?? '');
 
+  const { return_state } = useLocalSearchParams();
+  const hasReturn = return_state ? true : false;
+
   const [facing, setFacing] = useState<CameraType>('back');
   const [flash, setFlash] = useState<FlashMode>('off');
-  const [zoom, setZoom] = useState(0.1);
+  const [zoom, setZoom] = useState(0);
   const [permission, requestPermission] = useCameraPermissions();
   const [hasClicked, setHasClicked] = useState(false);
   const [photo, setPhoto] = useState<any>(null);
@@ -47,7 +50,15 @@ export default function Camera() {
       </Pressable>
     );
 
-  const toggleCameraFacing = () => setFacing((c) => (c === 'back' ? 'front' : 'back'));
+  const toggleCameraFacing = () => {
+    if (facing === 'back') {
+      setFacing('front');
+      setZoom(0);
+    } else {
+      setFacing('back');
+      setZoom(0.045);
+    }
+  };
   const toggleFlash = () => setFlash((c) => (c === 'off' ? 'on' : 'off'));
 
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
@@ -69,8 +80,7 @@ export default function Camera() {
       const takenPhoto = await cameraRef.current.takePictureAsync({
         quality: 1,
         base64: true,
-        exif: false,
-        mirror: facing === 'front',
+        exif: true,
       });
 
       setPhoto(takenPhoto);
@@ -100,7 +110,11 @@ export default function Camera() {
           <Tethr side="center" />
         </View>
         <TouchableOpacity
-          onPress={() => router.back()}
+          onPress={() => {
+            if (hasReturn) {
+              router.replace('/');
+            } else router.back();
+          }}
           className="absolute left-0 top-0 h-full items-center justify-center pb-2 pl-8">
           <Entypo
             name="chevron-left"
@@ -119,6 +133,7 @@ export default function Camera() {
           flash={flash}
           zoom={zoom}
           ref={cameraRef}
+          mirror={facing === 'front'}
         />
         <Text className="absolute left-8 top-2 w-auto items-center justify-center rounded-lg bg-tethr-gray/80 px-3 py-2 text-white">
           {taskName}
