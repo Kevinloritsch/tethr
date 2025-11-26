@@ -2,6 +2,7 @@ import { View, Text, Pressable, TextInput, ActivityIndicator, Switch } from 'rea
 import { useLocalSearchParams, router } from 'expo-router';
 import { useState, useEffect } from 'react';
 import { groupController } from '@/controllers/group';
+import { taskController } from '@/controllers/tasks';
 import { FontAwesome6 } from '@expo/vector-icons';
 
 const CreateTask = () => {
@@ -31,7 +32,7 @@ const CreateTask = () => {
   }
 
   const handleCreateTask = async () => {
-    const result = await groupController.createTask(groupId, task, recurring);
+    const result = await taskController.createTask(groupId, task, recurring);
 
     if (result.success) {
       router.replace(`/main/groups/${groupId}`);

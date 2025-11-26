@@ -24,29 +24,6 @@ class GroupController {
     return group?.group_name || null;
   }
 
-  async createTask(groupId: string, taskName: string, recurring: boolean) {
-    try {
-      const { data, error } = await supabase
-        .from('tasks')
-        .insert([
-          {
-            group_id: groupId,
-            task_name: taskName,
-            recurring: recurring,
-          },
-        ])
-        .select()
-        .single();
-
-      if (error) {
-        return { success: false, message: error.message };
-      }
-      return { success: true, data };
-    } catch {
-      return { success: false, message: 'Unexpected error occurred.' };
-    }
-  }
-
   async fetchUserData(): Promise<GroupType[]> {
     try {
       const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
