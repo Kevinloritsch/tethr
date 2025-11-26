@@ -71,7 +71,10 @@ export default function ProfileScreen() {
               numFriends={profile.numFriends}
             />
           )}
-          <Options logoutHandler={handleLogout} />
+          <Options
+            logoutHandler={handleLogout}
+            privacyPolicyHandler={() => router.push('/privacypolicy')}
+          />
         </View>
       </ScrollView>
     </View>
