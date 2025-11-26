@@ -109,7 +109,7 @@ const GroupPage = () => {
         </View>
         <TouchableOpacity
           onPress={() => {
-            router.navigate('/main'); // or '/main' depending on your route structure
+            router.navigate('/main');
           }}
           className="absolute left-0 top-0 h-full items-center justify-center pb-2 pl-8">
           <Entypo
