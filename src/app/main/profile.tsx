@@ -29,9 +29,6 @@ export default function ProfileScreen() {
     loadProfile();
   }, [loadProfile]);
 
-  useEffect(() => {
-    loadProfile();
-  }, []);
   const handleLogout = async () => {
     const success = await userController.logout();
     if (success) {

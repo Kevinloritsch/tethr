@@ -91,9 +91,6 @@ export default function FriendsScreen() {
     loadFriends();
   }, [loadFriends]);
 
-  useEffect(() => {
-    loadFriends();
-  }, []);
   const handleRemoveFriend = async (friendId: string) => {
     try {
       setFriends((prev) => prev.filter((f) => f.userId !== friendId));
