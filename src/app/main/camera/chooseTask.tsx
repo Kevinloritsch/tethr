@@ -3,9 +3,9 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { useState, useEffect } from 'react';
 import { taskController } from '@/controllers/tasks';
 import Tethr from '@/components/tethr';
+import SearchBar from '@/components/searchbar';
 import { completedTasksController } from '@/controllers/completeTask';
 import { getCardType, roundedMap } from '@/utils/cardType';
-
 import Entypo from '@expo/vector-icons/Entypo';
 
 interface Task {
@@ -14,11 +14,12 @@ interface Task {
 }
 
 const ChooseTask = () => {
-  const { group_name } = useLocalSearchParams();
-  const { group_id } = useLocalSearchParams();
+  const { group_name, group_id } = useLocalSearchParams();
   const groupId = Array.isArray(group_id) ? group_id[0] : (group_id ?? '');
 
   const [tasks, setTasks] = useState<Task[]>([]);
+  const [filteredTasks, setFilteredTasks] = useState<Task[]>([]);
+  const [query, setQuery] = useState('');
   const [completedTasks, setCompletedTasks] = useState<string[]>([]);
 
   const fetchGroupTasks = async (groupId: string) => {
@@ -36,6 +37,22 @@ const ChooseTask = () => {
     fetchGroupTasks(groupId);
   }, [groupId]);
 
+  useEffect(() => {
+    setFilteredTasks(tasks);
+  }, [tasks]);
+
+  const handleSearch = (text: string) => {
+    setQuery(text);
+    const lower = text.toLowerCase();
+
+    if (!lower.trim()) {
+      setFilteredTasks(tasks);
+      return;
+    }
+
+    setFilteredTasks(tasks.filter((t) => t.task_name.toLowerCase().includes(lower)));
+  };
+
   const isCompleted = (taskName: string, groupId: string) => {
     const taskKey = `${groupId}-${taskName}`;
     return completedTasks.includes(taskKey);
@@ -47,6 +64,7 @@ const ChooseTask = () => {
         <View className="absolute left-0 right-0 top-0 items-center">
           <Tethr side="center" />
         </View>
+
         <TouchableOpacity
           onPress={() => router.back()}
           className="absolute left-0 top-0 h-full items-center justify-center pb-2 pl-8">
@@ -59,33 +77,48 @@ const ChooseTask = () => {
           />
         </TouchableOpacity>
       </View>
-      <View className="items-center">
-        <Text className="text-2xl font-bold text-white">Select Task for {group_name}</Text>
 
-        {tasks.map((task, idx) => {
-          const taskCompleted = isCompleted(task.task_name, groupId);
-          return (
-            <Pressable
-              className="mr-3 w-full items-center rounded-xl px-4"
-              key={idx}
-              disabled={taskCompleted}
-              onPress={() =>
-                router.push({
-                  pathname: '/main/camera/takePhoto',
-                  params: { group_name: group_name, group_id: group_id, task_name: task.task_name },
-                })
-              }>
-              <View
-                className={`flex w-11/12 flex-col items-center bg-tethr-gray/50 ${roundedMap[getCardType(idx, tasks.length)]} p-2`}>
-                <Text
-                  className={`${taskCompleted ? `text-tethr-light-gray/20` : `text-white`} text-lg`}>
-                  {task.task_name} {task.recurring ? '(Recurring)' : ''}{' '}
-                  {taskCompleted ? '(Completed Today)' : ''}
-                </Text>
-              </View>
-            </Pressable>
-          );
-        })}
+      <View className="items-center">
+        <Text className="mb-4 text-2xl font-bold text-white">Select Task for {group_name}</Text>
+
+        <View className="mb-4 w-full items-center">
+          <SearchBar placeholder="Search tasks..." value={query} onSearch={handleSearch} />
+        </View>
+        {filteredTasks.length === 0 ? (
+          <Text className="mt-4 text-center text-white">No matching tasks.</Text>
+        ) : (
+          <View className="mb-4 w-full items-center">
+            {filteredTasks.map((task, idx) => {
+              const taskCompleted = isCompleted(task.task_name, groupId);
+
+              return (
+                <Pressable
+                  className="w-full items-center rounded-xl px-4"
+                  key={idx}
+                  disabled={taskCompleted}
+                  onPress={() =>
+                    router.push({
+                      pathname: '/main/camera/takePhoto',
+                      params: {
+                        group_name: group_name,
+                        group_id: group_id,
+                        task_name: task.task_name,
+                      },
+                    })
+                  }>
+                  <View
+                    className={`flex w-11/12 flex-col items-center bg-tethr-gray/50 ${roundedMap[getCardType(idx, filteredTasks.length)]} p-2`}>
+                    <Text
+                      className={`${taskCompleted ? 'text-tethr-light-gray/20' : 'text-white'} text-lg`}>
+                      {task.task_name} {task.recurring ? '(Recurring)' : ''}{' '}
+                      {taskCompleted ? '(Completed Today)' : ''}
+                    </Text>
+                  </View>
+                </Pressable>
+              );
+            })}
+          </View>
+        )}
       </View>
     </View>
   );
