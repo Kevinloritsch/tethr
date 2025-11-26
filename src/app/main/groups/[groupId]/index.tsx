@@ -124,16 +124,16 @@ const GroupPage = () => {
       <FlatList
         data={photos}
         ListHeaderComponent={
-          <View className="mx-auto w-10/12 pb-8">
-            <Text className="text-center text-3xl font-bold text-white">{groupName}</Text>
-            <Text className="my-6 px-4 text-xl font-bold text-white">Leaderboard</Text>
+          <View className="mx-auto w-[90vw] pb-8">
+            <Text className="text-3xl font-bold text-white">{groupName}</Text>
+            <Text className="my-6 text-xl font-bold text-white">Leaderboard</Text>
             {users.length === 0 ? (
               <Text className="text-white/70">No leaderboard data yet.</Text>
             ) : (
               users.map(({ username, current_rank, current_points }, idx) => (
-                <View className="w-full items-center rounded-xl px-4" key={idx}>
+                <View className="w-full items-center rounded-xl" key={idx}>
                   <View
-                    className={`flex w-full flex-row justify-between self-center bg-tethr-gray/50 px-5 py-4 text-2xl text-white ${roundedMap[getCardType(idx, users.length)]} p-2`}>
+                    className={`flex w-full flex-row justify-between self-center bg-tethr-gray/50 py-4 text-2xl text-white ${roundedMap[getCardType(idx, users.length)]} p-2`}>
                     <Text
                       className={`font-semibold ${username === myUsername ? `text-tethr-purple` : `text-white`}`}>
                       {current_rank}. {username}
@@ -148,24 +148,26 @@ const GroupPage = () => {
             )}
 
             <View className="my-6 flex-row items-center justify-between">
-              <Text className="px-4 text-xl font-bold text-white">Tasks</Text>
+              <Text className="text-xl font-bold text-white">Tasks</Text>
               <Pressable
-                className="flex-row items-center px-4 py-2"
+                className="flex-row items-center py-2"
                 onPress={() => router.push(`/main/groups/${groupId}/createTask`)}>
                 <FontAwesome6 name="plus" size={16} color="white" />
               </Pressable>
             </View>
 
             {tasks.map((task, idx) => (
-              <View className="w-full items-center rounded-xl px-4" key={idx}>
+              <View className="w-full items-center rounded-xl" key={idx}>
                 <View
-                  className={`flex w-full self-center bg-tethr-gray/50 px-5 py-4 text-2xl text-white ${roundedMap[getCardType(idx, tasks.length)]} p-2`}>
+                  className={`flex w-full self-center bg-tethr-gray/50 py-4 text-2xl text-white ${roundedMap[getCardType(idx, tasks.length)]} p-2`}>
                   <Text className="font-semibold text-white">
                     {task.task_name} {task.recurring ? '(Recurring)' : ''}
                   </Text>
                 </View>
               </View>
             ))}
+
+            <Text className="pt-8 text-xl font-bold text-white">Recently Completed Tasks</Text>
           </View>
         }
         keyExtractor={(item) => item.name}
