@@ -65,7 +65,6 @@ export default function Camera() {
     const offsetX = event.nativeEvent.contentOffset.x;
     const normalizedScroll = Math.min(Math.max(1 - offsetX / 100, 0), 1);
     const zoomValue = normalizedScroll * 0.4;
-    console.log(zoomValue);
     setZoom(zoomValue);
   };
 
