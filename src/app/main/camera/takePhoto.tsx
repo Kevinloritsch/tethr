@@ -26,6 +26,9 @@ export default function Camera() {
   const { task_name } = useLocalSearchParams();
   const taskName = Array.isArray(task_name) ? task_name[0] : (task_name ?? '');
 
+  const { return_state } = useLocalSearchParams();
+  const hasReturn = return_state ? true : false;
+
   const [facing, setFacing] = useState<CameraType>('back');
   const [flash, setFlash] = useState<FlashMode>('off');
   const [zoom, setZoom] = useState(0);
@@ -108,7 +111,11 @@ export default function Camera() {
           <Tethr side="center" />
         </View>
         <TouchableOpacity
-          onPress={() => router.back()}
+          onPress={() => {
+            if (hasReturn) {
+              router.replace('/');
+            } else router.back();
+          }}
           className="absolute left-0 top-0 h-full items-center justify-center pb-2 pl-8">
           <Entypo
             name="chevron-left"

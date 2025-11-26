@@ -95,17 +95,14 @@ const Index = () => {
         <ScrollView showsHorizontalScrollIndicator={false}>
           {filteredGroups.map((group, index) => {
             return (
-              <Pressable
+              <TouchableOpacity
                 key={group.group_id}
-                className="w-full items-center rounded-xl px-4"
+                className={`flex w-10/12 self-center bg-tethr-gray/50 px-5 py-4 text-2xl text-white ${roundedMap[getCardType(index, filteredGroups.length)]}`}
                 onPress={() => router.push(`/main/groups/${group.group_id}`)}>
-                <View
-                  className={`flex w-11/12 flex-col items-center bg-tethr-gray/50 ${roundedMap[getCardType(index, filteredGroups.length)]} p-2`}>
-                  <Text className="text-2xl font-medium text-white">
-                    {group.group_name || 'Unnamed Group'}
-                  </Text>
-                </View>
-              </Pressable>
+                <Text className="font-semibold text-white">
+                  {group.group_name || 'Unnamed Group'}
+                </Text>
+              </TouchableOpacity>
             );
           })}
         </ScrollView>

@@ -68,9 +68,9 @@ const Group = ({ group_id, group_name, current_points, total_tasks, photos }: Gr
           </View>
         )}
 
-        <Text className="absolute right-0 text-3xl font-bold text-white">
+        <View className="absolute right-0 text-3xl font-bold text-white">
           <CircleProgress percentage={(completedTasks / total_tasks) * 100} />
-        </Text>
+        </View>
       </View>
     </View>
   );
