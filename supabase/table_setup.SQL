@@ -150,6 +150,18 @@ WITH CHECK (
   )
 )
 
+CREATE POLICY "Group members can see the tasks within their group"
+on public.tasks
+to public
+FOR SELECT
+USING (
+  (EXISTS (SELECT 1
+    FROM ispartof
+    WHERE ((ispartof.group_id = tasks.group_id) AND (ispartof.user_id = auth.uid())))
+  )
+);
+
+
 create table public.hasCompleted (
   user_id uuid not null references public.users(user_id),
   group_id uuid not null references public.groups(group_id),
