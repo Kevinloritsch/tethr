@@ -87,7 +87,7 @@ const ChooseGroup = () => {
               {filtered.map((group, index) => (
                 <TouchableOpacity
                   key={group.group_id}
-                  className={`flex w-11/12 self-center bg-tethr-gray/50 px-5 py-4 text-2xl text-white ${roundedMap[getCardType(index, filtered.length)]}`}
+                  className={`flex w-10/12 self-center bg-tethr-gray/50 px-5 py-4 text-2xl text-white ${roundedMap[getCardType(index, filtered.length)]}`}
                   onPress={() =>
                     router.push({
                       pathname: '/main/camera/chooseTask',

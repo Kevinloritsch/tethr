@@ -4,7 +4,6 @@ import Options from '@/components/profile/options';
 import Tethr from '@/components/tethr';
 import { ProfileProps, userController } from '@/controllers/userInfo';
 import { useState, useCallback, useEffect } from 'react';
-import { useFocusEffect } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
 
 export default function ProfileScreen() {
@@ -30,11 +29,6 @@ export default function ProfileScreen() {
     loadProfile();
   }, [loadProfile]);
 
-  useFocusEffect(
-    useCallback(() => {
-      loadProfile();
-    }, [loadProfile])
-  );
   const handleLogout = async () => {
     const success = await userController.logout();
     if (success) {

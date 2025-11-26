@@ -107,7 +107,7 @@ const ChooseTask = () => {
                     })
                   }>
                   <View
-                    className={`flex w-11/12 flex-col items-center bg-tethr-gray/50 ${roundedMap[getCardType(idx, filteredTasks.length)]} p-2`}>
+                    className={`flex w-10/12 flex-col items-center bg-tethr-gray/50 ${roundedMap[getCardType(idx, filteredTasks.length)]} p-2`}>
                     <Text
                       className={`${taskCompleted ? 'text-tethr-light-gray/20' : 'text-white'} text-lg`}>
                       {task.task_name} {task.recurring ? '(Recurring)' : ''}{' '}

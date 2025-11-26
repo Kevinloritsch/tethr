@@ -8,7 +8,6 @@ import {
 } from 'react-native';
 import Tethr from '@/components/tethr';
 import { useState, useCallback, useEffect, useMemo } from 'react';
-import { useFocusEffect } from '@react-navigation/native';
 import FriendCard, { FriendProps } from '@/components/friendcard';
 import { getFriendsList } from '@/controllers/getFriends';
 import SearchBar from '@/components/searchbar';
@@ -92,11 +91,6 @@ export default function FriendsScreen() {
     loadFriends();
   }, [loadFriends]);
 
-  useFocusEffect(
-    useCallback(() => {
-      loadFriends();
-    }, [loadFriends])
-  );
   const handleRemoveFriend = async (friendId: string) => {
     try {
       setFriends((prev) => prev.filter((f) => f.userId !== friendId));

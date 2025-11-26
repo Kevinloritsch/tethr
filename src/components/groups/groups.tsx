@@ -6,6 +6,8 @@ import Group from '@/components/groups/group';
 interface GroupWithPhotos {
   group_id: string;
   group_name: string;
+  current_points: number;
+  total_tasks: number;
   photos: {
     name: string;
     publicUrl: string;
@@ -28,7 +30,13 @@ const Groups = ({ groups }: GroupsProps) => {
       }}
       renderItem={({ item }) => (
         <Pressable onPress={() => router.push(`/main/groups/${item.group_id}`)}>
-          <Group group_name={item.group_name} photos={item.photos} />
+          <Group
+            group_id={item.group_id}
+            group_name={item.group_name}
+            photos={item.photos}
+            current_points={item.current_points}
+            total_tasks={item.total_tasks}
+          />
         </Pressable>
       )}
       keyExtractor={(item) => item.group_id}
