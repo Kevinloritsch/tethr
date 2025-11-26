@@ -124,23 +124,41 @@ class GroupController {
   }
   async increaseMemberScore(userId: string, groupId: string): Promise<boolean> {
     try {
-      const { data } = await supabase
+      let { data: groupData } = await supabase
         .from('ispartof')
         .select('current_points')
         .eq('user_id', userId)
         .eq('group_id', groupId)
         .single();
 
-      const newPoints = (data?.current_points || 0) + 1;
+      const newPoints = (groupData?.current_points || 0) + 1;
 
-      const { error: updateError } = await supabase
+      const { error: groupUpdateError } = await supabase
         .from('ispartof')
         .update({ current_points: newPoints })
         .eq('user_id', userId)
         .eq('group_id', groupId);
 
-      if (updateError) {
-        console.error('Error updating:', updateError);
+      if (groupUpdateError) {
+        console.error('Error updating groups:', groupUpdateError);
+        return false;
+      }
+
+      let { data: profileData } = await supabase
+        .from('users')
+        .select('num_completed_tasks')
+        .eq('user_id', userId)
+        .single();
+
+      const newCompletedTasks = (profileData?.num_completed_tasks || 0) + 1;
+
+      const { error: profileUpdateError } = await supabase
+        .from('users')
+        .update({ num_completed_tasks: newCompletedTasks })
+        .eq('user_id', userId);
+
+      if (profileUpdateError) {
+        console.error('Error updating profile:', profileUpdateError);
         return false;
       }
 
