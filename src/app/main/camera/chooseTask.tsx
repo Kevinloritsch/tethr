@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { taskController } from '@/controllers/tasks';
 import Tethr from '@/components/tethr';
 import { completedTasksController } from '@/controllers/completeTask';
+import { getCardType, roundedMap } from '@/utils/cardType';
 
 import Entypo from '@expo/vector-icons/Entypo';
 
@@ -65,7 +66,7 @@ const ChooseTask = () => {
           const taskCompleted = isCompleted(task.task_name, groupId);
           return (
             <Pressable
-              className="mr-3 rounded-xl px-4 py-2"
+              className="mr-3 w-full items-center rounded-xl px-4"
               key={idx}
               disabled={taskCompleted}
               onPress={() =>
@@ -75,8 +76,9 @@ const ChooseTask = () => {
                 })
               }>
               <View
-                className={`flex w-full flex-col items-center rounded-2xl ${taskCompleted ? `bg-gray-400` : `bg-tethr-purple/70`} p-2`}>
-                <Text className="text-white">
+                className={`flex w-11/12 flex-col items-center bg-tethr-gray/50 ${roundedMap[getCardType(idx, tasks.length)]} p-2`}>
+                <Text
+                  className={`${taskCompleted ? `text-tethr-light-gray/20` : `text-white`} text-lg`}>
                   {task.task_name} {task.recurring ? '(Recurring)' : ''}{' '}
                   {taskCompleted ? '(Completed Today)' : ''}
                 </Text>
