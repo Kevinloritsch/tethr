@@ -1,11 +1,4 @@
-import {
-  View,
-  Text,
-  Pressable,
-  TouchableOpacity,
-  ActivityIndicator,
-  ScrollView,
-} from 'react-native';
+import { View, Text, TouchableOpacity, ActivityIndicator, ScrollView } from 'react-native';
 import { router } from 'expo-router';
 import { getAllGroups } from '@/controllers/group';
 import { useEffect, useState, useCallback } from 'react';
@@ -92,7 +85,7 @@ const ChooseGroup = () => {
           ) : (
             <ScrollView className="mt-4 w-full" showsVerticalScrollIndicator={false}>
               {filtered.map((group, index) => (
-                <Pressable
+                <TouchableOpacity
                   key={group.group_id}
                   className={`flex w-11/12 self-center bg-tethr-gray/50 px-5 py-4 text-2xl text-white ${roundedMap[getCardType(index, filtered.length)]}`}
                   onPress={() =>
@@ -105,7 +98,7 @@ const ChooseGroup = () => {
                     })
                   }>
                   <Text className="font-semibold text-white">{group.group_name}</Text>
-                </Pressable>
+                </TouchableOpacity>
               ))}
             </ScrollView>
           )}

@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, Pressable } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useState, useEffect } from 'react';
 import { taskController } from '@/controllers/tasks';
@@ -92,7 +92,7 @@ const ChooseTask = () => {
               const taskCompleted = isCompleted(task.task_name, groupId);
 
               return (
-                <Pressable
+                <TouchableOpacity
                   className="w-full items-center rounded-xl px-4"
                   key={idx}
                   disabled={taskCompleted}
@@ -114,7 +114,7 @@ const ChooseTask = () => {
                       {taskCompleted ? '(Completed Today)' : ''}
                     </Text>
                   </View>
-                </Pressable>
+                </TouchableOpacity>
               );
             })}
           </View>

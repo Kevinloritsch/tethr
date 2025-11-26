@@ -1,8 +1,18 @@
-import { View, Text, ActivityIndicator, Pressable, TextInput, Alert } from 'react-native';
+import {
+  View,
+  Text,
+  ActivityIndicator,
+  Pressable,
+  TextInput,
+  Alert,
+  TouchableOpacity,
+} from 'react-native';
 import { useState, useCallback, useEffect } from 'react';
 import { userController } from '@/controllers/userInfo';
 import { useRouter } from 'expo-router';
 import { useFocusEffect } from '@react-navigation/native';
+import Entypo from '@expo/vector-icons/Entypo';
+import Tethr from '@/components/tethr';
 
 export default function EditProfile() {
   const [loading, setLoading] = useState(true);
@@ -59,6 +69,24 @@ export default function EditProfile() {
 
   return (
     <View className="flex-1 items-center bg-black px-6 pt-12">
+      <View className="relative h-[10vh] w-full items-center">
+        <View className="absolute left-0 right-0 top-0 items-center">
+          <Tethr side="center" />
+        </View>
+        <TouchableOpacity
+          className="absolute left-0 top-0 h-full items-center justify-center pb-2 pl-8"
+          onPress={() => {
+            router.push('/main/profile');
+          }}>
+          <Entypo
+            name="chevron-left"
+            size={24}
+            color="#000000"
+            backgroundColor="#A597FF"
+            className="rounded-lg px-2"
+          />
+        </TouchableOpacity>
+      </View>
       <Text className="mb-6 text-2xl font-bold text-white">Edit Profile</Text>
       <Text className="w-full text-left text-white">Username</Text>
       <TextInput
