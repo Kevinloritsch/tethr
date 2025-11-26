@@ -12,6 +12,7 @@ export default function PrivacyPolicy() {
           <Tethr side="center" />
         </View>
         <TouchableOpacity
+          accessibilityRole="button"
           className="absolute left-0 top-0 h-full items-center justify-center pb-2 pl-8"
           onPress={() => {
             router.push('/main/profile');
