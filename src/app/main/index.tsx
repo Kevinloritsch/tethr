@@ -140,9 +140,9 @@ export default function Index() {
         }>
         <Text className="mb-6 pl-9 text-3xl font-bold text-white">Welcome back, {name}!</Text>
         <View className="flex-row items-center justify-between pl-8 pr-3">
-          <Text className="mb-3 text-2xl font-bold text-white">Your Groups</Text>
+          <Text className="my-3 text-2xl font-bold text-white">Your Groups</Text>
           <Pressable
-            className="flex-row items-center rounded-xl bg-tethr-purple/40 px-4 py-2"
+            className="mb-1 flex-row items-center rounded-xl bg-tethr-purple/40 px-4 py-2"
             onPress={() => router.push('main/groups')}>
             <Text className="mr-1 font-medium text-white">View all</Text>
             <FontAwesome6 name="arrow-right-long" size={16} color="white" className="pl-2" />
@@ -150,7 +150,13 @@ export default function Index() {
         </View>
         <Groups groups={groupsWithPhotos} />
         <View className="flex-row items-center justify-between pl-8 pr-3 pt-6">
-          <Text className="mb-3 text-2xl font-bold text-white">To-Do</Text>
+          <Text className="my-3 text-2xl font-bold text-white">To-Do</Text>
+          <Pressable
+            className="mb-1 flex-row items-center rounded-xl bg-tethr-purple/40 px-4 py-2"
+            onPress={() => router.push('main/groups')}>
+            <Text className="mr-1 font-medium text-white">View all</Text>
+            <FontAwesome6 name="arrow-right-long" size={16} color="white" className="pl-2" />
+          </Pressable>
         </View>
         <Tasks tasks={allTasks} />
       </ScrollView>

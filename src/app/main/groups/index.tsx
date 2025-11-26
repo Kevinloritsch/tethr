@@ -94,7 +94,6 @@ const Index = () => {
       ) : (
         <ScrollView showsHorizontalScrollIndicator={false}>
           {filteredGroups.map((group, index) => {
-            if (!group || !group.group_id) return null;
             return (
               <Pressable
                 key={group.group_id}

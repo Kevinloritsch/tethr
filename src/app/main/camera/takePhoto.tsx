@@ -28,7 +28,7 @@ export default function Camera() {
 
   const [facing, setFacing] = useState<CameraType>('back');
   const [flash, setFlash] = useState<FlashMode>('off');
-  const [zoom, setZoom] = useState(0.1);
+  const [zoom, setZoom] = useState(0);
   const [permission, requestPermission] = useCameraPermissions();
   const [hasClicked, setHasClicked] = useState(false);
   const [photo, setPhoto] = useState<any>(null);
@@ -47,13 +47,22 @@ export default function Camera() {
       </Pressable>
     );
 
-  const toggleCameraFacing = () => setFacing((c) => (c === 'back' ? 'front' : 'back'));
+  const toggleCameraFacing = () => {
+    if (facing === 'back') {
+      setFacing('front');
+      setZoom(0);
+    } else {
+      setFacing('back');
+      setZoom(0.045);
+    }
+  };
   const toggleFlash = () => setFlash((c) => (c === 'off' ? 'on' : 'off'));
 
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const offsetX = event.nativeEvent.contentOffset.x;
     const normalizedScroll = Math.min(Math.max(1 - offsetX / 100, 0), 1);
     const zoomValue = normalizedScroll * 0.4;
+    console.log(zoomValue);
     setZoom(zoomValue);
   };
 
@@ -69,8 +78,7 @@ export default function Camera() {
       const takenPhoto = await cameraRef.current.takePictureAsync({
         quality: 1,
         base64: true,
-        exif: false,
-        mirror: facing === 'front',
+        exif: true,
       });
 
       setPhoto(takenPhoto);
@@ -119,6 +127,7 @@ export default function Camera() {
           flash={flash}
           zoom={zoom}
           ref={cameraRef}
+          mirror={facing === 'front'}
         />
         <Text className="absolute left-8 top-2 w-auto items-center justify-center rounded-lg bg-tethr-gray/80 px-3 py-2 text-white">
           {taskName}
