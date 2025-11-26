@@ -107,9 +107,9 @@ const ChooseTask = () => {
                     })
                   }>
                   <View
-                    className={`flex w-10/12 flex-col items-center bg-tethr-gray/50 ${roundedMap[getCardType(idx, filteredTasks.length)]} p-2`}>
+                    className={`flex w-10/12 self-center bg-tethr-gray/50 px-5 py-4 text-2xl text-white ${roundedMap[getCardType(idx, filteredTasks.length)]}`}>
                     <Text
-                      className={`${taskCompleted ? 'text-tethr-light-gray/20' : 'text-white'} text-lg`}>
+                      className={`${taskCompleted ? 'text-tethr-light-gray/20' : 'text-white'} font-semibold`}>
                       {task.task_name} {task.recurring ? '(Recurring)' : ''}{' '}
                       {taskCompleted ? '(Completed Today)' : ''}
                     </Text>

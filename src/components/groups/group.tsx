@@ -35,7 +35,7 @@ const Group = ({ group_id, group_name, current_points, total_tasks, photos }: Gr
   return (
     <View className="mx-4 h-72 w-72 rounded-md bg-tethr-gray p-4">
       <View className="flex flex-row justify-between">
-        <Text className="mb-4 text-3xl font-bold text-white">{group_name}</Text>
+        <Text className="mb-2 text-center text-4xl font-bold text-white">{group_name}</Text>
         <Text className="mt-1 items-center text-xl font-bold text-white/40">{current_points}</Text>
       </View>
       <View className="relative flex-1 items-center justify-center">

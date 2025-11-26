@@ -62,8 +62,7 @@ export default function Index() {
         const grouped = allGroups.map((group) => {
           const groupPhotos = allPhotos
             .filter((p) => p.groupId === group.group_id)
-            .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-            .slice(0, 3);
+            .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
           return {
             group_id: group.group_id,

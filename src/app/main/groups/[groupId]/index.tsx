@@ -109,8 +109,7 @@ const GroupPage = () => {
         </View>
         <TouchableOpacity
           onPress={() => {
-            router.back();
-            router.back();
+            router.navigate('/main'); // or '/main' depending on your route structure
           }}
           className="absolute left-0 top-0 h-full items-center justify-center pb-2 pl-8">
           <Entypo
@@ -126,21 +125,21 @@ const GroupPage = () => {
         data={photos}
         ListHeaderComponent={
           <View className="mx-auto w-10/12 pb-8">
-            <Text className="mb-6 mt-6 text-2xl font-bold text-white">{groupName}</Text>
-            <Text className="mb-6 mt-6 text-2xl font-bold text-white">Leaderboard</Text>
+            <Text className="text-center text-3xl font-bold text-white">{groupName}</Text>
+            <Text className="my-6 px-4 text-xl font-bold text-white">Leaderboard</Text>
             {users.length === 0 ? (
               <Text className="text-white/70">No leaderboard data yet.</Text>
             ) : (
               users.map(({ username, current_rank, current_points }, idx) => (
                 <View className="w-full items-center rounded-xl px-4" key={idx}>
                   <View
-                    className={`flex w-full flex-row items-center justify-between bg-tethr-gray/50 ${roundedMap[getCardType(idx, users.length)]} p-2`}>
+                    className={`flex w-full flex-row justify-between self-center bg-tethr-gray/50 px-5 py-4 text-2xl text-white ${roundedMap[getCardType(idx, users.length)]} p-2`}>
                     <Text
-                      className={`text-lg ${username === myUsername ? `text-tethr-purple` : `text-white`}`}>
+                      className={`font-semibold ${username === myUsername ? `text-tethr-purple` : `text-white`}`}>
                       {current_rank}. {username}
                     </Text>
                     <Text
-                      className={`text-lg font-semibold ${username === myUsername ? `text-tethr-purple` : `text-white`}`}>
+                      className={`font-semibold ${username === myUsername ? `text-tethr-purple` : `text-white`}`}>
                       {current_points} pts
                     </Text>
                   </View>
@@ -149,7 +148,7 @@ const GroupPage = () => {
             )}
 
             <View className="my-6 flex-row items-center justify-between">
-              <Text className="text-xl font-bold text-white">Tasks</Text>
+              <Text className="px-4 text-xl font-bold text-white">Tasks</Text>
               <Pressable
                 className="flex-row items-center px-4 py-2"
                 onPress={() => router.push(`/main/groups/${groupId}/createTask`)}>
@@ -160,8 +159,8 @@ const GroupPage = () => {
             {tasks.map((task, idx) => (
               <View className="w-full items-center rounded-xl px-4" key={idx}>
                 <View
-                  className={`flex w-full flex-row items-center justify-between bg-tethr-gray/50 ${roundedMap[getCardType(idx, tasks.length)]} p-2`}>
-                  <Text className="text-lg text-white">
+                  className={`flex w-full self-center bg-tethr-gray/50 px-5 py-4 text-2xl text-white ${roundedMap[getCardType(idx, tasks.length)]} p-2`}>
+                  <Text className="font-semibold text-white">
                     {task.task_name} {task.recurring ? '(Recurring)' : ''}
                   </Text>
                 </View>
