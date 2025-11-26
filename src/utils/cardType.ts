@@ -6,3 +6,10 @@ export function getCardType(index: number, total: number): CardType {
   if (index === total - 1) return 'bottom';
   return 'middle';
 }
+
+export const roundedMap: Record<CardType, string> = {
+  top: 'rounded-t-2xl',
+  middle: '',
+  bottom: 'rounded-b-2xl',
+  solo: 'rounded-2xl',
+};

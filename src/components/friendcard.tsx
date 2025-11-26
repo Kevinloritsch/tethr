@@ -1,4 +1,5 @@
 import { View, Image, Text, TouchableOpacity } from 'react-native';
+import { roundedMap } from '@/utils/cardType';
 type CardType = 'top' | 'middle' | 'bottom' | 'solo';
 
 export interface FriendProps {
@@ -18,13 +19,6 @@ const FriendCard = ({
   cardType,
   pressFunction,
 }: FriendProps) => {
-  const roundedMap: Record<CardType, string> = {
-    top: 'rounded-t-2xl',
-    middle: '',
-    bottom: 'rounded-b-2xl',
-    solo: 'rounded-2xl',
-  };
-
   const roundedClass = roundedMap[cardType];
   return (
     <View

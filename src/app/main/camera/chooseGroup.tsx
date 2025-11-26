@@ -9,6 +9,7 @@ import {
 import { router } from 'expo-router';
 import { getAllGroups } from '@/controllers/group';
 import { useEffect, useState } from 'react';
+import { getCardType, roundedMap } from '@/utils/cardType';
 
 import Tethr from '@/components/tethr';
 
@@ -68,20 +69,18 @@ const ChooseGroup = () => {
         {groups.length === 0 ? (
           <Text className="text-center text-white">You’re not in any groups yet.</Text>
         ) : (
-          <ScrollView showsHorizontalScrollIndicator={false}>
-            {groups.map((group) => (
+          <ScrollView showsHorizontalScrollIndicator={false} className="mt-4 w-full">
+            {groups.map((group, index) => (
               <Pressable
                 key={group.group_id}
-                className="mr-3 rounded-xl bg-tethr-gray/45 px-4 py-2"
+                className={`flex w-11/12 self-center bg-tethr-gray/50 px-5 py-4 text-2xl text-white ${roundedMap[getCardType(index, groups.length)]}`}
                 onPress={() =>
                   router.push({
                     pathname: '/main/camera/chooseTask',
                     params: { group_name: group.group_name, group_id: group.group_id },
                   })
                 }>
-                <View className="flex w-full flex-col items-center rounded-2xl bg-tethr-purple/70 p-2">
-                  <Text className="text-white">{group.group_name}</Text>
-                </View>
+                <Text className="font-semibold text-white">{group.group_name}</Text>
               </Pressable>
             ))}
           </ScrollView>
