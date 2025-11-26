@@ -29,7 +29,17 @@ const Groups = ({ groups }: GroupsProps) => {
         paddingHorizontal: 25,
       }}
       renderItem={({ item }) => (
-        <Pressable onPress={() => router.push(`/main/groups/${item.group_id}`)}>
+        <Pressable
+          onPress={() =>
+            router.push({
+              pathname: `/main/groups/${item.group_id}`,
+              params: {
+                group_name: item.group_name,
+                group_id: item.group_id,
+                photos: JSON.stringify(item.photos),
+              },
+            })
+          }>
           <Group
             group_id={item.group_id}
             group_name={item.group_name}

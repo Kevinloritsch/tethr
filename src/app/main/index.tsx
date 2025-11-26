@@ -21,6 +21,8 @@ interface GroupWithPhotos {
     name: string;
     publicUrl: string;
     createdAt: string;
+    username: string;
+    taskName: string;
   }[];
 }
 
@@ -72,6 +74,8 @@ export default function Index() {
               name: p.name,
               publicUrl: p.publicUrl,
               createdAt: p.createdAt,
+              username: p.username,
+              taskName: p.taskName,
             })),
           };
         });

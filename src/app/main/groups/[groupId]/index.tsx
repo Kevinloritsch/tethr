@@ -1,9 +1,17 @@
-import { View, Text, ScrollView, ActivityIndicator, Pressable } from 'react-native';
+import { View, Text, TouchableOpacity, ActivityIndicator, Pressable, FlatList } from 'react-native';
 import { useEffect, useState } from 'react';
 import { useLocalSearchParams, router } from 'expo-router';
 import { FontAwesome6 } from '@expo/vector-icons';
 import { taskController } from '@/controllers/tasks';
 import { groupController } from '@/controllers/group';
+
+import Fyp from '@/components/fyp';
+import Tethr from '@/components/tethr';
+import { getCardType, roundedMap } from '@/utils/cardType';
+
+import Entypo from '@expo/vector-icons/Entypo';
+
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface GroupUser {
   user_id: string;
@@ -17,11 +25,24 @@ interface Task {
   recurring: boolean;
 }
 
+interface Photo {
+  name: string;
+  publicUrl: string;
+  createdAt: string;
+  username: string;
+  taskName: string;
+}
+
 const GroupPage = () => {
-  const { groupId } = useLocalSearchParams<{ groupId: string }>();
+  const { group_id } = useLocalSearchParams();
+  const groupId = Array.isArray(group_id) ? group_id[0] : (group_id ?? '');
+  const { group_name } = useLocalSearchParams();
+  const groupName = Array.isArray(group_name) ? group_name[0] : (group_name ?? '');
   const [users, setUsers] = useState<GroupUser[]>([]);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
+  const [myUsername, setMyUsername] = useState('');
+  const [photos, setPhotos] = useState<Photo[]>([]);
 
   useEffect(() => {
     if (groupId) {
@@ -30,10 +51,29 @@ const GroupPage = () => {
     }
   }, [groupId]);
 
+  const params = useLocalSearchParams();
+
+  useEffect(() => {
+    try {
+      const photosParam = params.photos;
+      if (typeof photosParam === 'string') {
+        const parsedPhotos = JSON.parse(photosParam);
+        setPhotos(parsedPhotos);
+      }
+    } catch (error) {
+      console.error('Error parsing photos:', error);
+      setPhotos([]);
+    } finally {
+      setLoading(false);
+    }
+  }, [params.photos]);
+
   const fetchGroupUsers = async (groupId: string) => {
     try {
       setLoading(true);
       const leaderboard = await groupController.getLeaderboardData(groupId);
+      const storedUsername = await AsyncStorage.getItem('currentUserName');
+      if (storedUsername) setMyUsername(storedUsername);
 
       if (!leaderboard || leaderboard.length === 0) {
         console.log('No leaderboard data found.');
@@ -62,47 +102,94 @@ const GroupPage = () => {
   }
 
   return (
-    <ScrollView className="flex-1 bg-black px-4 pt-12">
-      <Text className="mb-6 text-2xl font-bold text-white">Group Members</Text>
-      {users.map(({ username, user_id }) => (
-        <View key={user_id} className="mb-3 rounded-xl bg-tethr-gray/45 px-4 py-2">
-          <Text className="text-lg text-white">{username}</Text>
+    <View className="mx-auto w-full flex-1 flex-col justify-center bg-black pt-8">
+      <View className="relative h-[10vh] w-full items-center">
+        <View className="absolute left-0 right-0 top-0 items-center">
+          <Tethr side="center" />
         </View>
-      ))}
-
-      <Text className="mb-6 mt-6 text-2xl font-bold text-white">Leaderboard</Text>
-      {users.length === 0 ? (
-        <Text className="text-white/70">No leaderboard data yet.</Text>
-      ) : (
-        users.map(({ username, user_id, current_rank, current_points }) => (
-          <View
-            key={user_id}
-            className="mb-3 flex-row items-center justify-between rounded-xl bg-tethr-gray/45 px-4 py-2">
-            <Text className="text-lg text-white">
-              {current_rank}. {username}
-            </Text>
-            <Text className="text-lg font-semibold text-white">{current_points} pts</Text>
-          </View>
-        ))
-      )}
-
-      <View className="my-6 flex-row items-center justify-between">
-        <Text className="text-xl font-bold text-white">Tasks</Text>
-        <Pressable
-          className="flex-row items-center px-4 py-2"
-          onPress={() => router.push(`/main/groups/${groupId}/createTask`)}>
-          <FontAwesome6 name="plus" size={16} color="white" />
-        </Pressable>
+        <TouchableOpacity
+          onPress={() => {
+            router.back();
+            router.back();
+          }}
+          className="absolute left-0 top-0 h-full items-center justify-center pb-2 pl-8">
+          <Entypo
+            name="chevron-left"
+            size={24}
+            color="#000000"
+            backgroundColor="#A597FF"
+            className="rounded-lg px-2"
+          />
+        </TouchableOpacity>
       </View>
+      <FlatList
+        data={photos}
+        ListHeaderComponent={
+          <View className="mx-auto w-10/12 pb-8">
+            <Text className="mb-6 mt-6 text-2xl font-bold text-white">{groupName}</Text>
+            <Text className="mb-6 mt-6 text-2xl font-bold text-white">Leaderboard</Text>
+            {users.length === 0 ? (
+              <Text className="text-white/70">No leaderboard data yet.</Text>
+            ) : (
+              users.map(({ username, current_rank, current_points }, idx) => (
+                <View className="w-full items-center rounded-xl px-4" key={idx}>
+                  <View
+                    className={`flex w-full flex-row items-center justify-between bg-tethr-gray/50 ${roundedMap[getCardType(idx, users.length)]} p-2`}>
+                    <Text
+                      className={`text-lg ${username === myUsername ? `text-tethr-purple` : `text-white`}`}>
+                      {current_rank}. {username}
+                    </Text>
+                    <Text
+                      className={`text-lg font-semibold ${username === myUsername ? `text-tethr-purple` : `text-white`}`}>
+                      {current_points} pts
+                    </Text>
+                  </View>
+                </View>
+              ))
+            )}
 
-      {tasks.map((task, idx) => (
-        <View key={idx} className="mb-3 rounded-xl bg-tethr-gray/45 px-4 py-2">
-          <Text className="text-lg text-white">
-            {task.task_name} {task.recurring ? '(Recurring)' : ''}
-          </Text>
-        </View>
-      ))}
-    </ScrollView>
+            <View className="my-6 flex-row items-center justify-between">
+              <Text className="text-xl font-bold text-white">Tasks</Text>
+              <Pressable
+                className="flex-row items-center px-4 py-2"
+                onPress={() => router.push(`/main/groups/${groupId}/createTask`)}>
+                <FontAwesome6 name="plus" size={16} color="white" />
+              </Pressable>
+            </View>
+
+            {tasks.map((task, idx) => (
+              <View className="w-full items-center rounded-xl px-4" key={idx}>
+                <View
+                  className={`flex w-full flex-row items-center justify-between bg-tethr-gray/50 ${roundedMap[getCardType(idx, tasks.length)]} p-2`}>
+                  <Text className="text-lg text-white">
+                    {task.task_name} {task.recurring ? '(Recurring)' : ''}
+                  </Text>
+                </View>
+              </View>
+            ))}
+          </View>
+        }
+        keyExtractor={(item) => item.name}
+        renderItem={({ item }) => (
+          <View className="mx-auto justify-center pb-6">
+            <Fyp
+              publicUrl={item.publicUrl}
+              taskName={item.taskName}
+              userId={item.username}
+              groupId={params.group_name as string}
+            />
+          </View>
+        )}
+        contentContainerStyle={{
+          justifyContent: photos.length === 0 ? 'center' : undefined,
+          alignItems: photos.length === 0 ? 'center' : undefined,
+          paddingBottom: 80,
+        }}
+        ListEmptyComponent={
+          <Text className="px-4 text-center text-white">No photos in this group yet.</Text>
+        }
+      />
+    </View>
   );
 };
 
