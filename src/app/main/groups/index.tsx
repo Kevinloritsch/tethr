@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import { useEffect, useState, useMemo } from 'react';
 import { FontAwesome6 } from '@expo/vector-icons';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { getAllGroups } from '@/controllers/group';
 
 import Tethr from '@/components/tethr';
@@ -22,7 +22,31 @@ interface Group {
   group_name: string;
 }
 
+interface GroupWithPhotos {
+  group_id: string;
+  group_name: string;
+  current_points: number;
+  total_tasks: number;
+  photos: {
+    name: string;
+    publicUrl: string;
+    createdAt: string;
+    username: string;
+    taskName: string;
+  }[];
+}
+
 const Index = () => {
+  const { data } = useLocalSearchParams();
+
+  let parsedObject: GroupWithPhotos[] = [];
+
+  if (Array.isArray(data)) {
+    parsedObject = JSON.parse(data[0]);
+  } else if (typeof data === 'string') {
+    parsedObject = JSON.parse(data);
+  }
+
   const [groups, setGroups] = useState<Group[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
@@ -87,18 +111,27 @@ const Index = () => {
         <SearchBar placeholder="Search groups..." onSearch={setSearchQuery} value={searchQuery} />
       </View>
 
-      {filteredGroups.length === 0 ? (
+      {parsedObject.length === 0 ? (
         <Text className="text-center text-xl text-white">
           {searchQuery ? 'No groups found.' : "You're not in any groups yet."}
         </Text>
       ) : (
         <ScrollView showsHorizontalScrollIndicator={false}>
-          {filteredGroups.map((group, index) => {
+          {parsedObject.map((group: GroupWithPhotos, index: number) => {
             return (
               <TouchableOpacity
                 key={group.group_id}
                 className={`flex w-10/12 self-center bg-tethr-gray/50 px-5 py-4 text-2xl text-white ${roundedMap[getCardType(index, filteredGroups.length)]}`}
-                onPress={() => router.push(`/main/groups/${group.group_id}`)}>
+                onPress={() =>
+                  router.push({
+                    pathname: `/main/groups/${group.group_id}`,
+                    params: {
+                      group_name: group.group_name,
+                      group_id: group.group_id,
+                      photos: JSON.stringify(group.photos),
+                    },
+                  })
+                }>
                 <Text className="font-semibold text-white">
                   {group.group_name || 'Unnamed Group'}
                 </Text>
