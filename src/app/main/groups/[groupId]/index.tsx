@@ -124,7 +124,7 @@ const GroupPage = () => {
         <TouchableOpacity
           onPress={() => {
             if (hasReturn) {
-              router.navigate('/main');
+              router.navigate('/');
             } else {
               router.back();
             }
@@ -175,7 +175,7 @@ const GroupPage = () => {
                     params: {
                       groupId: groupId,
                       groupName: groupName,
-                      photos: JSON.stringify(photos), // Pass photos back
+                      photos: JSON.stringify(photos),
                     },
                   })
                 }>
@@ -198,6 +198,7 @@ const GroupPage = () => {
                         group_name: group_name,
                         group_id: group_id,
                         task_name: task.task_name,
+                        return_state: 'group',
                       },
                     })
                   }>

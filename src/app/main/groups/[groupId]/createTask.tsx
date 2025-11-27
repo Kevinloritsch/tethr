@@ -61,6 +61,7 @@ const CreateTask = () => {
           group_id: groupId,
           group_name: groupName,
           photos: photos,
+          return_state: 'main',
         },
       });
     } else {

@@ -28,6 +28,7 @@ export default function Camera() {
 
   const { return_state } = useLocalSearchParams();
   const hasReturn = return_state ? true : false;
+  const returnToGroup = return_state !== 'main' ? true : false;
 
   const [facing, setFacing] = useState<CameraType>('back');
   const [flash, setFlash] = useState<FlashMode>('off');
@@ -113,7 +114,14 @@ export default function Camera() {
           onPress={() => {
             if (hasReturn) {
               router.dismissAll();
-              router.navigate('/main');
+              if (returnToGroup)
+                router.navigate({
+                  pathname: `/main/groups/${groupId}`,
+                  params: {
+                    return_state: 'main',
+                  },
+                });
+              else router.navigate('/main');
             } else router.back();
           }}
           className="absolute left-0 top-0 h-full items-center justify-center pb-2 pl-8">
