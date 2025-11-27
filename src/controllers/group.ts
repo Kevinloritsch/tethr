@@ -145,6 +145,40 @@ class GroupController {
       return false;
     }
   }
+  async createGroup(group_name: string, user_id: string) {
+    try {
+      const { data: group, error: groupError } = await supabase
+        .from('groups')
+        .insert([{ group_name }])
+        .select()
+        .single();
+
+      if (groupError) {
+        console.error('Error creating group:', groupError);
+        return { success: false, message: groupError.message };
+      }
+
+      console.log('Group created:', group);
+
+      const { error: isPartOfError } = await supabase.from('ispartof').insert([
+        {
+          user_id: user_id,
+          group_id: group.group_id,
+          current_points: 0,
+        },
+      ]);
+
+      if (isPartOfError) {
+        console.error('Error inserting into ispartof:', isPartOfError);
+        return { success: false, message: isPartOfError.message };
+      }
+
+      return { success: true, data: group };
+    } catch (err) {
+      console.error('Unexpected error:', err);
+      return { success: false, message: 'Unexpected error occurred.' };
+    }
+  }
 }
 
 export const groupController = new GroupController();

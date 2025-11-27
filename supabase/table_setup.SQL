@@ -161,6 +161,14 @@ USING (
   )
 );
 
+create policy "Members can create groups"
+on public.groups
+to public
+FOR INSERT
+with check (
+  (auth.uid() IS NOT NULL)
+);
+
 
 create table public.hasCompleted (
   user_id uuid not null references public.users(user_id),
