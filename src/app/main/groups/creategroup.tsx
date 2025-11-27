@@ -83,7 +83,7 @@ const CreateGroup = () => {
                 <FontAwesome6
                   name={selected ? 'check-circle' : 'circle'}
                   size={20}
-                  color={selected ? '#8b5cf6' : 'white'}
+                  color={selected ? '#A597FF' : '#fff'}
                 />
               </Pressable>
             );
