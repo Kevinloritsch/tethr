@@ -29,6 +29,7 @@ export default function Camera() {
   const { return_state } = useLocalSearchParams();
   const hasReturn = return_state ? true : false;
   const returnToGroup = return_state !== 'main' ? true : false;
+  const { photos } = useLocalSearchParams();
 
   const [facing, setFacing] = useState<CameraType>('back');
   const [flash, setFlash] = useState<FlashMode>('off');
@@ -115,10 +116,13 @@ export default function Camera() {
             if (hasReturn) {
               router.dismissAll();
               if (returnToGroup)
-                router.navigate({
+                router.replace({
                   pathname: `/main/groups/${groupId}`,
                   params: {
+                    group_id: groupId,
+                    group_name: groupName,
                     return_state: 'main',
+                    photos: photos,
                   },
                 });
               else router.navigate('/main');
