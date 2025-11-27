@@ -51,7 +51,7 @@ const CreateGroup = () => {
   };
 
   return (
-    <View className="min-h-screen bg-black pt-8">
+    <View className="flex-1 bg-black pt-8">
       <Tethr side="left" />
 
       <View className="flex items-center pt-8">
