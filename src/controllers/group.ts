@@ -145,7 +145,7 @@ class GroupController {
       return false;
     }
   }
-  async createGroup(group_name: string, user_id: string) {
+  async createGroup(group_name: string, user_id: string, friendIds: string[] = []) {
     try {
       const { data: group, error: groupError } = await supabase
         .from('groups')
@@ -160,13 +160,20 @@ class GroupController {
 
       console.log('Group created:', group);
 
-      const { error: isPartOfError } = await supabase.from('ispartof').insert([
+      const membersToInsert = [
         {
           user_id: user_id,
           group_id: group.group_id,
           current_points: 0,
         },
-      ]);
+        ...friendIds.map((fid) => ({
+          user_id: fid,
+          group_id: group.group_id,
+          current_points: 0,
+        })),
+      ];
+
+      const { error: isPartOfError } = await supabase.from('ispartof').insert(membersToInsert);
 
       if (isPartOfError) {
         console.error('Error inserting into ispartof:', isPartOfError);
@@ -176,7 +183,10 @@ class GroupController {
       return { success: true, data: group };
     } catch (err) {
       console.error('Unexpected error:', err);
-      return { success: false, message: 'Unexpected error occurred.' };
+      return {
+        success: false,
+        message: 'Unexpected error occurred.',
+      };
     }
   }
 }
