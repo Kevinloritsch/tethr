@@ -71,9 +71,20 @@
     ],
     "moduleNameMapper": {
       "react-native-reanimated": "<rootDir>/__mocks__/react-native-reanimated.js",
-      "react-native-worklets": "<rootDir>/__mocks__/react-native-worklets.js"
+      "react-native-worklets": "<rootDir>/__mocks__/react-native-worklets.js",
+      "\\.(css|less|scss|sass)$": "<rootDir>/__mocks__/styleMock.js",
+      "\\.(png|jpg|jpeg|gif|svg)$": "<rootDir>/__mocks__/fileMock.js"
     },
-    "testEnvironment": "jsdom"
+    "testEnvironment": "jsdom",
+    "collectCoverage": true,
+    "collectCoverageFrom": [
+      "**/*.{ts,tsx,js,jsx}",
+      "!**/coverage/**",
+      "!**/node_modules/**",
+      "!**/babel.config.js",
+      "!**/expo-env.d.ts",
+      "!**/.expo/**"
+    ]
   },
   "private": true
 }
