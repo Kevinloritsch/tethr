@@ -112,6 +112,7 @@ export default function Camera() {
         <TouchableOpacity
           onPress={() => {
             if (hasReturn) {
+              // router.back();
               router.dismissAll();
               router.navigate('/main');
             } else router.back();

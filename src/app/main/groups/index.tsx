@@ -51,7 +51,7 @@ const Index = () => {
           <Tethr side="center" />
         </View>
         <TouchableOpacity
-          onPress={() => router.back()}
+          onPress={() => router.navigate('/main')}
           className="absolute left-0 top-0 h-full items-center justify-center pb-2 pl-8">
           <Entypo
             name="chevron-left"

@@ -38,6 +38,8 @@ const GroupPage = () => {
   const groupId = Array.isArray(group_id) ? group_id[0] : (group_id ?? '');
   const { group_name } = useLocalSearchParams();
   const groupName = Array.isArray(group_name) ? group_name[0] : (group_name ?? '');
+  const { return_state } = useLocalSearchParams();
+  const hasReturn = return_state ? true : false;
   const [users, setUsers] = useState<GroupUser[]>([]);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
@@ -109,7 +111,11 @@ const GroupPage = () => {
         </View>
         <TouchableOpacity
           onPress={() => {
-            router.navigate('/main');
+            if (hasReturn) {
+              router.navigate('/main');
+            } else {
+              router.back();
+            }
           }}
           className="absolute left-0 top-0 h-full items-center justify-center pb-2 pl-8">
           <Entypo

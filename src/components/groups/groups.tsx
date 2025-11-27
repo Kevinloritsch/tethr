@@ -37,6 +37,7 @@ const Groups = ({ groups }: GroupsProps) => {
                 group_name: item.group_name,
                 group_id: item.group_id,
                 photos: JSON.stringify(item.photos),
+                return_state: 'main',
               },
             })
           }>

@@ -63,13 +63,13 @@ const Group = ({ group_id, group_name, current_points, total_tasks, photos }: Gr
             )}
           </>
         ) : (
-          <View className="flex-1 items-center justify-center">
-            <Text className="text-white/60">No photos yet</Text>
-          </View>
+          <Text className="absolute left-0 text-white/60">No photos yet</Text>
         )}
 
         <View className="absolute right-0 text-3xl font-bold text-white">
-          <CircleProgress percentage={(completedTasks / total_tasks) * 100} />
+          <CircleProgress
+            percentage={total_tasks === 0 ? 0 : (completedTasks / total_tasks) * 100}
+          />
         </View>
       </View>
     </View>
