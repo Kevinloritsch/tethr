@@ -5,6 +5,7 @@ export default function CameraLayout() {
     <Stack
       screenOptions={{
         headerShown: false,
+        gestureEnabled: false,
       }}>
       <Stack.Screen name="chooseGroup" />
       <Stack.Screen name="chooseTask" />

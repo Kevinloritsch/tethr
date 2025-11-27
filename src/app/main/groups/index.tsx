@@ -1,15 +1,7 @@
-import {
-  View,
-  Pressable,
-  Text,
-  ScrollView,
-  ActivityIndicator,
-  TouchableOpacity,
-} from 'react-native';
-import { useEffect, useState, useMemo } from 'react';
+import { View, Pressable, Text, ScrollView, TouchableOpacity } from 'react-native';
+import { useState, useMemo } from 'react';
 import { FontAwesome6 } from '@expo/vector-icons';
-import { router } from 'expo-router';
-import { getAllGroups } from '@/controllers/group';
+import { router, useLocalSearchParams } from 'expo-router';
 
 import Tethr from '@/components/tethr';
 import SearchBar from '@/components/searchbar';
@@ -17,45 +9,40 @@ import { getCardType, roundedMap } from '@/utils/cardType';
 
 import Entypo from '@expo/vector-icons/Entypo';
 
-interface Group {
+interface GroupWithPhotos {
   group_id: string;
   group_name: string;
+  current_points: number;
+  total_tasks: number;
+  photos: {
+    name: string;
+    publicUrl: string;
+    createdAt: string;
+    username: string;
+    taskName: string;
+  }[];
 }
 
 const Index = () => {
-  const [groups, setGroups] = useState<Group[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data } = useLocalSearchParams();
+
+  const parsedObject: GroupWithPhotos[] = useMemo(() => {
+    if (Array.isArray(data)) {
+      return JSON.parse(data[0]);
+    } else if (typeof data === 'string') {
+      return JSON.parse(data);
+    }
+    return [];
+  }, [data]);
+
   const [searchQuery, setSearchQuery] = useState('');
 
-  useEffect(() => {
-    fetchGroupData();
-  }, []);
-
-  const fetchGroupData = async () => {
-    try {
-      const allGroups = await getAllGroups.fetchUserData();
-      setGroups(allGroups);
-    } catch (err) {
-      console.error('Unexpected error fetching data:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const filteredGroups = useMemo(() => {
-    if (!searchQuery.trim()) return groups;
+    if (!searchQuery.trim()) return parsedObject;
 
     const lowerQuery = searchQuery.toLowerCase();
-    return groups.filter((group) => group.group_name.toLowerCase().includes(lowerQuery));
-  }, [groups, searchQuery]);
-
-  if (loading) {
-    return (
-      <View className="flex-1 items-center justify-center bg-black">
-        <ActivityIndicator size="large" color="white" />
-      </View>
-    );
-  }
+    return parsedObject.filter((group) => group.group_name.toLowerCase().includes(lowerQuery));
+  }, [parsedObject, searchQuery]);
 
   return (
     <View className="flex-1 bg-black pt-8">
@@ -64,7 +51,7 @@ const Index = () => {
           <Tethr side="center" />
         </View>
         <TouchableOpacity
-          onPress={() => router.back()}
+          onPress={() => router.navigate('/main')}
           className="absolute left-0 top-0 h-full items-center justify-center pb-2 pl-8">
           <Entypo
             name="chevron-left"
@@ -93,12 +80,21 @@ const Index = () => {
         </Text>
       ) : (
         <ScrollView showsHorizontalScrollIndicator={false}>
-          {filteredGroups.map((group, index) => {
+          {filteredGroups.map((group: GroupWithPhotos, index: number) => {
             return (
               <TouchableOpacity
                 key={group.group_id}
                 className={`flex w-10/12 self-center bg-tethr-gray/50 px-5 py-4 text-2xl text-white ${roundedMap[getCardType(index, filteredGroups.length)]}`}
-                onPress={() => router.push(`/main/groups/${group.group_id}`)}>
+                onPress={() =>
+                  router.push({
+                    pathname: `/main/groups/${group.group_id}`,
+                    params: {
+                      group_name: group.group_name,
+                      group_id: group.group_id,
+                      photos: JSON.stringify(group.photos),
+                    },
+                  })
+                }>
                 <Text className="font-semibold text-white">
                   {group.group_name || 'Unnamed Group'}
                 </Text>

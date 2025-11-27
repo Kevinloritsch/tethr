@@ -1,5 +1,7 @@
 import { supabase } from '@/lib/supabase';
 import { User } from '@supabase/supabase-js';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 export interface ProfileProps {
   username: string;
   pfpurl: string;
@@ -48,6 +50,8 @@ class UserController {
     );
     const uniqueFriends = [...new Set(friendIds)];
     friendCount = uniqueFriends.length;
+
+    await AsyncStorage.setItem('currentUserName', profileData?.username ?? '');
 
     return {
       username: profileData?.username ?? 'Unknown',

@@ -19,8 +19,12 @@ const Profile = ({ username, pfpurl, fullName, numCompletedTasks, numFriends }: 
         }}>
         <Feather name="edit-2" size={20} color="white" />
       </Pressable>
-      <Text className="text-white/70">{numFriends} friends</Text>
-      <Text className="text-white/70">{numCompletedTasks} tasks completed</Text>
+      <Text className="text-white/70">
+        {numFriends} {numFriends === 1 ? 'friend' : 'friends'}
+      </Text>
+      <Text className="text-white/70">
+        {numCompletedTasks} {numCompletedTasks === 1 ? 'task' : 'tasks'} completed
+      </Text>
     </View>
   );
 };

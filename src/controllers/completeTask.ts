@@ -7,8 +7,8 @@ export const completedTasksController = {
       const lastDate = await AsyncStorage.getItem('lastTaskDate');
 
       if (lastDate !== today) {
-        await AsyncStorage.removeItem('completedTasks');
         await AsyncStorage.setItem('lastTaskDate', today);
+        await AsyncStorage.setItem('completedTasks', JSON.stringify([]));
       }
 
       const stored = await AsyncStorage.getItem('completedTasks');
@@ -33,8 +33,9 @@ export const completedTasksController = {
       const lastDate = await AsyncStorage.getItem('lastTaskDate');
 
       if (lastDate !== today) {
-        await AsyncStorage.removeItem('completedTasks');
         await AsyncStorage.setItem('lastTaskDate', today);
+        await AsyncStorage.setItem('completedTasks', JSON.stringify([]));
+
         return [];
       }
 

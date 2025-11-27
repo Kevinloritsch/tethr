@@ -28,6 +28,8 @@ export default function Camera() {
 
   const { return_state } = useLocalSearchParams();
   const hasReturn = return_state ? true : false;
+  const returnToGroup = return_state !== 'main' ? true : false;
+  const { photos } = useLocalSearchParams();
 
   const [facing, setFacing] = useState<CameraType>('back');
   const [flash, setFlash] = useState<FlashMode>('off');
@@ -112,7 +114,18 @@ export default function Camera() {
         <TouchableOpacity
           onPress={() => {
             if (hasReturn) {
-              router.replace('/');
+              router.dismissAll();
+              if (returnToGroup)
+                router.replace({
+                  pathname: `/main/groups/${groupId}`,
+                  params: {
+                    group_id: groupId,
+                    group_name: groupName,
+                    return_state: 'main',
+                    photos: photos,
+                  },
+                });
+              else router.navigate('/main');
             } else router.back();
           }}
           className="absolute left-0 top-0 h-full items-center justify-center pb-2 pl-8">

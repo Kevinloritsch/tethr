@@ -1,12 +1,4 @@
-import {
-  View,
-  Text,
-  ActivityIndicator,
-  Pressable,
-  TextInput,
-  Alert,
-  TouchableOpacity,
-} from 'react-native';
+import { View, Text, ActivityIndicator, TextInput, Alert, TouchableOpacity } from 'react-native';
 import { useState, useCallback, useEffect } from 'react';
 import { userController } from '@/controllers/userInfo';
 import { useRouter } from 'expo-router';
@@ -104,11 +96,11 @@ export default function EditProfile() {
         placeholder="Enter full name"
         placeholderTextColor="#777"
       />
-      <Pressable
+      <TouchableOpacity
         className="mt-5 w-1/2 items-center rounded-xl bg-tethr-purple/40 py-2"
         onPress={handleSave}>
         <Text className="text-lg text-white">Save Changes</Text>
-      </Pressable>
+      </TouchableOpacity>
     </View>
   );
 }
