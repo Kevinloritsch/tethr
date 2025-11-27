@@ -1,4 +1,4 @@
-import { View, TextInput, Text, Pressable, ScrollView } from 'react-native';
+import { View, TextInput, Text, Pressable, ScrollView, Image } from 'react-native';
 import { useState, useEffect } from 'react';
 import Tethr from '@/components/tethr';
 import { FontAwesome6 } from '@expo/vector-icons';
@@ -69,16 +69,20 @@ const CreateGroup = () => {
 
       <View className="mt-6 flex items-center">
         <Text className="mb-2 text-lg font-semibold text-white">Select Friends to Add</Text>
+
         <ScrollView className="max-h-[300px] w-3/4">
-          {friends.map((f) => {
-            const selected = selectedFriendIds.includes(f.userId);
+          {friends.map(({ userId, pfpUrl, username }) => {
+            const selected = selectedFriendIds.includes(userId);
 
             return (
               <Pressable
-                key={f.userId}
-                onPress={() => toggleSelect(f.userId)}
+                key={userId}
+                onPress={() => toggleSelect(userId)}
                 className="my-2 flex-row items-center justify-between rounded-xl bg-tethr-gray px-4 py-3">
-                <Text className="text-white">{f.username}</Text>
+                <View className="flex-row items-center">
+                  <Image source={{ uri: pfpUrl }} className="mr-3 h-10 w-10 rounded-full" />
+                  <Text className="text-white">{username}</Text>
+                </View>
 
                 <FontAwesome6
                   name={selected ? 'check-circle' : 'circle'}
