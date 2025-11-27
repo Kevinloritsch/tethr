@@ -31,7 +31,7 @@ const Groups = ({ groups }: GroupsProps) => {
       renderItem={({ item }) => (
         <Pressable
           onPress={() =>
-            router.push({
+            router.replace({
               pathname: `/main/groups/${item.group_id}`,
               params: {
                 group_name: item.group_name,
