@@ -189,6 +189,67 @@ class GroupController {
       };
     }
   }
+  async leaveGroup(userId: string, groupId: string) {
+    // if anyone's trying to understand this the basic logic here is check how many members are in a group,
+    // if i am the sole member, delete the group row and ispartof row. if not, then just delete ispartof row
+    try {
+      const { data: members, error: memberError } = await supabase
+        .from('ispartof')
+        .select('user_id')
+        .eq('group_id', groupId);
+
+      if (memberError) {
+        console.error('Error checking group members:', memberError);
+        return { success: false, message: memberError.message };
+      }
+
+      if (!members) {
+        return { success: false, message: 'Unable to fetch group members.' };
+      }
+      const memberCount = members.length;
+
+      if (memberCount === 1) {
+        console.log('User is the only member. Deleting group...');
+
+        const { error: deleteMembershipError } = await supabase
+          .from('ispartof')
+          .delete()
+          .eq('user_id', userId)
+          .eq('group_id', groupId);
+
+        if (deleteMembershipError) {
+          console.error('Error deleting membership:', deleteMembershipError);
+          return { success: false, message: deleteMembershipError.message };
+        }
+        const { error: deleteGroupError } = await supabase
+          .from('groups')
+          .delete()
+          .eq('group_id', groupId);
+
+        if (deleteGroupError) {
+          console.error('Error deleting group:', deleteGroupError);
+          return { success: false, message: deleteGroupError.message };
+        }
+
+        return { success: true, message: 'Group deleted because you were the only member.' };
+      }
+
+      const { error: removeUserError } = await supabase
+        .from('ispartof')
+        .delete()
+        .eq('user_id', userId)
+        .eq('group_id', groupId);
+
+      if (removeUserError) {
+        console.error('Error removing user:', removeUserError);
+        return { success: false, message: removeUserError.message };
+      }
+
+      return { success: true, message: 'Left group successfully.' };
+    } catch (err) {
+      console.error('Error leaving group:', err);
+    }
+  }
 }
 
 export const groupController = new GroupController();

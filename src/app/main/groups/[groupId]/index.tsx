@@ -4,7 +4,7 @@ import { useLocalSearchParams, router } from 'expo-router';
 import { FontAwesome6 } from '@expo/vector-icons';
 import { taskController } from '@/controllers/tasks';
 import { groupController } from '@/controllers/group';
-
+import { supabase } from '@/lib/supabase';
 interface GroupUser {
   user_id: string;
   username: string;
@@ -22,11 +22,12 @@ const GroupPage = () => {
   const [users, setUsers] = useState<GroupUser[]>([]);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
-
+  const [groupName, setGroupName] = useState<string | null>('Unnamed Group');
   useEffect(() => {
     if (groupId) {
       fetchGroupUsers(groupId);
       fetchGroupTasks(groupId);
+      fetchGroupName(groupId);
     }
   }, [groupId]);
 
@@ -48,9 +49,32 @@ const GroupPage = () => {
     }
   };
 
+  const fetchGroupName = async (groupId: string) => {
+    const data = await groupController.getGroupName(groupId);
+    setGroupName(data);
+  };
+
   const fetchGroupTasks = async (groupId: string) => {
     const data = await taskController.getTasksForGroup([{ group_id: groupId, group_name: '' }]);
     setTasks(data);
+  };
+
+  const leaveGroup = async () => {
+    const { data: session } = await supabase.auth.getSession();
+    const userId = session?.session?.user?.id;
+
+    if (!userId || !groupId) {
+      console.error('Missing user or group ID');
+      return;
+    }
+
+    const result = await groupController.leaveGroup(userId, groupId);
+    if (!result) return;
+    if (result.success) {
+      router.replace('/main/groups');
+    } else {
+      console.error('Failed to leave group:', result.message);
+    }
   };
 
   if (loading) {
@@ -63,13 +87,20 @@ const GroupPage = () => {
 
   return (
     <ScrollView className="flex-1 bg-black px-4 pt-12">
+      <View className="flex-row items-center justify-between pt-4">
+        <Text className="text-3xl font-bold leading-none text-white">{groupName}</Text>
+        <Pressable className="rounded-3xl bg-tethr-purple/40 px-4 py-2" onPress={leaveGroup}>
+          <Text className="text-white">Leave Group</Text>
+        </Pressable>
+      </View>
+      {/* We can keep  this here but commented out for debugging purposes if we ever need to fetch a list of group members but it's not in the figma
+      
       <Text className="mb-6 text-2xl font-bold text-white">Group Members</Text>
       {users.map(({ username, user_id }) => (
         <View key={user_id} className="mb-3 rounded-xl bg-tethr-gray/45 px-4 py-2">
           <Text className="text-lg text-white">{username}</Text>
         </View>
-      ))}
-
+      ))} */}
       <Text className="mb-6 mt-6 text-2xl font-bold text-white">Leaderboard</Text>
       {users.length === 0 ? (
         <Text className="text-white/70">No leaderboard data yet.</Text>
