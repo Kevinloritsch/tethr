@@ -93,13 +93,15 @@ const PhotoPreview = ({
       </View>
 
       <View className="h-[10vh] flex-row items-center justify-end pr-8">
-        <View className="flex flex-row items-center">
+        <TouchableOpacity
+          onPress={handleUpload}
+          disabled={uploading}
+          className="flex flex-row items-center">
           <Text className="pr-2 text-xl font-bold text-white">Post To</Text>
           <Text className="text-xl font-bold text-tethr-purple">{group_name}</Text>
-          <TouchableOpacity onPress={handleUpload} disabled={uploading}>
-            <MaterialCommunityIcons name="chevron-right" size={36} color="white" />
-          </TouchableOpacity>
-        </View>
+
+          <MaterialCommunityIcons name="chevron-right" size={36} color="white" />
+        </TouchableOpacity>
       </View>
     </View>
   );

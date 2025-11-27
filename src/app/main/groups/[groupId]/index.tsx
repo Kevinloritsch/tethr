@@ -4,6 +4,7 @@ import { useLocalSearchParams, router } from 'expo-router';
 import { FontAwesome6 } from '@expo/vector-icons';
 import { taskController } from '@/controllers/tasks';
 import { groupController } from '@/controllers/group';
+import { completedTasksController } from '@/controllers/completeTask';
 
 import Fyp from '@/components/fyp';
 import Tethr from '@/components/tethr';
@@ -45,11 +46,17 @@ const GroupPage = () => {
   const [loading, setLoading] = useState(true);
   const [myUsername, setMyUsername] = useState('');
   const [photos, setPhotos] = useState<Photo[]>([]);
+  const [completedTasks, setCompletedTasks] = useState<string[]>([]);
 
   useEffect(() => {
     if (groupId) {
       fetchGroupUsers(groupId);
       fetchGroupTasks(groupId);
+      const loadCompletedTasks = async () => {
+        const completed = await completedTasksController.getTasks();
+        setCompletedTasks(completed);
+      };
+      loadCompletedTasks();
     }
   }, [groupId]);
 
@@ -93,6 +100,11 @@ const GroupPage = () => {
   const fetchGroupTasks = async (groupId: string) => {
     const data = await taskController.getTasksForGroup([{ group_id: groupId, group_name: '' }]);
     setTasks(data);
+  };
+
+  const isCompleted = (taskName: string, groupId: string) => {
+    const taskKey = `${groupId}-${taskName}`;
+    return completedTasks.includes(taskKey);
   };
 
   if (loading) {
@@ -139,7 +151,7 @@ const GroupPage = () => {
               users.map(({ username, current_rank, current_points }, idx) => (
                 <View className="w-full items-center rounded-xl" key={idx}>
                   <View
-                    className={`flex w-full flex-row justify-between self-center bg-tethr-gray/50 py-4 text-2xl text-white ${roundedMap[getCardType(idx, users.length)]} p-2`}>
+                    className={`flex w-full flex-row justify-between bg-tethr-gray/50 py-4 text-2xl text-white ${roundedMap[getCardType(idx, users.length)]} p-2`}>
                     <Text
                       className={`font-semibold ${username === myUsername ? `text-tethr-purple` : `text-white`}`}>
                       {current_rank}. {username}
@@ -157,21 +169,49 @@ const GroupPage = () => {
               <Text className="text-xl font-bold text-white">Tasks</Text>
               <Pressable
                 className="flex-row items-center py-2"
-                onPress={() => router.push(`/main/groups/${groupId}/createTask`)}>
+                onPress={() =>
+                  router.push({
+                    pathname: `/main/groups/${groupId}/createTask`,
+                    params: {
+                      groupId: groupId,
+                      groupName: groupName,
+                      photos: JSON.stringify(photos), // Pass photos back
+                    },
+                  })
+                }>
                 <FontAwesome6 name="plus" size={16} color="white" />
               </Pressable>
             </View>
 
-            {tasks.map((task, idx) => (
-              <View className="w-full items-center rounded-xl" key={idx}>
-                <View
-                  className={`flex w-full self-center bg-tethr-gray/50 py-4 text-2xl text-white ${roundedMap[getCardType(idx, tasks.length)]} p-2`}>
-                  <Text className="font-semibold text-white">
-                    {task.task_name} {task.recurring ? '(Recurring)' : ''}
-                  </Text>
-                </View>
-              </View>
-            ))}
+            {tasks.map((task, idx) => {
+              const taskCompleted = isCompleted(task.task_name, groupId);
+
+              return (
+                <TouchableOpacity
+                  className="w-full items-center rounded-xl"
+                  key={idx}
+                  disabled={taskCompleted}
+                  onPress={() =>
+                    router.push({
+                      pathname: '/main/camera/takePhoto',
+                      params: {
+                        group_name: group_name,
+                        group_id: group_id,
+                        task_name: task.task_name,
+                      },
+                    })
+                  }>
+                  <View
+                    className={`flex w-full self-center bg-tethr-gray/50 py-4 text-2xl text-white ${roundedMap[getCardType(idx, tasks.length)]} p-2`}>
+                    <Text
+                      className={`${taskCompleted ? 'text-tethr-light-gray/20' : 'text-white'} font-semibold`}>
+                      {task.task_name} {task.recurring ? '(Recurring)' : ''}{' '}
+                      {taskCompleted ? '(Completed Today)' : ''}
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+              );
+            })}
 
             <Text className="pt-8 text-xl font-bold text-white">Recently Completed Tasks</Text>
           </View>
