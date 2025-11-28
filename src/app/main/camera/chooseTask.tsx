@@ -104,6 +104,7 @@ const ChooseTask = () => {
                         group_name: group_name,
                         group_id: group_id,
                         task_name: task.task_name,
+                        weekly: task.weekly as unknown as string,
                       },
                     })
                   }>

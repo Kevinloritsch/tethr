@@ -13,6 +13,7 @@ export interface Task {
   group_id: string;
   task_name: string;
   recurring: boolean;
+  weekly: boolean;
 }
 
 const Index = () => {
@@ -81,6 +82,7 @@ const Index = () => {
                       task_name: task.task_name,
                       all_tasks: JSON.stringify(parsedObject),
                       return_state: 'tasks',
+                      weekly: task.weekly as unknown as string,
                     },
                   })
                 }>

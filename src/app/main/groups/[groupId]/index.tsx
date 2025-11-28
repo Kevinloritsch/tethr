@@ -229,6 +229,7 @@ const GroupPage = () => {
                           task_name: task.task_name,
                           return_state: 'group',
                           photos: JSON.stringify(photos),
+                          weekly: task.weekly as unknown as string,
                         },
                       })
                     }>

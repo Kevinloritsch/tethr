@@ -26,6 +26,10 @@ export default function Camera() {
   const { task_name } = useLocalSearchParams();
   const taskName = Array.isArray(task_name) ? task_name[0] : (task_name ?? '');
 
+  const { weekly } = useLocalSearchParams();
+
+  const weeklyVal = Array.isArray(weekly) ? weekly[0] === 'true' : weekly === 'true';
+
   const { return_state } = useLocalSearchParams();
   const hasReturn = return_state ? true : false;
   const returnToGroup = return_state !== 'main' ? true : false;
@@ -104,6 +108,7 @@ export default function Camera() {
         group_name={groupName}
         group_id={groupId}
         task_name={taskName}
+        weekly={weeklyVal}
       />
     );
 
