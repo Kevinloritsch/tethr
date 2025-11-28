@@ -193,3 +193,32 @@ create table public.hasCompleted (
   primary key (user_id, group_id, task_name, time_submitted),
   foreign key (task_name, group_id) references public.tasks (task_name, group_id)
 );
+
+
+ALTER TABLE public.tasks 
+ADD COLUMN created_at TIMESTAMPTZ DEFAULT NOW();
+
+UPDATE public.tasks 
+SET created_at = NOW() 
+WHERE created_at IS NULL;
+
+CREATE EXTENSION IF NOT EXISTS pg_cron;
+
+CREATE OR REPLACE FUNCTION delete_non_recurring_tasks()
+RETURNS void 
+LANGUAGE plpgsql 
+SECURITY DEFINER
+AS $$
+BEGIN
+  DELETE FROM public.tasks 
+  WHERE recurring = false 
+  AND DATE(created_at AT TIME ZONE 'America/Los_Angeles') < 
+      DATE(NOW() AT TIME ZONE 'America/Los_Angeles');
+END;
+$$;
+
+SELECT cron.schedule(
+  'delete-non-recurring-tasks-midnight',
+  '0 8 * * *',
+  $$SELECT delete_non_recurring_tasks()$$
+);
