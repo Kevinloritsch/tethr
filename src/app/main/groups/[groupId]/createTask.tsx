@@ -111,6 +111,7 @@ const CreateTask = () => {
           onChangeText={setTask}
           placeholder="Enter task name"
           placeholderTextColor="#DEDEDE"
+          returnKeyType="done"
         />
         <View className="w-full flex-row items-center py-1 text-white">
           <Text className="mb-1 mr-1 w-1/4 text-white">Recurring</Text>
