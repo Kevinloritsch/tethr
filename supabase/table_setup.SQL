@@ -136,6 +136,13 @@ create table public.tasks (
   primary key (group_id, task_name)
 );
 
+CREATE POLICY "Users can leave a group they are in"
+ON public.ispartof
+TO public
+USING (
+  true
+);
+
 ALTER TABLE public.tasks ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Group Members can add tasks into their own group"
@@ -161,14 +168,21 @@ USING (
   )
 );
 
-create policy "Members can create groups"
+create policy "Enable insert for groups"
 on public.groups
 to public
 FOR INSERT
 with check (
-  (auth.uid() IS NOT NULL)
+  true
 );
 
+CREATE POLICY "Users can delete a group if they're leaving a group as the sole"
+on public.groups
+for delete
+to public
+using (
+  true
+);
 
 create table public.hasCompleted (
   user_id uuid not null references public.users(user_id),
