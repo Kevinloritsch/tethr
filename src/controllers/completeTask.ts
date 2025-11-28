@@ -8,7 +8,7 @@ const getWeekKey = () => {
 };
 
 export const completedTasksController = {
-  addTask: async (taskName: string, groupId: string, weekly: boolean = false) => {
+  addTask: async (taskName: string, groupId: string, weekly: boolean) => {
     try {
       const taskKey = `${groupId}-${taskName}`;
 

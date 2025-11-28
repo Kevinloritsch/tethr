@@ -1,5 +1,5 @@
 import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { router, useLocalSearchParams } from 'expo-router';
 
 import Tethr from '@/components/tethr';
@@ -7,6 +7,8 @@ import SearchBar from '@/components/searchbar';
 import { getCardType, roundedMap } from '@/utils/cardType';
 
 import Entypo from '@expo/vector-icons/Entypo';
+
+import { completedTasksController } from '@/controllers/completeTask';
 
 export interface Task {
   group_name: string;
@@ -17,6 +19,7 @@ export interface Task {
 }
 
 const Index = () => {
+  const [completedTasks, setCompletedTasks] = useState<string[]>([]);
   const { data } = useLocalSearchParams();
 
   const parsedObject: Task[] = useMemo(() => {
@@ -28,6 +31,15 @@ const Index = () => {
     return [];
   }, [data]);
 
+  useEffect(() => {
+    const loadCompletedTasks = async () => {
+      const completed = await completedTasksController.getTasks();
+      setCompletedTasks(completed);
+    };
+
+    loadCompletedTasks();
+  }, []);
+
   const [searchQuery, setSearchQuery] = useState('');
 
   const filteredTasks = useMemo(() => {
@@ -36,6 +48,11 @@ const Index = () => {
     const lowerQuery = searchQuery.toLowerCase();
     return parsedObject.filter((task) => task.task_name.toLowerCase().includes(lowerQuery));
   }, [parsedObject, searchQuery]);
+
+  const isCompleted = (taskName: string, groupId: string) => {
+    const taskKey = `${groupId}-${taskName}`;
+    return completedTasks.includes(taskKey);
+  };
 
   return (
     <View className="flex-1 bg-black pt-8">
@@ -69,9 +86,11 @@ const Index = () => {
       ) : (
         <ScrollView showsHorizontalScrollIndicator={false}>
           {filteredTasks.map((task: Task, index: number) => {
+            const taskCompleted = isCompleted(task.task_name, task.group_id);
             return (
               <TouchableOpacity
                 key={task.group_id + task.task_name}
+                disabled={taskCompleted}
                 className={`flex w-10/12 self-center bg-tethr-gray/50 px-5 py-4 text-2xl text-white ${roundedMap[getCardType(index, filteredTasks.length)]}`}
                 onPress={() =>
                   router.push({
@@ -87,10 +106,12 @@ const Index = () => {
                   })
                 }>
                 <View className="flex flex-row justify-between">
-                  <Text className="font-semibold text-white">
+                  <Text
+                    className={`${taskCompleted ? 'text-tethr-light-gray/20' : 'text-white'} font-semibold`}>
                     {task.task_name || 'Unnamed Task'}
                   </Text>
-                  <Text className="font-semibold text-tethr-purple">
+                  <Text
+                    className={`${taskCompleted ? 'text-tethr-purple/20' : 'text-tethr-purple'} font-semibold`}>
                     {task.group_name || 'Unnamed Task'}
                   </Text>
                 </View>
