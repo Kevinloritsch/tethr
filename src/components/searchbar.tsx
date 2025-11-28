@@ -50,6 +50,7 @@ export default function SearchBar({
         autoFocus={autoFocus}
         autoCapitalize="none"
         autoCorrect={false}
+        returnKeyType="done"
       />
 
       {internal.length > 0 && (
