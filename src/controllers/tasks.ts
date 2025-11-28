@@ -5,6 +5,7 @@ export interface Task {
   group_id: string;
   task_name: string;
   recurring: boolean;
+  weekly: boolean;
 }
 
 interface GroupType {
@@ -18,7 +19,7 @@ class TaskController {
     try {
       const { data, error } = await supabase
         .from('tasks')
-        .select('group_id, task_name, recurring, groups!tasks_group_id_fkey ( group_name )')
+        .select('group_id, task_name, recurring, weekly, groups!tasks_group_id_fkey ( group_name )')
         .in('group_id', groupIds);
 
       if (error) {
@@ -33,6 +34,7 @@ class TaskController {
           group_name: task.groups?.group_name || 'Unknown Group',
           task_name: task.task_name,
           recurring: task.recurring,
+          weekly: task.weekly,
         }));
 
       return filteredTasks;
@@ -42,7 +44,7 @@ class TaskController {
     }
   }
 
-  async createTask(groupId: string, taskName: string, recurring: boolean) {
+  async createTask(groupId: string, taskName: string, recurring: boolean, weekly: boolean) {
     try {
       const { data, error } = await supabase
         .from('tasks')
@@ -51,6 +53,7 @@ class TaskController {
             group_id: groupId,
             task_name: taskName,
             recurring: recurring,
+            weekly: weekly,
           },
         ])
         .select()

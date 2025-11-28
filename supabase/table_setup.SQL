@@ -198,6 +198,9 @@ create table public.hasCompleted (
 ALTER TABLE public.tasks 
 ADD COLUMN created_at TIMESTAMPTZ DEFAULT NOW();
 
+ALTER TABLE public.tasks 
+ADD COLUMN weekly BOOLEAN DEFAULT false;
+
 UPDATE public.tasks 
 SET created_at = (NOW() AT TIME ZONE 'America/Los_Angeles') 
 WHERE created_at IS NULL;
@@ -212,8 +215,15 @@ AS $$
 BEGIN
   DELETE FROM public.tasks 
   WHERE recurring = false 
+  AND weekly = false
   AND DATE(created_at AT TIME ZONE 'America/Los_Angeles') < 
       DATE(NOW() AT TIME ZONE 'America/Los_Angeles');
+  
+  DELETE FROM public.tasks 
+  WHERE recurring = false 
+  AND weekly = true
+  AND DATE(created_at AT TIME ZONE 'America/Los_Angeles') < 
+      DATE(NOW() AT TIME ZONE 'America/Los_Angeles') - INTERVAL '6 days';
 END;
 $$;
 

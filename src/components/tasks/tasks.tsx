@@ -9,6 +9,7 @@ interface TaskItem {
   task_name: string;
   group_name: string;
   group_id: string;
+  weekly: boolean;
 }
 
 interface TasksProps {
@@ -58,7 +59,7 @@ const Tasks = ({ tasks }: TasksProps) => {
                   },
                 })
               }>
-              <Task groupName={item.group_name} taskId={item.task_name} />
+              <Task groupName={item.group_name} taskId={item.task_name} weekly={item.weekly} />
             </Pressable>
           </View>
         );

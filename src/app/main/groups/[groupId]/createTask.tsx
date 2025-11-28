@@ -30,6 +30,7 @@ const CreateTask = () => {
   const [uploading, setUploading] = useState(false);
   const [task, setTask] = useState<string>('');
   const [recurring, setRecurring] = useState<boolean>(false);
+  const [weekly, setWeekly] = useState<boolean>(false);
 
   useEffect(() => {
     loadGroup();
@@ -51,7 +52,7 @@ const CreateTask = () => {
   }
 
   const handleCreateTask = async () => {
-    const result = await taskController.createTask(groupId, task, recurring);
+    const result = await taskController.createTask(groupId, task, recurring, weekly);
     setUploading(true);
 
     if (result.success) {
@@ -115,6 +116,7 @@ const CreateTask = () => {
           <Text className="mb-1 mr-1 w-1/4 text-white">Recurring</Text>
           <Switch
             value={recurring}
+            disabled={uploading}
             onValueChange={setRecurring}
             trackColor={{ false: '#767577', true: '#A597FF' }}
             thumbColor={recurring ? '#f4f3f4' : '#f4f3f4'}
@@ -123,9 +125,9 @@ const CreateTask = () => {
         <View className="w-full flex-row items-center py-1 text-white">
           <Text className="mb-1 mr-1 w-1/4 text-white">Weekly</Text>
           <Switch
-            value={recurring}
-            disabled={!recurring}
-            onValueChange={setRecurring}
+            value={weekly}
+            disabled={uploading}
+            onValueChange={setWeekly}
             trackColor={{ false: '#767577', true: '#A597FF' }}
             thumbColor={recurring ? '#f4f3f4' : '#f4f3f4'}
           />
