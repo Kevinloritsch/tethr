@@ -143,7 +143,7 @@ const CreateGroup = () => {
           className="flex flex-row items-center">
           <Text
             className={`pr-2 text-xl font-bold ${group_name.length === 0 ? 'text-tethr-gray' : 'text-white'}`}>
-            Post To
+            Create
           </Text>
           <Text className="text-xl font-bold text-tethr-purple">{group_name}</Text>
 

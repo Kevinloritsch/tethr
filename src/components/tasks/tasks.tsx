@@ -1,4 +1,4 @@
-import { FlatList, View, Pressable } from 'react-native';
+import { FlatList, View, Pressable, Text } from 'react-native';
 
 import Task from '@/components/tasks/task';
 import { completedTasksController } from '@/controllers/completeTask';
@@ -64,6 +64,13 @@ const Tasks = ({ tasks }: TasksProps) => {
         );
       }}
       keyExtractor={(item) => item.group_name + item.task_name}
+      ListEmptyComponent={
+        <View className="flex items-center justify-center p-4">
+          <Text className="text-center text-white">
+            Add a task by creating it on a group&apos;s page!
+          </Text>
+        </View>
+      }
     />
   );
 };
