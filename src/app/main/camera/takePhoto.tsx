@@ -115,10 +115,8 @@ export default function Camera() {
         </View>
         <TouchableOpacity
           onPress={() => {
-            console.log(hasReturn + ' ' + returnToGroup);
             if (hasReturn) {
               if (returnToTask) {
-                console.log('Returning to tasks');
                 router.replace({
                   pathname: '/main/tasks',
                   params: {

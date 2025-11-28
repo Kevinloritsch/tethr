@@ -11,6 +11,7 @@ import Entypo from '@expo/vector-icons/Entypo';
 interface Task {
   task_name: string;
   recurring: boolean;
+  weekly: boolean;
 }
 
 const ChooseTask = () => {

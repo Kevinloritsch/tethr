@@ -22,6 +22,7 @@ interface GroupUser {
 interface Task {
   task_name: string;
   recurring: boolean;
+  weekly: boolean;
 }
 
 interface Photo {
