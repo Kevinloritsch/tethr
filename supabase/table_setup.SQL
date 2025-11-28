@@ -199,7 +199,7 @@ ALTER TABLE public.tasks
 ADD COLUMN created_at TIMESTAMPTZ DEFAULT NOW();
 
 UPDATE public.tasks 
-SET created_at = NOW() 
+SET created_at = (NOW() AT TIME ZONE 'America/Los_Angeles') 
 WHERE created_at IS NULL;
 
 CREATE EXTENSION IF NOT EXISTS pg_cron;
