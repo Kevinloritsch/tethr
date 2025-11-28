@@ -10,6 +10,7 @@ import {
 import { useLocalSearchParams, router } from 'expo-router';
 import { useState, useEffect } from 'react';
 import { groupController } from '@/controllers/group';
+import { taskController } from '@/controllers/tasks';
 import Tethr from '@/components/tethr';
 import Entypo from '@expo/vector-icons/Entypo';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
@@ -50,8 +51,8 @@ const CreateTask = () => {
   }
 
   const handleCreateTask = async () => {
+    const result = await taskController.createTask(groupId, task, recurring);
     setUploading(true);
-    const result = await groupController.createTask(groupId, task, recurring);
 
     if (result.success) {
       router.dismiss();

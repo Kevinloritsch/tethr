@@ -25,29 +25,6 @@ class GroupController {
     return group?.group_name || null;
   }
 
-  async createTask(groupId: string, taskName: string, recurring: boolean) {
-    try {
-      const { data, error } = await supabase
-        .from('tasks')
-        .insert([
-          {
-            group_id: groupId,
-            task_name: taskName,
-            recurring: recurring,
-          },
-        ])
-        .select()
-        .single();
-
-      if (error) {
-        return { success: false, message: error.message };
-      }
-      return { success: true, data };
-    } catch {
-      return { success: false, message: 'Unexpected error occurred.' };
-    }
-  }
-
   async fetchUserData(): Promise<GroupType[]> {
     try {
       const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
@@ -166,6 +143,111 @@ class GroupController {
     } catch (err) {
       console.error('Increasing Score Error:', err);
       return false;
+    }
+  }
+  async createGroup(group_name: string, user_id: string, friendIds: string[] = []) {
+    try {
+      const { data: group, error: groupError } = await supabase
+        .from('groups')
+        .insert([{ group_name }])
+        .select()
+        .single();
+
+      if (groupError) {
+        console.error('Error creating group:', groupError);
+        return { success: false, message: groupError.message };
+      }
+
+      console.log('Group created:', group);
+
+      const membersToInsert = [
+        {
+          user_id: user_id,
+          group_id: group.group_id,
+          current_points: 0,
+        },
+        ...friendIds.map((fid) => ({
+          user_id: fid,
+          group_id: group.group_id,
+          current_points: 0,
+        })),
+      ];
+
+      const { error: isPartOfError } = await supabase.from('ispartof').insert(membersToInsert);
+
+      if (isPartOfError) {
+        console.error('Error inserting into ispartof:', isPartOfError);
+        return { success: false, message: isPartOfError.message };
+      }
+
+      return { success: true, data: group };
+    } catch (err) {
+      console.error('Unexpected error:', err);
+      return {
+        success: false,
+        message: 'Unexpected error occurred.',
+      };
+    }
+  }
+  async leaveGroup(userId: string, groupId: string) {
+    // if anyone's trying to understand this the basic logic here is check how many members are in a group,
+    // if i am the sole member, delete the group row and ispartof row. if not, then just delete ispartof row
+    try {
+      const { data: members, error: memberError } = await supabase
+        .from('ispartof')
+        .select('user_id')
+        .eq('group_id', groupId);
+
+      if (memberError) {
+        console.error('Error checking group members:', memberError);
+        return { success: false, message: memberError.message };
+      }
+
+      if (!members) {
+        return { success: false, message: 'Unable to fetch group members.' };
+      }
+      const memberCount = members.length;
+
+      if (memberCount === 1) {
+        console.log('User is the only member. Deleting group...');
+
+        const { error: deleteMembershipError } = await supabase
+          .from('ispartof')
+          .delete()
+          .eq('user_id', userId)
+          .eq('group_id', groupId);
+
+        if (deleteMembershipError) {
+          console.error('Error deleting membership:', deleteMembershipError);
+          return { success: false, message: deleteMembershipError.message };
+        }
+        const { error: deleteGroupError } = await supabase
+          .from('groups')
+          .delete()
+          .eq('group_id', groupId);
+
+        if (deleteGroupError) {
+          console.error('Error deleting group:', deleteGroupError);
+          return { success: false, message: deleteGroupError.message };
+        }
+
+        return { success: true, message: 'Group deleted because you were the only member.' };
+      }
+
+      const { error: removeUserError } = await supabase
+        .from('ispartof')
+        .delete()
+        .eq('user_id', userId)
+        .eq('group_id', groupId);
+
+      if (removeUserError) {
+        console.error('Error removing user:', removeUserError);
+        return { success: false, message: removeUserError.message };
+      }
+
+      return { success: true, message: 'Left group successfully.' };
+    } catch (err) {
+      console.error('Error leaving group:', err);
     }
   }
 }

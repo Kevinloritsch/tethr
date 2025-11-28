@@ -66,7 +66,7 @@ const Index = () => {
         <Text className="text-2xl font-bold text-white">Your Groups</Text>
         <Pressable
           className="flex-row items-center px-4 py-2"
-          onPress={() => router.push('/main/groups')}>
+          onPress={() => router.push('/main/groups/createGroup')}>
           <FontAwesome6 name="plus" size={16} color="white" />
         </Pressable>
       </View>
