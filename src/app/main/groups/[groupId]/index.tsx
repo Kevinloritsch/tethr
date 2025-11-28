@@ -212,6 +212,7 @@ const GroupPage = () => {
 
               {tasks.map((task, idx) => {
                 const taskCompleted = isCompleted(task.task_name, groupId);
+                console.log(task);
 
                 return (
                   <TouchableOpacity
@@ -235,7 +236,7 @@ const GroupPage = () => {
                       <Text
                         className={`${taskCompleted ? 'text-tethr-light-gray/20' : 'text-white'} font-semibold`}>
                         {task.task_name} {task.recurring ? '(Recurring)' : ''}{' '}
-                        {taskCompleted ? '(Completed Today)' : ''}
+                        {task.weekly ? '(Weekly)' : ''} {taskCompleted ? '(Completed)' : ''}
                       </Text>
                     </View>
                   </TouchableOpacity>
