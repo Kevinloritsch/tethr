@@ -11,7 +11,8 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 export default function RootLayout() {
   const segments = useSegments();
 
-  const hideTabBar = segments.includes('camera') || segments.includes('groups');
+  const hideTabBar =
+    segments.includes('camera') || segments.includes('groups') || segments.includes('tasks');
 
   return (
     <React.Fragment>
@@ -78,6 +79,12 @@ export default function RootLayout() {
         />
         <Tabs.Screen
           name="groups"
+          options={{
+            href: null,
+          }}
+        />
+        <Tabs.Screen
+          name="tasks"
           options={{
             href: null,
           }}

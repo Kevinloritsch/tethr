@@ -159,7 +159,10 @@ export default function Index() {
           <Text className="my-3 text-2xl font-bold text-white">To-Do</Text>
           <Pressable
             className="mb-1 flex-row items-center rounded-xl bg-tethr-purple/40 px-4 py-2"
-            onPress={() => router.push('main/groups')}>
+            onPress={() => {
+              const tasksString = JSON.stringify(allTasks);
+              return router.push({ pathname: 'main/tasks', params: { data: tasksString } });
+            }}>
             <Text className="mr-1 font-medium text-white">View all</Text>
             <FontAwesome6 name="arrow-right-long" size={16} color="white" className="pl-2" />
           </Pressable>
