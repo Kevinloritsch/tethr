@@ -119,7 +119,7 @@ const GroupPage = () => {
     const result = await groupController.leaveGroup(userId, groupId);
     if (!result) return;
     if (result.success) {
-      router.replace('/main/groups');
+      router.replace('/');
     } else {
       console.error('Failed to leave group:', result.message);
     }
