@@ -21,6 +21,8 @@ interface GroupWithPhotos {
     name: string;
     publicUrl: string;
     createdAt: string;
+    username: string;
+    taskName: string;
   }[];
 }
 
@@ -60,8 +62,7 @@ export default function Index() {
         const grouped = allGroups.map((group) => {
           const groupPhotos = allPhotos
             .filter((p) => p.groupId === group.group_id)
-            .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-            .slice(0, 3);
+            .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
           return {
             group_id: group.group_id,
@@ -72,6 +73,8 @@ export default function Index() {
               name: p.name,
               publicUrl: p.publicUrl,
               createdAt: p.createdAt,
+              username: p.username,
+              taskName: p.taskName,
             })),
           };
         });
@@ -143,7 +146,10 @@ export default function Index() {
           <Text className="my-3 text-2xl font-bold text-white">Your Groups</Text>
           <Pressable
             className="mb-1 flex-row items-center rounded-xl bg-tethr-purple/40 px-4 py-2"
-            onPress={() => router.push('main/groups')}>
+            onPress={() => {
+              const groupsString = JSON.stringify(groupsWithPhotos);
+              return router.push({ pathname: 'main/groups', params: { data: groupsString } });
+            }}>
             <Text className="mr-1 font-medium text-white">View all</Text>
             <FontAwesome6 name="arrow-right-long" size={16} color="white" className="pl-2" />
           </Pressable>

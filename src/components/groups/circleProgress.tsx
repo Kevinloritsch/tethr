@@ -37,7 +37,7 @@ const CircularProgress = ({ percentage }: CircularProgressProps) => {
         />
       </Svg>
       <View className="absolute">
-        <Text className="text-lg font-bold text-white">{percentage}%</Text>
+        <Text className="text-sm font-bold text-white">{percentage}%</Text>
       </View>
     </View>
   );
