@@ -19,6 +19,7 @@ const CreateGroup = () => {
   const [group_name, setGroupName] = useState('');
   const [friends, setFriends] = useState<FriendProps[]>([]);
   const [selectedFriendIds, setSelectedFriendIds] = useState<string[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     const loadFriends = async () => {
@@ -50,6 +51,10 @@ const CreateGroup = () => {
     }
   };
 
+  const filteredFriends = friends.filter((f) =>
+    f.username.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <View className="flex-1 bg-black pt-8">
       <Tethr side="left" />
@@ -69,9 +74,17 @@ const CreateGroup = () => {
 
       <View className="mt-6 flex items-center">
         <Text className="mb-2 text-lg font-semibold text-white">Select Friends to Add</Text>
+        <TextInput
+          className="mb-4 w-3/4 rounded-3xl bg-tethr-gray py-2 pl-4 text-white"
+          placeholder="Search friends..."
+          placeholderTextColor="#ffffff"
+          autoCorrect={false}
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+        />
 
         <ScrollView className="max-h-[300px] w-3/4">
-          {friends.map(({ userId, pfpUrl, username }) => {
+          {filteredFriends.map(({ userId, pfpUrl, username }) => {
             const selected = selectedFriendIds.includes(userId);
 
             return (
