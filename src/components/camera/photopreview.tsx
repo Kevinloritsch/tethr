@@ -39,14 +39,12 @@ const PhotoPreview = ({
   const fixOrientation = async () => {
     try {
       setProcessing(true);
-      console.log('Photo URI:', photo.uri);
       console.log('Photo EXIF orientation:', photo.exif?.Orientation);
 
       let rotation = 0;
 
       const exifOrientation = photo.exif?.Orientation || 6;
 
-      // Apply 180 degree fix for landscape orientations
       if (exifOrientation === 1) {
         rotation = 90;
         console.log('Applying 90 rotation for landscape');
@@ -61,25 +59,22 @@ const PhotoPreview = ({
       }
 
       if (rotation !== 0) {
-        manipulator.rotate(rotation); // Use the hook from top level
-        const imageRef = await manipulator.renderAsync();
-
-        const result = await imageRef.saveAsync({
-          compress: 0.7,
-          format: SaveFormat.JPEG,
-        });
-
-        console.log('Corrected photo URI:', result.uri);
-        setCorrectedPhoto(result.uri);
-      } else {
-        setCorrectedPhoto(photo.uri);
+        manipulator.rotate(rotation);
       }
+
+      const imageRef = await manipulator.renderAsync();
+
+      const result = await imageRef.saveAsync({
+        compress: 0.35,
+        format: SaveFormat.JPEG,
+      });
+
+      setCorrectedPhoto(result.uri);
     } catch (error) {
       console.error('Error fixing orientation:', error);
       setCorrectedPhoto(photo.uri);
-    } finally {
-      setProcessing(false);
     }
+    setProcessing(false);
   };
 
   const handleUpload = async () => {
@@ -135,6 +130,7 @@ const PhotoPreview = ({
         {processing ? (
           <View className="flex-1 items-center justify-center">
             <ActivityIndicator size="large" color="white" />
+            <Text className="mt-4 text-xl font-bold text-tethr-purple">Processing Photo!</Text>
           </View>
         ) : (
           <>
