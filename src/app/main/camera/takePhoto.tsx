@@ -26,10 +26,16 @@ export default function Camera() {
   const { task_name } = useLocalSearchParams();
   const taskName = Array.isArray(task_name) ? task_name[0] : (task_name ?? '');
 
+  const { weekly } = useLocalSearchParams();
+
+  const weeklyVal = Array.isArray(weekly) ? weekly[0] === 'true' : weekly === 'true';
+
   const { return_state } = useLocalSearchParams();
   const hasReturn = return_state ? true : false;
   const returnToGroup = return_state !== 'main' ? true : false;
+  const returnToTask = return_state === 'tasks' ? true : false;
   const { photos } = useLocalSearchParams();
+  const { all_tasks } = useLocalSearchParams();
 
   const [facing, setFacing] = useState<CameraType>('back');
   const [flash, setFlash] = useState<FlashMode>('off');
@@ -102,6 +108,7 @@ export default function Camera() {
         group_name={groupName}
         group_id={groupId}
         task_name={taskName}
+        weekly={weeklyVal}
       />
     );
 
@@ -114,8 +121,15 @@ export default function Camera() {
         <TouchableOpacity
           onPress={() => {
             if (hasReturn) {
-              router.dismissAll();
-              if (returnToGroup)
+              if (returnToTask) {
+                router.replace({
+                  pathname: '/main/tasks',
+                  params: {
+                    data: all_tasks,
+                  },
+                });
+              } else if (returnToGroup) {
+                router.dismissAll();
                 router.replace({
                   pathname: `/main/groups/${groupId}`,
                   params: {
@@ -125,7 +139,10 @@ export default function Camera() {
                     photos: photos,
                   },
                 });
-              else router.navigate('/main');
+              } else {
+                router.dismissAll();
+                router.navigate('/main');
+              }
             } else router.back();
           }}
           className="absolute left-0 top-0 h-full items-center justify-center pb-2 pl-8">

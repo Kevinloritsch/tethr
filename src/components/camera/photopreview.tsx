@@ -16,12 +16,14 @@ const PhotoPreview = ({
   group_id,
   group_name,
   task_name,
+  weekly,
 }: {
   photo: CameraCapturedPicture;
   handleRetakePhoto: () => void;
   group_id: string;
   group_name: string;
   task_name: string;
+  weekly: boolean;
 }) => {
   const [uploading, setUploading] = useState(false);
 
@@ -37,7 +39,7 @@ const PhotoPreview = ({
         return;
       }
 
-      await completedTasksController.addTask(task_name, group_id);
+      await completedTasksController.addTask(task_name, group_id, weekly);
       await groupController.increaseMemberScore(userId, group_id);
 
       storagePush.uploadImage({

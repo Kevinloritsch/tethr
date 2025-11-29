@@ -11,6 +11,7 @@ import Entypo from '@expo/vector-icons/Entypo';
 interface Task {
   task_name: string;
   recurring: boolean;
+  weekly: boolean;
 }
 
 const ChooseTask = () => {
@@ -103,6 +104,7 @@ const ChooseTask = () => {
                         group_name: group_name,
                         group_id: group_id,
                         task_name: task.task_name,
+                        weekly: task.weekly as unknown as string,
                       },
                     })
                   }>
@@ -111,7 +113,7 @@ const ChooseTask = () => {
                     <Text
                       className={`${taskCompleted ? 'text-tethr-light-gray/20' : 'text-white'} font-semibold`}>
                       {task.task_name} {task.recurring ? '(Recurring)' : ''}{' '}
-                      {taskCompleted ? '(Completed Today)' : ''}
+                      {task.weekly ? '(Weekly)' : ''} {taskCompleted ? '(Completed)' : ''}
                     </Text>
                   </View>
                 </TouchableOpacity>

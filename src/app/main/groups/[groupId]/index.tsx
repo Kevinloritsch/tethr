@@ -22,6 +22,7 @@ interface GroupUser {
 interface Task {
   task_name: string;
   recurring: boolean;
+  weekly: boolean;
 }
 
 interface Photo {
@@ -212,6 +213,7 @@ const GroupPage = () => {
 
               {tasks.map((task, idx) => {
                 const taskCompleted = isCompleted(task.task_name, groupId);
+                console.log(task);
 
                 return (
                   <TouchableOpacity
@@ -227,6 +229,7 @@ const GroupPage = () => {
                           task_name: task.task_name,
                           return_state: 'group',
                           photos: JSON.stringify(photos),
+                          weekly: task.weekly as unknown as string,
                         },
                       })
                     }>
@@ -235,7 +238,7 @@ const GroupPage = () => {
                       <Text
                         className={`${taskCompleted ? 'text-tethr-light-gray/20' : 'text-white'} font-semibold`}>
                         {task.task_name} {task.recurring ? '(Recurring)' : ''}{' '}
-                        {taskCompleted ? '(Completed Today)' : ''}
+                        {task.weekly ? '(Weekly)' : ''} {taskCompleted ? '(Completed)' : ''}
                       </Text>
                     </View>
                   </TouchableOpacity>

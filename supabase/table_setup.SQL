@@ -102,6 +102,16 @@ create table public.groups (
 
 ALTER TABLE public.groups ENABLE ROW LEVEL SECURITY;
 
+create table public.isPartOf (
+  user_id uuid not null references public.users(user_id),
+  group_id uuid not null references public.groups(group_id),
+  current_rank int,
+  current_points int default 0,
+  primary key (user_id, group_id)
+);
+
+ALTER TABLE public.isPartOf ENABLE ROW LEVEL SECURITY;
+
 CREATE POLICY "Members can view their group details"
 ON public.groups
 FOR SELECT
@@ -113,16 +123,6 @@ USING (
       AND isPartOf.user_id = auth.uid()
   )
 );
-
-create table public.isPartOf (
-  user_id uuid not null references public.users(user_id),
-  group_id uuid not null references public.groups(group_id),
-  current_rank int,
-  current_points int default 0,
-  primary key (user_id, group_id)
-);
-
-ALTER TABLE public.isPartOf ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Users can view their own group memberships"
 ON public.isPartOf
@@ -155,12 +155,12 @@ WITH CHECK (
     WHERE isPartOf.group_id = tasks.group_id
       AND isPartOf.user_id = auth.uid()
   )
-)
+);
 
 CREATE POLICY "Group members can see the tasks within their group"
 on public.tasks
-to public
 FOR SELECT
+to public
 USING (
   (EXISTS (SELECT 1
     FROM ispartof
@@ -170,8 +170,8 @@ USING (
 
 create policy "Enable insert for groups"
 on public.groups
-to public
 FOR INSERT
+to public
 with check (
   true
 );
@@ -192,4 +192,43 @@ create table public.hasCompleted (
   time_submitted timestamptz not null default now(),
   primary key (user_id, group_id, task_name, time_submitted),
   foreign key (task_name, group_id) references public.tasks (task_name, group_id)
+);
+
+
+ALTER TABLE public.tasks 
+ADD COLUMN created_at TIMESTAMPTZ DEFAULT NOW();
+
+ALTER TABLE public.tasks 
+ADD COLUMN weekly BOOLEAN DEFAULT false;
+
+UPDATE public.tasks 
+SET created_at = (NOW() AT TIME ZONE 'America/Los_Angeles') 
+WHERE created_at IS NULL;
+
+CREATE EXTENSION IF NOT EXISTS pg_cron;
+
+CREATE OR REPLACE FUNCTION delete_non_recurring_tasks()
+RETURNS void 
+LANGUAGE plpgsql 
+SECURITY DEFINER
+AS $$
+BEGIN
+  DELETE FROM public.tasks 
+  WHERE recurring = false 
+  AND weekly = false
+  AND DATE(created_at AT TIME ZONE 'America/Los_Angeles') < 
+      DATE(NOW() AT TIME ZONE 'America/Los_Angeles');
+  
+  DELETE FROM public.tasks 
+  WHERE recurring = false 
+  AND weekly = true
+  AND DATE(created_at AT TIME ZONE 'America/Los_Angeles') < 
+      DATE(NOW() AT TIME ZONE 'America/Los_Angeles') - INTERVAL '6 days';
+END;
+$$;
+
+SELECT cron.schedule(
+  'delete-non-recurring-tasks-midnight',
+  '0 8 * * *',
+  $$SELECT delete_non_recurring_tasks()$$
 );

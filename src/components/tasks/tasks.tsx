@@ -1,4 +1,4 @@
-import { FlatList, View, Pressable } from 'react-native';
+import { FlatList, View, Pressable, Text } from 'react-native';
 
 import Task from '@/components/tasks/task';
 import { completedTasksController } from '@/controllers/completeTask';
@@ -9,6 +9,7 @@ interface TaskItem {
   task_name: string;
   group_name: string;
   group_id: string;
+  weekly: boolean;
 }
 
 interface TasksProps {
@@ -55,15 +56,23 @@ const Tasks = ({ tasks }: TasksProps) => {
                     group_id: item.group_id,
                     task_name: item.task_name,
                     return_state: 'main',
+                    weekly: item.weekly as unknown as string,
                   },
                 })
               }>
-              <Task groupName={item.group_name} taskId={item.task_name} />
+              <Task groupName={item.group_name} taskId={item.task_name} weekly={item.weekly} />
             </Pressable>
           </View>
         );
       }}
       keyExtractor={(item) => item.group_name + item.task_name}
+      ListEmptyComponent={
+        <View className="flex items-center justify-center p-4">
+          <Text className="text-center text-white">
+            Add a task by creating it on a group&apos;s page!
+          </Text>
+        </View>
+      }
     />
   );
 };

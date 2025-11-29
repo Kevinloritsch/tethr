@@ -1,10 +1,11 @@
 import { View, FlatList, ActivityIndicator, Text, RefreshControl } from 'react-native';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { photoRetrieve, PhotoSubmission } from '@/controllers/photoRetrieve';
 import { getAllGroups } from '@/controllers/group';
 
 import Tethr from '@/components/tethr';
 import Fyp from '@/components/fyp';
+import SearchBar from '@/components/searchbar';
 
 interface PhotoWithGroup extends PhotoSubmission {
   groupName: string;
@@ -14,6 +15,7 @@ export default function ExploreUI() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [photos, setPhotos] = useState<PhotoWithGroup[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const loadPhotos = async () => {
     try {
@@ -53,6 +55,18 @@ export default function ExploreUI() {
     loadPhotos();
   }, []);
 
+  const filteredPhotos = useMemo(() => {
+    if (!searchQuery.trim()) return photos;
+
+    const lowerQuery = searchQuery.toLowerCase();
+    return photos.filter(
+      (photo) =>
+        photo.groupName.toLowerCase().includes(lowerQuery) ||
+        photo.taskName.toLowerCase().includes(lowerQuery) ||
+        photo.username.toLowerCase().includes(lowerQuery)
+    );
+  }, [photos, searchQuery]);
+
   if (loading) {
     return (
       <View className="flex-1 items-center justify-center bg-black">
@@ -66,7 +80,7 @@ export default function ExploreUI() {
     <View className="flex-1 bg-black pt-8">
       <Tethr side="left" />
       <FlatList
-        data={photos}
+        data={filteredPhotos}
         keyExtractor={(item) => item.name}
         renderItem={({ item }) => {
           console.log('Photo item:', {
@@ -87,7 +101,10 @@ export default function ExploreUI() {
           );
         }}
         ListHeaderComponent={
-          <Text className="pb-8 text-center text-2xl font-bold text-white">Your Feed</Text>
+          <View className="mx-auto flex flex-col justify-center pb-8">
+            <Text className="pb-4 text-center text-2xl font-bold text-white">Your Feed</Text>
+            <SearchBar placeholder="Search for..." onSearch={setSearchQuery} value={searchQuery} />
+          </View>
         }
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         contentContainerStyle={{
@@ -97,7 +114,9 @@ export default function ExploreUI() {
         }}
         ListEmptyComponent={
           <Text className="px-4 text-center text-white">
-            No photos yet. Join a group to start completing tasks!
+            {searchQuery
+              ? 'No photos match your search.'
+              : 'No photos yet. Join a group to start completing tasks!'}
           </Text>
         }
       />

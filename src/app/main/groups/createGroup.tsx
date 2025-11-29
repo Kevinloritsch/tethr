@@ -1,6 +1,7 @@
 import { View, TextInput, Text, ScrollView, Image, TouchableOpacity } from 'react-native';
 import { useState, useEffect } from 'react';
 import Tethr from '@/components/tethr';
+import SearchBar from '@/components/searchbar';
 import { FontAwesome6 } from '@expo/vector-icons';
 import Entypo from '@expo/vector-icons/Entypo';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
@@ -82,32 +83,26 @@ const CreateGroup = () => {
       </View>
 
       <View className="flex items-center pt-4">
-        <Text className="w-3/4 text-left text-xl font-bold text-white">Create a Group</Text>
+        <Text className="w-10/12 text-left text-xl font-bold text-white">Create a Group</Text>
 
         <TextInput
-          className="mt-4 w-3/4 rounded-3xl bg-tethr-gray py-2 pl-4 text-white"
+          className="mt-4 w-10/12 rounded-3xl bg-tethr-gray py-2 pl-4 text-white"
           placeholder="Enter a group name"
-          placeholderTextColor="#ffffff"
+          placeholderTextColor="#ffffff60"
           autoCorrect={false}
           value={group_name}
           onChangeText={setGroupName}
+          returnKeyType="done"
         />
       </View>
 
       <View className="mt-6 flex items-center">
-        <Text className="mb-2 w-3/4 text-left text-lg font-semibold text-white">
+        <Text className="mb-2 w-10/12 text-left text-lg font-semibold text-white">
           Select Friends to Add
         </Text>
-        <TextInput
-          className="mb-4 w-3/4 rounded-3xl bg-tethr-gray py-2 pl-4 text-white"
-          placeholder="Search friends..."
-          placeholderTextColor="#ffffff"
-          autoCorrect={false}
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-        />
+        <SearchBar placeholder="Search friends..." onSearch={setSearchQuery} value={searchQuery} />
 
-        <ScrollView className="max-h-[600px] w-3/4">
+        <ScrollView className="mt-2 max-h-[600px] w-10/12">
           {filteredFriends.map(({ userId, pfpUrl, username }, idx) => {
             const selected = selectedFriendIds.includes(userId);
 
@@ -143,7 +138,7 @@ const CreateGroup = () => {
           className="flex flex-row items-center">
           <Text
             className={`pr-2 text-xl font-bold ${group_name.length === 0 ? 'text-tethr-gray' : 'text-white'}`}>
-            Post To
+            Create
           </Text>
           <Text className="text-xl font-bold text-tethr-purple">{group_name}</Text>
 

@@ -1,5 +1,6 @@
-import { FlatList, Pressable } from 'react-native';
+import { FlatList, Pressable, View, Text } from 'react-native';
 import { router } from 'expo-router';
+import { FontAwesome6 } from '@expo/vector-icons';
 
 import Group from '@/components/groups/group';
 
@@ -51,6 +52,18 @@ const Groups = ({ groups }: GroupsProps) => {
         </Pressable>
       )}
       keyExtractor={(item) => item.group_id}
+      ListEmptyComponent={
+        <View className="flex items-center justify-center px-8 py-4">
+          <Text className="text-center text-white">
+            Create or a group to get started!
+            <Pressable
+              className="flex-row items-center px-4 py-2"
+              onPress={() => router.push('/main/groups/createGroup')}>
+              <FontAwesome6 name="plus" size={16} color="white" />
+            </Pressable>
+          </Text>
+        </View>
+      }
     />
   );
 };
