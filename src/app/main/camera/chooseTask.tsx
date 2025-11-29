@@ -94,7 +94,7 @@ const ChooseTask = () => {
 
               return (
                 <TouchableOpacity
-                  className="w-full items-center rounded-xl px-4"
+                  className={`flex w-10/12 self-center bg-tethr-gray/50 px-5 py-4 text-2xl text-white ${roundedMap[getCardType(idx, filteredTasks.length)]}`}
                   key={idx}
                   disabled={taskCompleted}
                   onPress={() =>
@@ -108,14 +108,11 @@ const ChooseTask = () => {
                       },
                     })
                   }>
-                  <View
-                    className={`flex w-10/12 self-center bg-tethr-gray/50 px-5 py-4 text-2xl text-white ${roundedMap[getCardType(idx, filteredTasks.length)]}`}>
-                    <Text
-                      className={`${taskCompleted ? 'text-tethr-light-gray/20' : 'text-white'} font-semibold`}>
-                      {task.task_name} {task.recurring ? '(Recurring)' : ''}{' '}
-                      {task.weekly ? '(Weekly)' : ''} {taskCompleted ? '(Completed)' : ''}
-                    </Text>
-                  </View>
+                  <Text
+                    className={`${taskCompleted ? 'text-tethr-light-gray/20' : 'text-white'} font-semibold`}>
+                    {task.task_name} {task.recurring ? '(Recurring)' : ''}{' '}
+                    {task.weekly ? '(Weekly)' : ''} {taskCompleted ? '(Completed)' : ''}
+                  </Text>
                 </TouchableOpacity>
               );
             })}
