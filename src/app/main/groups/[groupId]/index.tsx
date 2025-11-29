@@ -163,7 +163,7 @@ const GroupPage = () => {
             />
           </TouchableOpacity>
         </View>
-        <View className="flex-row items-center justify-between px-[5vw] pt-4">
+        <View className="flex-row items-center justify-between px-[5vw] pb-4 pt-2">
           <Text className="text-3xl font-bold leading-none text-white">{groupNameState}</Text>
           <Pressable className="rounded-3xl bg-tethr-purple/40 px-4 py-2" onPress={leaveGroup}>
             <Text className="text-white">Leave Group</Text>
