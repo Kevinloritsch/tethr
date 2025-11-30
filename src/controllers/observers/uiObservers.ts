@@ -1,4 +1,7 @@
-import { taskCompletionObserver, TaskCompletionData } from '@/controllers/taskCompletionObserver';
+import {
+  taskCompletionObserver,
+  TaskCompletionData,
+} from '@/controllers/observers/taskCompletionObserver';
 
 let homeUpdateCallback: ((data: TaskCompletionData) => void) | null = null;
 let exploreUpdateCallback: ((data: TaskCompletionData) => void) | null = null;

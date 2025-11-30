@@ -7,7 +7,7 @@ import { photoRetrieve } from '@/controllers/photoRetrieve';
 import { getAllGroups } from '@/controllers/group';
 import { taskController, Task } from '@/controllers/tasks';
 import { LinearGradient } from 'expo-linear-gradient';
-import { registerHomeObserver, unregisterHomeObserver } from '@/controllers/uiObservers';
+import { registerHomeObserver, unregisterHomeObserver } from '@/controllers/observers/uiObservers';
 
 import Tethr from '@/components/tethr';
 import Groups from '@/components/groups/groups';

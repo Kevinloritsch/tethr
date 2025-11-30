@@ -1,6 +1,6 @@
 import { supabase } from '@/lib/supabase';
 import { imageCompressor } from '@/utils/compress';
-import { taskCompletionObserver } from '@/controllers/taskCompletionObserver';
+import { taskCompletionObserver } from '@/controllers/observers/taskCompletionObserver';
 
 export interface UploadParams {
   uri: string;

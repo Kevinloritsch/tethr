@@ -2,7 +2,10 @@ import { View, FlatList, ActivityIndicator, Text, RefreshControl } from 'react-n
 import { useState, useEffect, useMemo, useRef } from 'react';
 import { photoRetrieve, PhotoSubmission } from '@/controllers/photoRetrieve';
 import { groupController } from '@/controllers/group';
-import { registerExploreObserver, unregisterExploreObserver } from '@/controllers/uiObservers';
+import {
+  registerExploreObserver,
+  unregisterExploreObserver,
+} from '@/controllers/observers/uiObservers';
 
 import Tethr from '@/components/tethr';
 import Fyp from '@/components/fyp';

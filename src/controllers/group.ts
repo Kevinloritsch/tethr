@@ -1,5 +1,8 @@
 import { supabase } from '@/lib/supabase';
-import { taskCompletionObserver, TaskCompletionData } from '@/controllers/taskCompletionObserver';
+import {
+  taskCompletionObserver,
+  TaskCompletionData,
+} from '@/controllers/observers/taskCompletionObserver';
 
 interface GroupType {
   group_id: string;

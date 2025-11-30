@@ -1,5 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { taskCompletionObserver, TaskCompletionData } from '@/controllers/taskCompletionObserver';
+import {
+  taskCompletionObserver,
+  TaskCompletionData,
+} from '@/controllers/observers/taskCompletionObserver';
 
 const getWeekKey = () => {
   const now = new Date();

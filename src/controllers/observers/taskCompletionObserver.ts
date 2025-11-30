@@ -9,7 +9,7 @@ class TaskCompletionObserver {
   }
 
   notify(data: TaskCompletionData) {
-    console.log('Notifying all observers:', data);
+    console.log('Notifying all task observers:', data);
     this.observers.forEach((observer) => {
       try {
         observer(data);
