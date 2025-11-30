@@ -1,18 +1,29 @@
 import { Tabs, useSegments } from 'expo-router';
 import '../../../global.css';
-import React from 'react';
 import { TouchableOpacity, View } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
+import React, { useState, useEffect, useCallback } from 'react';
+import { getFriendsList } from '@/controllers/getFriends';
 
 import AntDesign from '@expo/vector-icons/AntDesign';
 import Feather from '@expo/vector-icons/Feather';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
 export default function RootLayout() {
+  const [incomingRequests, setIncoming] = useState<number>(0);
   const segments = useSegments();
 
   const hideTabBar =
     segments.includes('camera') || segments.includes('groups') || segments.includes('tasks');
+
+  const loadFriends = useCallback(async () => {
+    const incomingRes = await getFriendsList.getIncomingFriendRequestsCount();
+    setIncoming(incomingRes);
+  }, [setIncoming]);
+
+  useEffect(() => {
+    loadFriends();
+  }, [loadFriends]);
 
   return (
     <React.Fragment>
@@ -68,6 +79,7 @@ export default function RootLayout() {
           options={{
             tabBarIcon: ({ color, size }) => <Ionicons name="people" size={size} color={color} />,
             tabBarButton: (props) => <TouchableOpacity {...(props as any)} />,
+            tabBarBadge: incomingRequests && incomingRequests > 0 ? incomingRequests : undefined,
           }}
         />
         <Tabs.Screen

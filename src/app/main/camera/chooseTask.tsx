@@ -80,8 +80,10 @@ const ChooseTask = () => {
       </View>
 
       <View className="items-center">
-        <Text className="mb-4 text-2xl font-bold text-white">Select Task for {group_name}</Text>
-
+        <View className="flex flex-row gap-2">
+          <Text className="mb-4 text-2xl font-bold text-white">Select Task for</Text>
+          <Text className="mb-4 text-2xl font-bold text-tethr-purple">{group_name}</Text>
+        </View>
         <View className="mb-4 w-full items-center">
           <SearchBar placeholder="Search tasks..." value={query} onSearch={handleSearch} />
         </View>

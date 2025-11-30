@@ -148,6 +148,7 @@ const PhotoPreview = ({
             {uploading && (
               <View className="absolute inset-0 items-center justify-center rounded-2xl bg-black/70">
                 <ActivityIndicator size="large" color="white" />
+                <Text className="mt-4 text-xl font-bold text-tethr-purple">Uploading Photo!</Text>
               </View>
             )}
           </>
