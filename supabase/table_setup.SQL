@@ -222,8 +222,7 @@ BEGIN
   DELETE FROM public.tasks 
   WHERE recurring = false 
   AND weekly = true
-  AND DATE(created_at AT TIME ZONE 'America/Los_Angeles') < 
-      DATE(NOW() AT TIME ZONE 'America/Los_Angeles') - INTERVAL '6 days';
+  AND EXTRACT(DOW FROM NOW() AT TIME ZONE 'America/Los_Angeles') = 0;
 END;
 $$;
 
