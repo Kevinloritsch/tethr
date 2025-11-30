@@ -1,7 +1,8 @@
 import { View, FlatList, ActivityIndicator, Text, RefreshControl } from 'react-native';
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { photoRetrieve, PhotoSubmission } from '@/controllers/photoRetrieve';
-import { getAllGroups } from '@/controllers/group';
+import { groupController } from '@/controllers/group';
+import { registerExploreObserver, unregisterExploreObserver } from '@/controllers/uiObservers';
 
 import Tethr from '@/components/tethr';
 import Fyp from '@/components/fyp';
@@ -16,13 +17,20 @@ export default function ExploreUI() {
   const [refreshing, setRefreshing] = useState(false);
   const [photos, setPhotos] = useState<PhotoWithGroup[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const groupsMapRef = useRef<Record<string, string>>({});
 
   const loadPhotos = async () => {
     try {
       setLoading(true);
 
-      const allGroups = await getAllGroups.fetchUserData();
+      const allGroups = await groupController.fetchUserData('EXPLORE_SCREEN');
       const groupIds = allGroups.map((g) => g.group_id);
+
+      const gMap: Record<string, string> = {};
+      allGroups.forEach((g) => {
+        gMap[g.group_id] = g.group_name;
+      });
+      groupsMapRef.current = gMap;
 
       if (groupIds.length > 0) {
         const allPhotos = await photoRetrieve.getPhotosByGroups(groupIds);
@@ -53,8 +61,26 @@ export default function ExploreUI() {
 
   useEffect(() => {
     loadPhotos();
-  }, []);
 
+    registerExploreObserver((data) => {
+      console.log('Explore: Observer, adding photos to relevant states...', data);
+
+      const newPhoto: PhotoWithGroup = {
+        name: data.photoUri.split('/').pop() || '',
+        publicUrl: data.photoUri,
+        createdAt: data.timestamp,
+        groupId: data.groupId,
+        userId: data.userId,
+        username: 'You',
+        taskName: data.taskName,
+        groupName: groupsMapRef.current[data.groupId] || 'Unknown Group',
+      };
+
+      setPhotos((prev) => [newPhoto, ...prev]);
+    });
+
+    return () => unregisterExploreObserver();
+  }, []);
   const filteredPhotos = useMemo(() => {
     if (!searchQuery.trim()) return photos;
 
@@ -83,11 +109,11 @@ export default function ExploreUI() {
         data={filteredPhotos}
         keyExtractor={(item) => item.name}
         renderItem={({ item }) => {
-          console.log('Photo item:', {
-            groupId: item.groupId,
-            groupName: item.groupName,
-            taskName: item.taskName,
-          });
+          // console.log('Photo item:', {
+          //   groupId: item.groupId,
+          //   groupName: item.groupName,
+          //   taskName: item.taskName,
+          // });
 
           return (
             <View className="mx-auto justify-center pb-6">

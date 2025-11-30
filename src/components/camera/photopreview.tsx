@@ -6,8 +6,6 @@ import { SaveFormat, useImageManipulator } from 'expo-image-manipulator';
 import Tethr from '@/components/tethr';
 import { storagePush } from '@/controllers/photoUpload';
 import { userController } from '@/controllers/userInfo';
-import { completedTasksController } from '@/controllers/completeTask';
-import { groupController } from '@/controllers/group';
 
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
@@ -87,18 +85,16 @@ const PhotoPreview = ({
         return;
       }
 
-      await completedTasksController.addTask(task_name, group_id, weekly);
-      await groupController.increaseMemberScore(userId, group_id);
-
-      storagePush.uploadImage({
+      await storagePush.uploadImage({
         uri: correctedPhoto,
         userId: userId,
         groupId: group_id,
         taskName: task_name,
+        weekly: weekly,
       });
 
       handleRetakePhoto();
-      router.push('/');
+      router.replace('/');
     } catch (err: any) {
       console.error('Upload error:', err);
     } finally {

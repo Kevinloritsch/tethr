@@ -42,6 +42,11 @@ const CreateTask = () => {
     setLoading(false);
   };
 
+  const handleTaskNameChange = (text: string) => {
+    const filtered = text.replace(/[^a-zA-Z0-9 ]/g, '');
+    setTask(filtered);
+  };
+
   if (loading) {
     return (
       <View className="flex-1 items-center justify-center">
@@ -52,7 +57,8 @@ const CreateTask = () => {
   }
 
   const handleCreateTask = async () => {
-    const result = await taskController.createTask(groupId, task, recurring, weekly);
+    const sanitizedTask = task.replace(/[^a-zA-Z0-9 ]/g, '').trim();
+    const result = await taskController.createTask(groupId, sanitizedTask, recurring, weekly);
     setUploading(true);
 
     if (result.success) {
@@ -108,7 +114,7 @@ const CreateTask = () => {
         <TextInput
           className="border-1 m-2 mx-auto w-full rounded-lg bg-white p-2"
           value={task}
-          onChangeText={setTask}
+          onChangeText={handleTaskNameChange}
           placeholder="Enter task name"
           placeholderTextColor="#DEDEDE"
           returnKeyType="done"

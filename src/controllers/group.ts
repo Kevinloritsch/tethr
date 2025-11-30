@@ -1,4 +1,5 @@
 import { supabase } from '@/lib/supabase';
+import { taskCompletionObserver, TaskCompletionData } from '@/controllers/taskCompletionObserver';
 
 interface GroupType {
   group_id: string;
@@ -14,6 +15,19 @@ interface LeaderboardEntry {
 }
 
 class GroupController {
+  private initialized = false;
+
+  initialize() {
+    if (this.initialized) {
+      console.log('Reinitialization check: already done');
+      return;
+    }
+    this.initialized = true;
+    taskCompletionObserver.subscribe(async (data: TaskCompletionData) => {
+      console.log('Scores: Observer, increasing relevant scores...');
+      await this.increaseMemberScore(data.userId, data.groupId);
+    });
+  }
   async getGroupName(groupId: string): Promise<string | null> {
     const { data: group, error } = await supabase
       .from('groups')
@@ -25,17 +39,16 @@ class GroupController {
     return group?.group_name || null;
   }
 
-  async fetchUserData(): Promise<GroupType[]> {
+  async fetchUserData(source?: string): Promise<GroupType[]> {
+    console.log(`fetchUserData called by: ${source || 'unknown'}`);
     try {
       const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
       if (sessionError) {
-        console.error('Error fetching session:', sessionError);
         return [];
       }
 
       const user = sessionData?.session?.user;
       if (!user) {
-        console.log('No user logged in.');
         return [];
       }
 
@@ -45,20 +58,17 @@ class GroupController {
         .eq('user_id', user.id);
 
       if (groupError) console.error('Error fetching groups:', groupError);
-      else {
-        const formattedGroups: GroupType[] = (groupData || []).map((item: any) => ({
-          group_id: item.group_id,
-          group_name: item.groups?.group_name || 'N/A Group Name',
-          current_points: item.current_points,
-        }));
+      const formattedGroups: GroupType[] = (groupData || []).map((item: any) => ({
+        group_id: item.group_id,
+        group_name: item.groups?.group_name || 'N/A Group Name',
+        current_points: item.current_points,
+      }));
 
-        return formattedGroups;
-      }
+      return formattedGroups;
     } catch (err) {
       console.error('Unexpected error fetching data:', err);
       return [];
     }
-    return [];
   }
 
   async getLeaderboardData(groupId: string): Promise<LeaderboardEntry[]> {
@@ -253,4 +263,4 @@ class GroupController {
 }
 
 export const groupController = new GroupController();
-export const getAllGroups = new GroupController();
+export const getAllGroups = groupController;

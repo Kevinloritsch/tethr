@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { taskCompletionObserver, TaskCompletionData } from '@/controllers/taskCompletionObserver';
 
 const getWeekKey = () => {
   const now = new Date();
@@ -8,6 +9,16 @@ const getWeekKey = () => {
 };
 
 export const completedTasksController = {
+  initialized: false,
+  initialize: () => {
+    if (completedTasksController.initialized) return;
+    completedTasksController.initialized = true;
+    taskCompletionObserver.subscribe(async (data: TaskCompletionData) => {
+      console.log('Tasks: Observer, storing completion in local data...');
+      await completedTasksController.addTask(data.taskName, data.groupId, data.weekly);
+    });
+  },
+
   addTask: async (taskName: string, groupId: string, weekly: boolean) => {
     try {
       const taskKey = `${groupId}-${taskName}`;

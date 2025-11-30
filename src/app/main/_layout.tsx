@@ -4,6 +4,8 @@ import { TouchableOpacity, View } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect, useCallback } from 'react';
 import { getFriendsList } from '@/controllers/getFriends';
+import { completedTasksController } from '@/controllers/completeTask';
+import { groupController } from '@/controllers/group';
 
 import AntDesign from '@expo/vector-icons/AntDesign';
 import Feather from '@expo/vector-icons/Feather';
@@ -21,9 +23,19 @@ export default function RootLayout() {
     setIncoming(incomingRes);
   }, [setIncoming]);
 
+  const initializeObservers = () => {
+    console.log('Initializing observers');
+    completedTasksController.initialize();
+    groupController.initialize();
+  };
+
   useEffect(() => {
     loadFriends();
   }, [loadFriends]);
+
+  useEffect(() => {
+    initializeObservers();
+  }, []);
 
   return (
     <React.Fragment>

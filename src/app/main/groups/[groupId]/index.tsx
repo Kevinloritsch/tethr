@@ -213,7 +213,6 @@ const GroupPage = () => {
 
               {tasks.map((task, idx) => {
                 const taskCompleted = isCompleted(task.task_name, groupId);
-                console.log(task);
 
                 return (
                   <TouchableOpacity
