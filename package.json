@@ -25,6 +25,7 @@
     "expo-linear-gradient": "~15.0.7",
     "expo-linking": "~8.0.9",
     "expo-router": "~6.0.15",
+    "expo-splash-screen": "~31.0.11",
     "expo-status-bar": "~3.0.8",
     "nativewind": "^4.1.23",
     "prettier-plugin-tailwindcss": "^0.7.1",

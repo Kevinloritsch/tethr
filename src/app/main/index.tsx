@@ -8,6 +8,7 @@ import { getAllGroups } from '@/controllers/group';
 import { taskController, Task } from '@/controllers/tasks';
 import { LinearGradient } from 'expo-linear-gradient';
 import { registerHomeObserver, unregisterHomeObserver } from '@/controllers/observers/uiObservers';
+import * as SplashScreen from 'expo-splash-screen';
 
 import Tethr from '@/components/tethr';
 import Groups from '@/components/groups/groups';
@@ -26,6 +27,8 @@ interface GroupWithPhotos {
     taskName: string;
   }[];
 }
+
+SplashScreen.preventAutoHideAsync();
 
 export default function Index() {
   const [name, setName] = useState<string>('');
@@ -65,6 +68,12 @@ export default function Index() {
     return () => unregisterHomeObserver();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (!loading) {
+      SplashScreen.hideAsync();
+    }
+  }, [loading]);
 
   const loadPageData = async () => {
     try {
