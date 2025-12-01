@@ -43,6 +43,7 @@ describe('photoUpload/storagePush', () => {
       userId: 'u1',
       groupId: 'g1',
       taskName: 't1',
+      weekly: false,
     });
 
     expect(imageCompressor.compress).toHaveBeenCalledWith('file://original.jpg', {
@@ -75,6 +76,7 @@ describe('photoUpload/storagePush', () => {
       userId: 'u1',
       groupId: 'g1',
       taskName: 't1',
+      weekly: false,
     });
 
     expect(res.success).toBe(false);

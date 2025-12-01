@@ -51,7 +51,7 @@ describe('taskController', () => {
         select: () => ({ single: jest.fn().mockResolvedValue({ data: { id: 1 }, error: null }) }),
       }),
     });
-    const res = await taskController.createTask('g', 't', false);
+    const res = await taskController.createTask('g', 't', false, false);
     expect(res.success).toBe(true);
     expect(res.data).toBeDefined();
   });
@@ -64,7 +64,7 @@ describe('taskController', () => {
         }),
       }),
     });
-    const res = await taskController.createTask('g', 't', false);
+    const res = await taskController.createTask('g', 't', false, false);
     expect(res.success).toBe(false);
     expect(res.message).toMatch(/insert fail/);
   });
