@@ -123,8 +123,8 @@ describe('Profile Screen', () => {
   });
 
   it('reloads profile when observer callback fires', async () => {
-    let observerCallback: Function | null = null;
-    (scoreUpdateObserver.subscribe as jest.Mock).mockImplementation((callback: Function) => {
+    let observerCallback: (() => void) | null = null;
+    (scoreUpdateObserver.subscribe as jest.Mock).mockImplementation((callback: () => void) => {
       observerCallback = callback;
       return jest.fn();
     });
@@ -135,7 +135,9 @@ describe('Profile Screen', () => {
       expect(userController.getProfileInformation).toHaveBeenCalledTimes(1);
     });
 
-    observerCallback?.();
+    if (observerCallback) {
+      (observerCallback as () => void)();
+    }
 
     await waitFor(() => {
       expect(userController.getProfileInformation).toHaveBeenCalledTimes(2);
