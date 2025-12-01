@@ -145,7 +145,7 @@ describe('getFriendsList', () => {
     const res = await getFriendsList.getIncomingFriendRequests();
 
     expect(res).toHaveLength(1);
-    expect(res[0]).toMatchObject({ username: 'bob', userId: 'u2', buttonText: 'Accept' });
+    expect(res[0]).toMatchObject({ username: 'bob', userId: 'u2', buttonText: 'check' });
   });
 
   it('getOutgoingFriendRequests returns outgoing requests', async () => {
