@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useState, useEffect } from 'react';
 import { taskController } from '@/controllers/tasks';
@@ -79,7 +79,7 @@ const ChooseTask = () => {
         </TouchableOpacity>
       </View>
 
-      <View className="items-center">
+      <View className="mb-8 flex-1 items-center">
         <View className="flex flex-row gap-2">
           <Text className="mb-4 text-2xl font-bold text-white">Select Task for</Text>
           <Text className="mb-4 text-2xl font-bold text-tethr-purple">{group_name}</Text>
@@ -90,7 +90,8 @@ const ChooseTask = () => {
         {filteredTasks.length === 0 ? (
           <Text className="mt-4 text-center text-white">No matching tasks.</Text>
         ) : (
-          <View className="mb-4 w-full items-center">
+          // <View className="mb-4 w-full items-center">
+          <ScrollView showsHorizontalScrollIndicator={false} className="w-full flex-1">
             {filteredTasks.map((task, idx) => {
               const taskCompleted = isCompleted(task.task_name, groupId);
 
@@ -118,7 +119,8 @@ const ChooseTask = () => {
                 </TouchableOpacity>
               );
             })}
-          </View>
+          </ScrollView>
+          // </View>
         )}
       </View>
     </View>

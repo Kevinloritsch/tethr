@@ -203,6 +203,7 @@ export default function FriendsScreen() {
       <SectionList
         sections={sections}
         keyExtractor={(item) => item.username}
+        stickySectionHeadersEnabled={false}
         renderItem={({ item, section, index }) => (
           <View className="flex flex-col items-center px-4">
             <FriendCard
