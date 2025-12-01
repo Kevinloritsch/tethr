@@ -3,7 +3,7 @@
     "name": "tethr",
     "slug": "expo-starter",
     "scheme": "tethr",
-    "version": "1.0.0",
+    "version": "1.0.3",
     "orientation": "portrait",
     "icon": "./src/assets/splash-icon.png",
     "userInterfaceStyle": "dark",

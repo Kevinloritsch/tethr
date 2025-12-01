@@ -80,8 +80,10 @@ const ChooseTask = () => {
       </View>
 
       <View className="items-center">
-        <Text className="mb-4 text-2xl font-bold text-white">Select Task for {group_name}</Text>
-
+        <View className="flex flex-row gap-2">
+          <Text className="mb-4 text-2xl font-bold text-white">Select Task for</Text>
+          <Text className="mb-4 text-2xl font-bold text-tethr-purple">{group_name}</Text>
+        </View>
         <View className="mb-4 w-full items-center">
           <SearchBar placeholder="Search tasks..." value={query} onSearch={handleSearch} />
         </View>
@@ -94,7 +96,7 @@ const ChooseTask = () => {
 
               return (
                 <TouchableOpacity
-                  className="w-full items-center rounded-xl px-4"
+                  className={`flex w-10/12 self-center bg-tethr-gray/50 px-5 py-4 text-2xl text-white ${roundedMap[getCardType(idx, filteredTasks.length)]}`}
                   key={idx}
                   disabled={taskCompleted}
                   onPress={() =>
@@ -108,14 +110,11 @@ const ChooseTask = () => {
                       },
                     })
                   }>
-                  <View
-                    className={`flex w-10/12 self-center bg-tethr-gray/50 px-5 py-4 text-2xl text-white ${roundedMap[getCardType(idx, filteredTasks.length)]}`}>
-                    <Text
-                      className={`${taskCompleted ? 'text-tethr-light-gray/20' : 'text-white'} font-semibold`}>
-                      {task.task_name} {task.recurring ? '(Recurring)' : ''}{' '}
-                      {task.weekly ? '(Weekly)' : ''} {taskCompleted ? '(Completed)' : ''}
-                    </Text>
-                  </View>
+                  <Text
+                    className={`${taskCompleted ? 'text-tethr-light-gray/20' : 'text-white'} font-semibold`}>
+                    {task.task_name} {task.recurring ? '(Recurring)' : ''}{' '}
+                    {task.weekly ? '(Weekly)' : ''} {taskCompleted ? '(Completed)' : ''}
+                  </Text>
                 </TouchableOpacity>
               );
             })}

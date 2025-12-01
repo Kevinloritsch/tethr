@@ -7,6 +7,8 @@ import { photoRetrieve } from '@/controllers/photoRetrieve';
 import { getAllGroups } from '@/controllers/group';
 import { taskController, Task } from '@/controllers/tasks';
 import { LinearGradient } from 'expo-linear-gradient';
+import { registerHomeObserver, unregisterHomeObserver } from '@/controllers/observers/uiObservers';
+import * as SplashScreen from 'expo-splash-screen';
 
 import Tethr from '@/components/tethr';
 import Groups from '@/components/groups/groups';
@@ -26,6 +28,8 @@ interface GroupWithPhotos {
   }[];
 }
 
+SplashScreen.preventAutoHideAsync();
+
 export default function Index() {
   const [name, setName] = useState<string>('');
   const [loading, setLoading] = useState(true);
@@ -35,7 +39,41 @@ export default function Index() {
 
   useEffect(() => {
     loadPageData();
+    registerHomeObserver((data) => {
+      console.log('Home: Observer, adding photos to relevant states', data);
+
+      setGroupsWithPhotos((prevGroups) =>
+        prevGroups.map((group) => {
+          if (group.group_id === data.groupId) {
+            return {
+              ...group,
+              current_points: group.current_points + 1,
+              photos: [
+                {
+                  name: data.photoUri.split('/').pop() || '',
+                  publicUrl: data.photoUri,
+                  createdAt: data.timestamp,
+                  username: name,
+                  taskName: data.taskName,
+                },
+                ...group.photos,
+              ],
+            };
+          }
+          return group;
+        })
+      );
+    });
+
+    return () => unregisterHomeObserver();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (!loading) {
+      SplashScreen.hideAsync();
+    }
+  }, [loading]);
 
   const loadPageData = async () => {
     try {
@@ -44,7 +82,7 @@ export default function Index() {
       const userName = await userController.getName();
       if (userName) setName(userName);
 
-      const allGroups = await getAllGroups.fetchUserData();
+      const allGroups = await getAllGroups.fetchUserData('Home');
 
       const groupIds = allGroups.map((g) => g.group_id);
 

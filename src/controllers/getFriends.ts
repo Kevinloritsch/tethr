@@ -107,6 +107,24 @@ class GetFriendController {
     return requests;
   }
 
+  async getIncomingFriendRequestsCount(): Promise<number> {
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+    if (!user) throw authError;
+
+    const userId = user.id;
+    const { data, error } = await supabase
+      .from(this.friendRequestsTableName)
+      .select('sender_id, users!sender_id(user_id, username)')
+      .eq('recipient_id', userId);
+
+    if (error) throw error;
+
+    return data.length;
+  }
+
   async getOutgoingFriendRequests(): Promise<FriendProps[]> {
     const {
       data: { user },

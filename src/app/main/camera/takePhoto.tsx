@@ -89,6 +89,7 @@ export default function Camera() {
         quality: 1,
         base64: true,
         exif: true,
+        skipProcessing: false,
       });
 
       setPhoto(takenPhoto);
@@ -164,6 +165,7 @@ export default function Camera() {
           zoom={zoom}
           ref={cameraRef}
           mirror={facing === 'front'}
+          responsiveOrientationWhenOrientationLocked
         />
         <Text className="absolute left-8 top-2 w-auto items-center justify-center rounded-lg bg-tethr-gray/80 px-3 py-2 text-white">
           {taskName}
