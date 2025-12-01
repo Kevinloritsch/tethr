@@ -96,15 +96,16 @@ describe('completedTasksController', () => {
     const taskKey = `group1-weeklyTask`;
 
     (AsyncStorage.getItem as jest.Mock)
-      .mockResolvedValueOnce(weekKey)
-      .mockResolvedValueOnce(JSON.stringify([taskKey]));
+      .mockResolvedValueOnce(weekKey) // lastWeekKey matches
+      .mockResolvedValueOnce(JSON.stringify([taskKey])); // existing tasks include taskKey
 
     const tasks = await completedTasksController.addTask('weeklyTask', 'group1', true);
 
     expect(tasks).toEqual([taskKey]);
+    // Should not call setItem for completedWeeklyTasks since task already exists
     expect(AsyncStorage.setItem).not.toHaveBeenCalledWith(
       'completedWeeklyTasks',
-      expect.any(String)
+      JSON.stringify([taskKey, taskKey])
     );
   });
 

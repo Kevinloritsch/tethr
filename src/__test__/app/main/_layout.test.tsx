@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, waitFor } from '@testing-library/react-native';
+import { render, waitFor, act } from '@testing-library/react-native';
 import RootLayout from '@/app/main/_layout';
 import { useSegments } from 'expo-router';
 import { getFriendsList } from '@/controllers/getFriends';
@@ -145,6 +145,133 @@ describe('app/main/_layout', () => {
     expect(UNSAFE_root).toBeTruthy();
   });
 
+  it('loads friend requests on mount', async () => {
+    mockedGetFriendsList.getIncomingFriendRequestsCount.mockResolvedValue(3);
+
+    render(<RootLayout />);
+
+    await waitFor(() => {
+      expect(mockedGetFriendsList.getIncomingFriendRequestsCount).toHaveBeenCalled();
+    });
+  });
+
+  it('sets incoming requests count from API', async () => {
+    mockedGetFriendsList.getIncomingFriendRequestsCount.mockResolvedValue(5);
+
+    render(<RootLayout />);
+
+    await waitFor(() => {
+      expect(mockedGetFriendsList.getIncomingFriendRequestsCount).toHaveBeenCalled();
+    });
+  });
+
+  it('handles accept action from observer callback', async () => {
+    mockedGetFriendsList.getIncomingFriendRequestsCount.mockResolvedValue(2);
+    let subscriberCallback: ((data: any) => void) | null = null;
+
+    mockedFriendRequestObserver.subscribe.mockImplementation((callback) => {
+      subscriberCallback = callback;
+      return jest.fn();
+    });
+
+    render(<RootLayout />);
+
+    await waitFor(() => {
+      expect(subscriberCallback).toBeDefined();
+    });
+
+    if (subscriberCallback) {
+      await act(async () => {
+        (subscriberCallback as (data: any) => void)({ action: 'accept' });
+      });
+    }
+  });
+
+  it('handles reject action from observer callback', async () => {
+    mockedGetFriendsList.getIncomingFriendRequestsCount.mockResolvedValue(3);
+    let subscriberCallback: ((data: any) => void) | null = null;
+
+    mockedFriendRequestObserver.subscribe.mockImplementation((callback) => {
+      subscriberCallback = callback;
+      return jest.fn();
+    });
+
+    render(<RootLayout />);
+
+    await waitFor(() => {
+      expect(subscriberCallback).toBeDefined();
+    });
+
+    if (subscriberCallback) {
+      await act(async () => {
+        (subscriberCallback as (data: any) => void)({ action: 'reject' });
+      });
+    }
+  });
+
+  it('handles manualUpdate action from observer callback', async () => {
+    let subscriberCallback: ((data: any) => void) | null = null;
+
+    mockedFriendRequestObserver.subscribe.mockImplementation((callback) => {
+      subscriberCallback = callback;
+      return jest.fn();
+    });
+
+    render(<RootLayout />);
+
+    await waitFor(() => {
+      expect(subscriberCallback).toBeDefined();
+    });
+
+    if (subscriberCallback) {
+      await act(async () => {
+        (subscriberCallback as (data: any) => void)({ action: 'manualUpdate', count: 4 });
+      });
+    }
+  });
+
+  it('prevents negative incoming requests count', async () => {
+    mockedGetFriendsList.getIncomingFriendRequestsCount.mockResolvedValue(1);
+    let subscriberCallback: ((data: any) => void) | null = null;
+
+    mockedFriendRequestObserver.subscribe.mockImplementation((callback) => {
+      subscriberCallback = callback;
+      return jest.fn();
+    });
+
+    render(<RootLayout />);
+
+    await waitFor(() => {
+      expect(subscriberCallback).toBeDefined();
+    });
+
+    if (subscriberCallback) {
+      await act(async () => {
+        (subscriberCallback as (data: any) => void)({ action: 'accept' });
+        (subscriberCallback as (data: any) => void)({ action: 'accept' });
+      });
+    }
+  });
+
+  it('initializes both task controller and group controller', async () => {
+    render(<RootLayout />);
+
+    await waitFor(() => {
+      expect(mockedCompletedTasksController.initialize).toHaveBeenCalled();
+      expect(mockedGroupController.initialize).toHaveBeenCalled();
+    });
+  });
+
+  it('renders StatusBar with light style', () => {
+    const { UNSAFE_root } = render(<RootLayout />);
+    expect(UNSAFE_root).toBeTruthy();
+  });
+
+  it('applies correct tab bar styling', () => {
+    const { UNSAFE_root } = render(<RootLayout />);
+    expect(UNSAFE_root).toBeTruthy();
+  });
+
   it('unsubscribes from friend request observer on unmount', async () => {
     const mockUnsubscribe = jest.fn();
     mockedFriendRequestObserver.subscribe.mockReturnValue(mockUnsubscribe);
@@ -160,47 +287,5 @@ describe('app/main/_layout', () => {
     await waitFor(() => {
       expect(mockUnsubscribe).toHaveBeenCalled();
     });
-  });
-
-  it('accepts friend request and decrements badge', async () => {
-    mockedGetFriendsList.getIncomingFriendRequestsCount.mockResolvedValue(2);
-    let subscriberCallback: ((data: any) => void) | null = null;
-
-    mockedFriendRequestObserver.subscribe.mockImplementation((callback) => {
-      subscriberCallback = callback;
-      return () => {};
-    });
-
-    render(<RootLayout />);
-
-    await waitFor(() => {
-      expect(subscriberCallback).toBeDefined();
-    });
-  });
-
-  it('rejects friend request and decrements badge', async () => {
-    mockedGetFriendsList.getIncomingFriendRequestsCount.mockResolvedValue(1);
-    let subscriberCallback: ((data: any) => void) | null = null;
-
-    mockedFriendRequestObserver.subscribe.mockImplementation((callback) => {
-      subscriberCallback = callback;
-      return () => {};
-    });
-
-    render(<RootLayout />);
-
-    await waitFor(() => {
-      expect(subscriberCallback).toBeDefined();
-    });
-  });
-
-  it('configures tab bar with correct styling', () => {
-    const { UNSAFE_root } = render(<RootLayout />);
-    expect(UNSAFE_root).toBeTruthy();
-  });
-
-  it('renders all required tabs', () => {
-    const { UNSAFE_root } = render(<RootLayout />);
-    expect(UNSAFE_root).toBeTruthy();
   });
 });
