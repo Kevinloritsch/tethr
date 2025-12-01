@@ -53,15 +53,13 @@ const Groups = ({ groups }: GroupsProps) => {
       )}
       keyExtractor={(item) => item.group_id}
       ListEmptyComponent={
-        <View className="flex items-center justify-center px-8 py-4">
-          <Text className="text-center text-white">
-            Create or a group to get started!
-            <Pressable
-              className="flex-row items-center px-4 py-2"
-              onPress={() => router.push('/main/groups/createGroup')}>
-              <FontAwesome6 name="plus" size={16} color="white" />
-            </Pressable>
-          </Text>
+        <View className="flex flex-row items-center justify-center p-4">
+          <Text className="text-center text-white">Create a group to get started!</Text>
+          <Pressable
+            className="flex-row items-center px-4 py-2"
+            onPress={() => router.push('/main/groups/createGroup')}>
+            <FontAwesome6 name="plus" size={16} color="white" />
+          </Pressable>
         </View>
       }
     />

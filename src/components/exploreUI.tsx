@@ -153,7 +153,7 @@ export default function ExploreUI() {
           <Text className="px-4 text-center text-white">
             {searchQuery
               ? 'No photos match your search.'
-              : 'No photos yet. Join a group to start completing tasks!'}
+              : 'No photos yet. Time to complete your tasks!'}
           </Text>
         }
       />
