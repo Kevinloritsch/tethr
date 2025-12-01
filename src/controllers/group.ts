@@ -3,6 +3,7 @@ import {
   taskCompletionObserver,
   TaskCompletionData,
 } from '@/controllers/observers/taskCompletionObserver';
+import { scoreUpdateObserver } from '@/controllers/observers/scoreUpdateObserver';
 
 interface GroupType {
   group_id: string;
@@ -151,6 +152,8 @@ class GroupController {
         console.error('Error updating profile:', profileUpdateError);
         return false;
       }
+
+      scoreUpdateObserver.notify();
 
       return true;
     } catch (err) {

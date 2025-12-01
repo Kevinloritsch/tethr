@@ -67,7 +67,7 @@ const ChooseGroup = () => {
           />
         </TouchableOpacity>
       </View>
-      <View className="w-full items-center gap-2">
+      <View className="mb-4 w-full items-center gap-2">
         <Text className="text-2xl font-bold text-white">Select Group</Text>
 
         <SearchBar placeholder="Search groups..." value={query} onSearch={handleSearch} />
@@ -79,11 +79,11 @@ const ChooseGroup = () => {
         </View>
       )}
       {!loading && (
-        <View className="items-center">
+        <View className="mb-8 flex-1 items-center">
           {filtered.length === 0 ? (
             <Text className="mt-4 text-center text-white">No matching groups.</Text>
           ) : (
-            <ScrollView className="mt-4 w-full" showsVerticalScrollIndicator={false}>
+            <ScrollView showsHorizontalScrollIndicator={false} className="w-full flex-1">
               {filtered.map((group, index) => (
                 <TouchableOpacity
                   key={group.group_id}

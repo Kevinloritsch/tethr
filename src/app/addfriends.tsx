@@ -105,7 +105,7 @@ export default function AddFriendsScreen() {
         </TouchableOpacity>
       </View>
 
-      <View className="flex w-full flex-col items-center gap-2">
+      <View className="mb-4 flex w-full flex-col items-center gap-2">
         <Text className="text-center text-2xl font-bold text-white">Add Friends</Text>
 
         <SearchBar placeholder="Search users..." value={query} onSearch={searchUsers} />

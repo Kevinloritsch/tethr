@@ -1,10 +1,11 @@
 'use client';
 
 import { View, TextInput, Alert, Text, TouchableOpacity } from 'react-native';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Redirect } from 'expo-router';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import * as SplashScreen from 'expo-splash-screen';
 
 import Tethr from '@/components/tethr';
 
@@ -15,8 +16,14 @@ export default function IndexScreen() {
   const [otp, setOtp] = useState('');
   const [authMode, setAuthMode] = useState<'login' | 'signup'>('signup');
   const [currentView, setCurrentView] = useState<'email' | 'verify' | 'authenticated'>('email');
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    SplashScreen.hideAsync();
+  }, []);
 
   const OTP = async () => {
+    setLoading(true);
     console.log(authMode);
     if (authMode === 'signup') {
       const { data: existingUsers, error: checkError } = await supabase
@@ -69,9 +76,11 @@ export default function IndexScreen() {
       setCurrentView('verify');
       console.log('Success! Check your email');
     }
+    setLoading(false);
   };
 
   const verifyOTP = async () => {
+    setLoading(true);
     const { data, error } = await supabase.auth.verifyOtp({
       email: email,
       token: otp,
@@ -103,6 +112,7 @@ export default function IndexScreen() {
       setCurrentView('authenticated');
       console.log('User authenticated:', data);
     }
+    setLoading(true);
   };
 
   if (currentView === 'email') {
@@ -149,8 +159,11 @@ export default function IndexScreen() {
               autoCapitalize="none"
             />
           )}
-          <TouchableOpacity onPress={OTP} disabled={email.trim().length === 0}>
-            <Text className="py-2 text-center font-semibold text-tethr-purple">Continue</Text>
+          <TouchableOpacity onPress={OTP} disabled={email.trim().length === 0 || loading}>
+            <Text
+              className={`py-2 text-center font-semibold ${email.trim().length > 0 ? 'text-tethr-purple' : 'text-gray-500'}`}>
+              Continue
+            </Text>
           </TouchableOpacity>
         </View>
 
@@ -198,7 +211,7 @@ export default function IndexScreen() {
             keyboardType="number-pad"
             returnKeyType="done"
           />
-          <TouchableOpacity onPress={verifyOTP} disabled={otp.length !== 6}>
+          <TouchableOpacity onPress={verifyOTP} disabled={otp.length !== 6 || loading}>
             <Text
               className={`py-2 text-center font-semibold ${otp.length === 6 ? 'text-tethr-purple' : 'text-gray-500'}`}>
               Verify Email

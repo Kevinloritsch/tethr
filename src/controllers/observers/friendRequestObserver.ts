@@ -1,7 +1,8 @@
 export interface FriendRequestData {
-  action: 'accept' | 'reject' | 'cancel';
-  friendId: string;
+  action: 'accept' | 'reject' | 'cancel' | 'manualUpdate';
+  friendId?: string;
   username?: string;
+  count?: number;
 }
 
 class FriendRequestObserver {
@@ -23,6 +24,10 @@ class FriendRequestObserver {
         console.error('Friend request observer error:', error);
       }
     });
+  }
+
+  notifyChange(count: number) {
+    this.notify({ action: 'manualUpdate', count });
   }
 }
 
