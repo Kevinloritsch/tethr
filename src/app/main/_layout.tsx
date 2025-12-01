@@ -38,12 +38,15 @@ export default function RootLayout() {
     initializeTaskObservers();
 
     const unsubscribe = friendRequestObserver.subscribe((data) => {
-      console.log('Layout observer: reduce friends badge', data);
+      console.log('Layout observer: modify friends badge', data);
 
       if (data.action === 'accept') {
         setIncoming((prev) => Math.max(0, prev - 1));
       } else if (data.action === 'reject') {
         setIncoming((prev) => Math.max(0, prev - 1));
+      }
+      if (data.action === 'manualUpdate' && data.count) {
+        setIncoming(data.count);
       }
     });
 

@@ -90,7 +90,6 @@ const ChooseTask = () => {
         {filteredTasks.length === 0 ? (
           <Text className="mt-4 text-center text-white">No matching tasks.</Text>
         ) : (
-          // <View className="mb-4 w-full items-center">
           <ScrollView showsHorizontalScrollIndicator={false} className="w-full flex-1">
             {filteredTasks.map((task, idx) => {
               const taskCompleted = isCompleted(task.task_name, groupId);
@@ -120,7 +119,6 @@ const ChooseTask = () => {
               );
             })}
           </ScrollView>
-          // </View>
         )}
       </View>
     </View>

@@ -99,7 +99,7 @@ class GetFriendController {
         pfpUrl: pfpUrl,
         username: user?.username ?? 'Unknown',
         userId: user?.user_id ?? '',
-        buttonText: 'Accept',
+        buttonText: 'check',
         cardType: getCardType(index, arr.length),
       };
     });
