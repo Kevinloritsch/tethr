@@ -1,4 +1,5 @@
+/* eslint-disable no-undef */
 module.exports = {
-  preventAutoHideAsync: jest.fn(() => Promise.resolve()),
-  hideAsync: jest.fn(() => Promise.resolve()),
+  preventAutoHideAsync: jest.fn(),
+  hideAsync: jest.fn(),
 };
