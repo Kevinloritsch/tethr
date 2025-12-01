@@ -9,22 +9,35 @@ export default function Index() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setIsLoading(false);
-    });
+    supabase.auth
+      .getSession()
+      .then(({ data: { session } }) => {
+        setSession(session);
+      })
+      .catch(() => {
+        setSession(null);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
 
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
-    });
+    }) as any;
 
-    return () => listener.subscription.unsubscribe();
+    return () => {
+      try {
+        listener?.subscription?.unsubscribe?.();
+      } catch (e) {
+        console.error('Error unsubscribing from auth listener', e);
+      }
+    };
   }, []);
 
   if (isLoading) {
     return (
       <View className="items-center justify-center">
-        <ActivityIndicator size="large" color="#fff" />
+        <ActivityIndicator testID="loading-indicator" size="large" color="#fff" />
       </View>
     );
   }

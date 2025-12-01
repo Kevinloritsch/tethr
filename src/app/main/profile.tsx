@@ -34,8 +34,7 @@ export default function ProfileScreen() {
     });
 
     return () => unsubscribe();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [loadProfile]);
 
   const handleLogout = async () => {
     const success = await userController.logout();
@@ -46,7 +45,8 @@ export default function ProfileScreen() {
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     await loadProfile();
-  }, [loadProfile]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   if (loading) {
     return (

@@ -35,3 +35,9 @@ yarn-error.*
 
 # typescript
 *.tsbuildinfo
+
+# jest
+coverage/
+test_output.txt
+coverage.txt
+coverage_report.txt
