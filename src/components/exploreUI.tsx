@@ -1,4 +1,11 @@
-import { View, FlatList, ActivityIndicator, Text, RefreshControl } from 'react-native';
+import {
+  View,
+  FlatList,
+  ActivityIndicator,
+  Text,
+  RefreshControl,
+  TouchableOpacity,
+} from 'react-native';
 import { useState, useEffect, useMemo, useRef } from 'react';
 import { photoRetrieve, PhotoSubmission } from '@/controllers/photoRetrieve';
 import { groupController } from '@/controllers/group';
@@ -10,7 +17,7 @@ import {
 import Tethr from '@/components/tethr';
 import Fyp from '@/components/fyp';
 import SearchBar from '@/components/searchbar';
-
+import Entypo from '@expo/vector-icons/Entypo';
 interface PhotoWithGroup extends PhotoSubmission {
   groupName: string;
 }
@@ -21,6 +28,7 @@ export default function ExploreUI() {
   const [photos, setPhotos] = useState<PhotoWithGroup[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const groupsMapRef = useRef<Record<string, string>>({});
+  const flatListRef = useRef<FlatList>(null);
 
   const loadPhotos = async () => {
     try {
@@ -62,6 +70,10 @@ export default function ExploreUI() {
     setRefreshing(false);
   };
 
+  const scrollToTop = () => {
+    flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
+  };
+
   useEffect(() => {
     loadPhotos();
 
@@ -84,6 +96,7 @@ export default function ExploreUI() {
 
     return () => unregisterExploreObserver();
   }, []);
+
   const filteredPhotos = useMemo(() => {
     if (!searchQuery.trim()) return photos;
 
@@ -109,15 +122,10 @@ export default function ExploreUI() {
     <View className="flex-1 bg-black pt-8">
       <Tethr side="left" />
       <FlatList
+        ref={flatListRef}
         data={filteredPhotos}
         keyExtractor={(item) => item.name}
         renderItem={({ item }) => {
-          // console.log('Photo item:', {
-          //   groupId: item.groupId,
-          //   groupName: item.groupName,
-          //   taskName: item.taskName,
-          // });
-
           return (
             <View className="mx-auto justify-center pb-6">
               <Fyp
@@ -149,6 +157,12 @@ export default function ExploreUI() {
           </Text>
         }
       />
+
+      <TouchableOpacity
+        onPress={scrollToTop}
+        className="absolute bottom-24 right-6 mb-4 h-10 w-14 items-center justify-center rounded-full bg-tethr-purple">
+        <Entypo name="chevron-up" size={24} color="white" />
+      </TouchableOpacity>
     </View>
   );
 }
