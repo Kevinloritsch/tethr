@@ -1,17 +1,54 @@
 import { Tabs, useSegments } from 'expo-router';
 import '../../../global.css';
-import React from 'react';
 import { TouchableOpacity, View } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
+import React, { useState, useEffect, useCallback } from 'react';
+import { getFriendsList } from '@/controllers/getFriends';
+import { completedTasksController } from '@/controllers/completeTask';
+import { groupController } from '@/controllers/group';
+import { friendRequestObserver } from '@/controllers/observers/friendRequestObserver';
 
 import AntDesign from '@expo/vector-icons/AntDesign';
 import Feather from '@expo/vector-icons/Feather';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
 export default function RootLayout() {
+  const [incomingRequests, setIncoming] = useState<number>(0);
   const segments = useSegments();
 
-  const hideTabBar = segments.includes('camera');
+  const hideTabBar =
+    segments.includes('camera') || segments.includes('groups') || segments.includes('tasks');
+
+  const loadFriends = useCallback(async () => {
+    const incomingRes = await getFriendsList.getIncomingFriendRequestsCount();
+    setIncoming(incomingRes);
+  }, [setIncoming]);
+
+  const initializeTaskObservers = () => {
+    console.log('Initializing task observers');
+    completedTasksController.initialize();
+    groupController.initialize();
+  };
+
+  useEffect(() => {
+    loadFriends();
+  }, [loadFriends]);
+
+  useEffect(() => {
+    initializeTaskObservers();
+
+    const unsubscribe = friendRequestObserver.subscribe((data) => {
+      console.log('Layout observer: reduce friends badge', data);
+
+      if (data.action === 'accept') {
+        setIncoming((prev) => Math.max(0, prev - 1));
+      } else if (data.action === 'reject') {
+        setIncoming((prev) => Math.max(0, prev - 1));
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   return (
     <React.Fragment>
@@ -67,6 +104,7 @@ export default function RootLayout() {
           options={{
             tabBarIcon: ({ color, size }) => <Ionicons name="people" size={size} color={color} />,
             tabBarButton: (props) => <TouchableOpacity {...(props as any)} />,
+            tabBarBadge: incomingRequests && incomingRequests > 0 ? incomingRequests : undefined,
           }}
         />
         <Tabs.Screen
@@ -78,6 +116,12 @@ export default function RootLayout() {
         />
         <Tabs.Screen
           name="groups"
+          options={{
+            href: null,
+          }}
+        />
+        <Tabs.Screen
+          name="tasks"
           options={{
             href: null,
           }}

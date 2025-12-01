@@ -8,6 +8,7 @@ export default function RootLayout() {
         contentStyle: {
           backgroundColor: '#000000',
         },
+        gestureEnabled: false,
       }}
     />
   );

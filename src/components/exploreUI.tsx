@@ -1,10 +1,15 @@
 import { View, FlatList, ActivityIndicator, Text, RefreshControl } from 'react-native';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { photoRetrieve, PhotoSubmission } from '@/controllers/photoRetrieve';
-import { getAllGroups } from '@/controllers/group';
+import { groupController } from '@/controllers/group';
+import {
+  registerExploreObserver,
+  unregisterExploreObserver,
+} from '@/controllers/observers/uiObservers';
 
 import Tethr from '@/components/tethr';
 import Fyp from '@/components/fyp';
+import SearchBar from '@/components/searchbar';
 
 interface PhotoWithGroup extends PhotoSubmission {
   groupName: string;
@@ -14,13 +19,21 @@ export default function ExploreUI() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [photos, setPhotos] = useState<PhotoWithGroup[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const groupsMapRef = useRef<Record<string, string>>({});
 
   const loadPhotos = async () => {
     try {
       setLoading(true);
 
-      const allGroups = await getAllGroups.fetchUserData();
+      const allGroups = await groupController.fetchUserData('EXPLORE_SCREEN');
       const groupIds = allGroups.map((g) => g.group_id);
+
+      const gMap: Record<string, string> = {};
+      allGroups.forEach((g) => {
+        gMap[g.group_id] = g.group_name;
+      });
+      groupsMapRef.current = gMap;
 
       if (groupIds.length > 0) {
         const allPhotos = await photoRetrieve.getPhotosByGroups(groupIds);
@@ -51,7 +64,37 @@ export default function ExploreUI() {
 
   useEffect(() => {
     loadPhotos();
+
+    registerExploreObserver((data) => {
+      console.log('Explore: Observer, adding photos to relevant states...', data);
+
+      const newPhoto: PhotoWithGroup = {
+        name: data.photoUri.split('/').pop() || '',
+        publicUrl: data.photoUri,
+        createdAt: data.timestamp,
+        groupId: data.groupId,
+        userId: data.userId,
+        username: 'You',
+        taskName: data.taskName,
+        groupName: groupsMapRef.current[data.groupId] || 'Unknown Group',
+      };
+
+      setPhotos((prev) => [newPhoto, ...prev]);
+    });
+
+    return () => unregisterExploreObserver();
   }, []);
+  const filteredPhotos = useMemo(() => {
+    if (!searchQuery.trim()) return photos;
+
+    const lowerQuery = searchQuery.toLowerCase();
+    return photos.filter(
+      (photo) =>
+        photo.groupName.toLowerCase().includes(lowerQuery) ||
+        photo.taskName.toLowerCase().includes(lowerQuery) ||
+        photo.username.toLowerCase().includes(lowerQuery)
+    );
+  }, [photos, searchQuery]);
 
   if (loading) {
     return (
@@ -66,14 +109,14 @@ export default function ExploreUI() {
     <View className="flex-1 bg-black pt-8">
       <Tethr side="left" />
       <FlatList
-        data={photos}
+        data={filteredPhotos}
         keyExtractor={(item) => item.name}
         renderItem={({ item }) => {
-          console.log('Photo item:', {
-            groupId: item.groupId,
-            groupName: item.groupName,
-            taskName: item.taskName,
-          });
+          // console.log('Photo item:', {
+          //   groupId: item.groupId,
+          //   groupName: item.groupName,
+          //   taskName: item.taskName,
+          // });
 
           return (
             <View className="mx-auto justify-center pb-6">
@@ -87,7 +130,10 @@ export default function ExploreUI() {
           );
         }}
         ListHeaderComponent={
-          <Text className="pb-8 text-center text-2xl font-bold text-white">Your Feed</Text>
+          <View className="mx-auto flex flex-col justify-center pb-8">
+            <Text className="pb-4 text-center text-2xl font-bold text-white">Your Feed</Text>
+            <SearchBar placeholder="Search for..." onSearch={setSearchQuery} value={searchQuery} />
+          </View>
         }
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         contentContainerStyle={{
@@ -97,7 +143,9 @@ export default function ExploreUI() {
         }}
         ListEmptyComponent={
           <Text className="px-4 text-center text-white">
-            No photos yet. Join a group to start completing tasks!
+            {searchQuery
+              ? 'No photos match your search.'
+              : 'No photos yet. Join a group to start completing tasks!'}
           </Text>
         }
       />

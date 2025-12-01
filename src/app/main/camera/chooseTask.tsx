@@ -11,6 +11,7 @@ import Entypo from '@expo/vector-icons/Entypo';
 interface Task {
   task_name: string;
   recurring: boolean;
+  weekly: boolean;
 }
 
 const ChooseTask = () => {
@@ -79,8 +80,10 @@ const ChooseTask = () => {
       </View>
 
       <View className="items-center">
-        <Text className="mb-4 text-2xl font-bold text-white">Select Task for {group_name}</Text>
-
+        <View className="flex flex-row gap-2">
+          <Text className="mb-4 text-2xl font-bold text-white">Select Task for</Text>
+          <Text className="mb-4 text-2xl font-bold text-tethr-purple">{group_name}</Text>
+        </View>
         <View className="mb-4 w-full items-center">
           <SearchBar placeholder="Search tasks..." value={query} onSearch={handleSearch} />
         </View>
@@ -93,7 +96,7 @@ const ChooseTask = () => {
 
               return (
                 <TouchableOpacity
-                  className="w-full items-center rounded-xl px-4"
+                  className={`flex w-10/12 self-center bg-tethr-gray/50 px-5 py-4 text-2xl text-white ${roundedMap[getCardType(idx, filteredTasks.length)]}`}
                   key={idx}
                   disabled={taskCompleted}
                   onPress={() =>
@@ -103,17 +106,15 @@ const ChooseTask = () => {
                         group_name: group_name,
                         group_id: group_id,
                         task_name: task.task_name,
+                        weekly: task.weekly as unknown as string,
                       },
                     })
                   }>
-                  <View
-                    className={`flex w-10/12 flex-col items-center bg-tethr-gray/50 ${roundedMap[getCardType(idx, filteredTasks.length)]} p-2`}>
-                    <Text
-                      className={`${taskCompleted ? 'text-tethr-light-gray/20' : 'text-white'} text-lg`}>
-                      {task.task_name} {task.recurring ? '(Recurring)' : ''}{' '}
-                      {taskCompleted ? '(Completed Today)' : ''}
-                    </Text>
-                  </View>
+                  <Text
+                    className={`${taskCompleted ? 'text-tethr-light-gray/20' : 'text-white'} font-semibold`}>
+                    {task.task_name} {task.recurring ? '(Recurring)' : ''}{' '}
+                    {task.weekly ? '(Weekly)' : ''} {taskCompleted ? '(Completed)' : ''}
+                  </Text>
                 </TouchableOpacity>
               );
             })}

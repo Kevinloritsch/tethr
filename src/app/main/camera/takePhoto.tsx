@@ -26,8 +26,16 @@ export default function Camera() {
   const { task_name } = useLocalSearchParams();
   const taskName = Array.isArray(task_name) ? task_name[0] : (task_name ?? '');
 
+  const { weekly } = useLocalSearchParams();
+
+  const weeklyVal = Array.isArray(weekly) ? weekly[0] === 'true' : weekly === 'true';
+
   const { return_state } = useLocalSearchParams();
   const hasReturn = return_state ? true : false;
+  const returnToGroup = return_state !== 'main' ? true : false;
+  const returnToTask = return_state === 'tasks' ? true : false;
+  const { photos } = useLocalSearchParams();
+  const { all_tasks } = useLocalSearchParams();
 
   const [facing, setFacing] = useState<CameraType>('back');
   const [flash, setFlash] = useState<FlashMode>('off');
@@ -81,6 +89,7 @@ export default function Camera() {
         quality: 1,
         base64: true,
         exif: true,
+        skipProcessing: false,
       });
 
       setPhoto(takenPhoto);
@@ -100,6 +109,7 @@ export default function Camera() {
         group_name={groupName}
         group_id={groupId}
         task_name={taskName}
+        weekly={weeklyVal}
       />
     );
 
@@ -112,7 +122,28 @@ export default function Camera() {
         <TouchableOpacity
           onPress={() => {
             if (hasReturn) {
-              router.replace('/');
+              if (returnToTask) {
+                router.replace({
+                  pathname: '/main/tasks',
+                  params: {
+                    data: all_tasks,
+                  },
+                });
+              } else if (returnToGroup) {
+                router.dismissAll();
+                router.replace({
+                  pathname: `/main/groups/${groupId}`,
+                  params: {
+                    group_id: groupId,
+                    group_name: groupName,
+                    return_state: 'main',
+                    photos: photos,
+                  },
+                });
+              } else {
+                router.dismissAll();
+                router.navigate('/main');
+              }
             } else router.back();
           }}
           className="absolute left-0 top-0 h-full items-center justify-center pb-2 pl-8">
@@ -134,6 +165,7 @@ export default function Camera() {
           zoom={zoom}
           ref={cameraRef}
           mirror={facing === 'front'}
+          responsiveOrientationWhenOrientationLocked
         />
         <Text className="absolute left-8 top-2 w-auto items-center justify-center rounded-lg bg-tethr-gray/80 px-3 py-2 text-white">
           {taskName}

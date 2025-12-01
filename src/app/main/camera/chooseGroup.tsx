@@ -24,7 +24,7 @@ const ChooseGroup = () => {
 
   const fetchGroupData = async () => {
     try {
-      const allGroups = await getAllGroups.fetchUserData();
+      const allGroups = await getAllGroups.fetchUserData('Choose group');
       setGroups(allGroups);
       setFiltered(allGroups);
     } catch (err) {

@@ -14,6 +14,7 @@ import SearchBar from '@/components/searchbar';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getCardType } from '@/utils/cardType';
+import { friendRequestObserver } from '@/controllers/observers/friendRequestObserver';
 
 export default function FriendsScreen() {
   const [friends, setFriends] = useState<FriendProps[]>([]);
@@ -117,9 +118,20 @@ export default function FriendsScreen() {
   };
   const handleAcceptRequest = async (friendId: string) => {
     try {
-      setFriends((prev) => prev.filter((f) => f.userId !== friendId));
+      const acceptedFriend = incomingRequests.find((f) => f.userId === friendId);
+
       setIncoming((prev) => prev.filter((f) => f.userId !== friendId));
       setOutgoing((prev) => prev.filter((f) => f.userId !== friendId));
+
+      if (acceptedFriend) {
+        setFriends((prev) => [...prev, { ...acceptedFriend, buttonText: 'Remove' }]);
+      }
+
+      friendRequestObserver.notify({
+        action: 'accept',
+        friendId,
+        username: acceptedFriend?.username,
+      });
 
       await getFriendsList.acceptRequest(friendId);
     } catch (error) {
