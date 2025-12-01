@@ -45,15 +45,10 @@ const PhotoPreview = ({
 
       if (exifOrientation === 1) {
         rotation = 90;
-        console.log('Applying 90 rotation for landscape');
       } else if (exifOrientation === 3) {
         rotation = 270;
-        console.log('Applying 270 rotation for landscape');
       } else if (exifOrientation === 8) {
         rotation = 180;
-        console.log('Applying 180° rotation for upsidedown');
-      } else {
-        console.log('No rotation needed for portrait');
       }
 
       if (rotation !== 0) {

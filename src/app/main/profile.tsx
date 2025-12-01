@@ -5,6 +5,7 @@ import Tethr from '@/components/tethr';
 import { ProfileProps, userController } from '@/controllers/userInfo';
 import { useState, useCallback, useEffect } from 'react';
 import { useRouter } from 'expo-router';
+import { scoreUpdateObserver } from '@/controllers/observers/scoreUpdateObserver';
 
 export default function ProfileScreen() {
   const [loading, setLoading] = useState(true);
@@ -27,7 +28,14 @@ export default function ProfileScreen() {
   }, []);
   useEffect(() => {
     loadProfile();
-  }, [loadProfile]);
+
+    const unsubscribe = scoreUpdateObserver.subscribe(() => {
+      loadProfile();
+    });
+
+    return () => unsubscribe();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleLogout = async () => {
     const success = await userController.logout();

@@ -45,7 +45,7 @@ const Index = () => {
   }, [parsedObject, searchQuery]);
 
   return (
-    <View className="flex-1 bg-black pt-8">
+    <View className="flex-1 bg-black py-8">
       <View className="relative h-[10vh] w-full items-center">
         <View className="absolute left-0 right-0 top-0 items-center">
           <Tethr side="center" />

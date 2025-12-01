@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity, ActivityIndicator, Pressable, FlatList } from 'react-native';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useLocalSearchParams, router } from 'expo-router';
 import { FontAwesome6 } from '@expo/vector-icons';
 import { taskController } from '@/controllers/tasks';
@@ -47,6 +47,7 @@ const GroupPage = () => {
   const [myUsername, setMyUsername] = useState('');
   const [photos, setPhotos] = useState<Photo[]>([]);
   const [completedTasks, setCompletedTasks] = useState<string[]>([]);
+  const flatListRef = useRef<FlatList>(null);
 
   useEffect(() => {
     if (groupId) {
@@ -130,6 +131,10 @@ const GroupPage = () => {
     return completedTasks.includes(taskKey);
   };
 
+  const scrollToTop = () => {
+    flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
+  };
+
   if (loading) {
     return (
       <View className="flex-1 items-center justify-center bg-black">
@@ -171,6 +176,7 @@ const GroupPage = () => {
         </View>
         <FlatList
           data={photos}
+          ref={flatListRef}
           ListHeaderComponent={
             <View className="mx-auto w-[90vw] pb-8">
               <Text className="my-6 text-xl font-bold text-white">Leaderboard</Text>
@@ -267,6 +273,11 @@ const GroupPage = () => {
             <Text className="px-4 text-center text-white">No photos in this group yet.</Text>
           }
         />
+        <TouchableOpacity
+          onPress={scrollToTop}
+          className="absolute bottom-12 right-6 mb-4 h-10 w-14 items-center justify-center rounded-full bg-tethr-purple">
+          <Entypo name="chevron-up" size={24} color="white" />
+        </TouchableOpacity>
       </View>
     </View>
   );

@@ -51,6 +51,12 @@ export default function FriendsScreen() {
         getFriendsList.getOutgoingFriendRequests(),
       ]);
 
+      console.log(incomingRes.length);
+      friendRequestObserver.notify({
+        action: 'manualUpdate',
+        count: incomingRes.length,
+      });
+
       const addedFriends = friendsRes ?? [];
       const incomingReqs = incomingRes ?? [];
       const outgoingReqs = outgoingRes ?? [];
@@ -140,6 +146,22 @@ export default function FriendsScreen() {
     }
   };
 
+  const handleRejectRequest = async (friendId: string) => {
+    try {
+      setIncoming((prev) => prev.filter((f) => f.userId !== friendId));
+
+      friendRequestObserver.notify({
+        action: 'reject',
+        friendId,
+      });
+
+      await getFriendsList.removeRequest(friendId);
+    } catch (error) {
+      console.error(error);
+      loadFriends();
+    }
+  };
+
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     await loadFriends();
@@ -179,7 +201,7 @@ export default function FriendsScreen() {
   }
 
   return (
-    <View className="flex-1 flex-col bg-black pt-8">
+    <View className="mb-16 flex-1 flex-col bg-black pb-12 pt-8">
       <Tethr side="left" />
 
       <View className="flex w-full flex-col items-center gap-2">
@@ -203,12 +225,14 @@ export default function FriendsScreen() {
       <SectionList
         sections={sections}
         keyExtractor={(item) => item.username}
+        stickySectionHeadersEnabled={false}
         renderItem={({ item, section, index }) => (
           <View className="flex flex-col items-center px-4">
             <FriendCard
               pfpUrl={item.pfpUrl}
               username={item.username}
               buttonText={item.buttonText}
+              secondButtonText={section.title === 'Incoming' ? 'close' : undefined}
               userId={item.userId}
               pressFunction={() => {
                 if (section.title === 'Friends') {
@@ -219,6 +243,9 @@ export default function FriendsScreen() {
                   handleRemoveRequest(item.userId);
                 }
               }}
+              secondPressFunction={
+                section.title === 'Incoming' ? () => handleRejectRequest(item.userId) : undefined
+              }
               cardType={getCardType(index, section.data.length)}
             />
           </View>
