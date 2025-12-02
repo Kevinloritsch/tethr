@@ -58,6 +58,7 @@ export default function IndexScreen() {
           'Account Not Found',
           'No account exists with this email. Please sign up instead.'
         );
+        setLoading(false);
         return;
       }
     }

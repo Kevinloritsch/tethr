@@ -43,10 +43,20 @@ const PhotoPreview = ({
 
       const exifOrientation = photo.exif?.Orientation || 6;
 
+      console.log(exifOrientation);
+
       if (exifOrientation === 1) {
         rotation = 90;
+      } else if (exifOrientation === 2) {
+        rotation = 270;
       } else if (exifOrientation === 3) {
         rotation = 270;
+      } else if (exifOrientation === 4) {
+        rotation = 90;
+      } else if (exifOrientation === 5) {
+        rotation = 0;
+      } else if (exifOrientation === 7) {
+        rotation = 180;
       } else if (exifOrientation === 8) {
         rotation = 180;
       }
