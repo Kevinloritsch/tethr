@@ -102,7 +102,7 @@ const CreateGroup = () => {
         </Text>
         <SearchBar placeholder="Search friends..." onSearch={setSearchQuery} value={searchQuery} />
 
-        <ScrollView className="mt-2 max-h-[600px] w-10/12">
+        <ScrollView className="mt-2 max-h-[600px] w-full">
           {filteredFriends.map(({ userId, pfpUrl, username }, idx) => {
             const selected = selectedFriendIds.includes(userId);
 
